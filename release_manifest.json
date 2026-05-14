@@ -1,6 +1,6 @@
 {
   "blocked_files": [],
-  "copied_count": 1053,
+  "copied_count": 1051,
   "copied_files": [
     ".github/workflows/ci.yml",
     ".github/workflows/package-smoke.yml",
@@ -24,8 +24,6 @@
     "apps/web/src/App.tsx",
     "apps/web/src/api.ts",
     "apps/web/src/assets/hero.png",
-    "apps/web/src/assets/react.svg",
-    "apps/web/src/assets/vite.svg",
     "apps/web/src/components/ChatArea.tsx",
     "apps/web/src/components/ChatInput.tsx",
     "apps/web/src/components/ChatMessage.tsx",
@@ -1059,5 +1057,5 @@
   "dry_run": false,
   "output_dir": "bio-harness",
   "skipped_missing": [],
-  "total_bytes": 16016513
+  "total_bytes": 16006017
 }
