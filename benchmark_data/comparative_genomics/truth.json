@@ -1,0 +1,41 @@
+{
+  "genomes": [
+    {
+      "name": "E. coli K-12 MG1655",
+      "file": "ecoli_k12.fna"
+    },
+    {
+      "name": "E. coli O157:H7 EDL933",
+      "file": "ecoli_o157.fna"
+    },
+    {
+      "name": "Salmonella enterica Typhimurium LT2",
+      "file": "salmonella_lt2.fna"
+    }
+  ],
+  "expected_pairs": [
+    {
+      "genome_a": "ecoli_k12",
+      "genome_b": "ecoli_o157",
+      "ani_min": 0.95,
+      "ani_max": 1.0
+    },
+    {
+      "genome_a": "ecoli_k12",
+      "genome_b": "salmonella_lt2",
+      "ani_min": 0.75,
+      "ani_max": 0.9
+    },
+    {
+      "genome_a": "ecoli_o157",
+      "genome_b": "salmonella_lt2",
+      "ani_min": 0.75,
+      "ani_max": 0.9
+    }
+  ],
+  "closest_pair": [
+    "ecoli_k12",
+    "ecoli_o157"
+  ],
+  "min_pairs_with_alignment": 3
+}

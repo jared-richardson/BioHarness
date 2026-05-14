@@ -1,0 +1,78 @@
+---
+name: scanpy_workflow
+description: Run a deterministic Scanpy preprocessing and clustering workflow on pre-counted single-cell input.
+when_to_use: Use for single-cell RNA-seq analysis with scanpy (Python-based preprocessing/clustering)
+when_not_to_use: Not for bulk RNA-seq or when R/Seurat workflow is preferred
+risk_level: medium
+tools_required:
+- python
+- scanpy
+capabilities:
+- single_cell_analysis
+- differential_analysis
+input_types:
+- h5ad
+- csv
+- mtx
+output_types:
+- h5ad
+- csv
+- png
+analysis_categories:
+- single_cell_rna_seq
+parameters:
+  input_path:
+    type: path
+    description: Input single-cell dataset path (h5ad, loom, 10x h5, or 10x MTX directory).
+    required: true
+    file_role: input_matrix
+    ownership: user_input
+  script_path:
+    type: path
+    description: Optional path to a custom scanpy workflow script. Defaults to the bundled deterministic workflow.
+    required: false
+    ownership: harness_managed
+  output_dir:
+    type: path
+    description: Output directory for plots/tables.
+    required: true
+    file_role: output_dir
+    ownership: execution_output
+  min_genes:
+    type: integer
+    description: Minimum genes detected per cell during QC filtering.
+    required: false
+    ownership: tuning
+  min_cells:
+    type: integer
+    description: Minimum cells expressing a gene during QC filtering.
+    required: false
+    ownership: tuning
+  max_mito_pct:
+    type: number
+    description: Maximum mitochondrial read percentage allowed per cell.
+    required: false
+    ownership: tuning
+  n_hvgs:
+    type: integer
+    description: Number of highly variable genes to retain before PCA/clustering.
+    required: false
+    ownership: tuning
+  leiden_resolution:
+    type: number
+    description: Leiden resolution parameter for cluster granularity.
+    required: false
+    ownership: tuning
+system_requirements:
+  min_ram_gb: 16
+  min_cores: 4
+command_template: python {script_path} --input-path {input_path} --output-dir {output_dir}
+---
+Use for deterministic preprocessing/clustering of pre-counted single-cell inputs. The wrapper accepts `input_path`
+as the canonical parameter and also tolerates legacy `input_h5ad` calls for compatibility with older templates.
+
+## Onboarding Metadata
+- Source: https://scanpy.readthedocs.io/en/stable/
+- Source Mode: official_docs
+- Installed At: curated_seed_v1
+- Install Workflow: controlled_curated_batch_onboarding:single_cell_core

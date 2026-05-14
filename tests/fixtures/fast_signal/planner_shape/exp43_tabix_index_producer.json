@@ -1,0 +1,27 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {},
+  "covers_fix": [
+    "27"
+  ],
+  "expected_outcome": {
+    "forbid_silent_corruption": true,
+    "min_steps": 1,
+    "passed": true,
+    "required_tools": [
+      "bcftools_filter_run"
+    ]
+  },
+  "failure_class": "artifact_contract",
+  "id": "exp43_tabix_index_producer",
+  "kind": "planner_shape",
+  "metadata": {
+    "scenario": "Compressed VCF producer shape that requires a tabix sidecar contract downstream."
+  },
+  "model": "qwen3.6",
+  "prefix_state": {},
+  "raw_emission": "{\"steps\":[{\"step_id\":1,\"tool_name\":\"bcftools_filter_run\",\"objective\":\"Filter evol1 variants and emit compressed VCF\",\"arguments\":{\"input_vcf\":\"evol1_raw.vcf\",\"output_vcf\":\"evol1.filtered.vcf.gz\",\"output_type\":\"z\"}}]}",
+  "schema_version": 1,
+  "source_run": "exp43",
+  "temperature": 0.3
+}

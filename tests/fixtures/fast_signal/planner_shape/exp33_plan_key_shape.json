@@ -1,0 +1,27 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {},
+  "covers_fix": [
+    "15"
+  ],
+  "expected_outcome": {
+    "forbid_silent_corruption": true,
+    "min_steps": 1,
+    "passed": true,
+    "required_tools": [
+      "bwa_mem_align"
+    ]
+  },
+  "failure_class": "planner_shape",
+  "id": "exp33_plan_key_shape",
+  "kind": "planner_shape",
+  "metadata": {
+    "scenario": "Qwen emits the step list under plan instead of workflow."
+  },
+  "model": "qwen3.6",
+  "prefix_state": {},
+  "raw_emission": "{\"thought_process\":\"Use an alignment-first variant workflow.\",\"plan\":[{\"step_id\":1,\"tool_name\":\"bwa_mem_align\",\"objective\":\"Align ancestor reads\",\"parameter_hints\":{\"reads_1\":\"anc_R1.fastq.gz\",\"reads_2\":\"anc_R2.fastq.gz\",\"output_bam\":\"anc_aligned.bam\"}}]}",
+  "schema_version": 1,
+  "source_run": "exp33",
+  "temperature": 0.3
+}

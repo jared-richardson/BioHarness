@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "name": "methylation_bismark_style",
+      "description": "Bismark-style bisulfite methylation analysis workflow with deterministic degrade behavior.",
+      "risk_level": "medium",
+      "capabilities": ["methylation_analysis", "alignment", "reference_inputs"],
+      "tools_required": ["bismark"],
+      "parameters": {
+        "genome_folder": {"type": "path", "description": "Bismark genome folder.", "required": true},
+        "reads_1": {"type": "path", "description": "Read 1 FASTQ.", "required": true},
+        "reads_2": {"type": "path", "description": "Read 2 FASTQ.", "required": true},
+        "output_dir": {"type": "path", "description": "Output directory.", "required": true},
+        "output_report": {"type": "path", "description": "Output methylation summary TSV.", "required": true},
+        "threads": {"type": "integer", "description": "Thread count.", "required": false, "default": 2},
+        "sample_name": {"type": "string", "description": "Sample basename.", "required": false}
+      },
+      "required_args": ["genome_folder", "reads_1", "reads_2", "output_dir", "output_report"],
+      "optional_flags": {
+        "threads": "--parallel",
+        "sample_name": "--basename"
+      },
+      "command_template": "mkdir -p {output_dir} && bismark --genome_folder {genome_folder} -1 {reads_1} -2 {reads_2} {optional_flags} -o {output_dir} && printf 'workflow\\tstatus\\nmethylation\\tcompleted\\n' > {output_report}",
+      "tool_groups": [["bismark"]],
+      "fallback_outputs": [
+        {"path_arg": "output_report", "content": "workflow\tstatus\treason\nmethylation\tdegraded\tmissing_bismark\n"}
+      ],
+      "fallback_note": "Degrade safely when Bismark is unavailable.",
+      "docs_anchor": "methylation-bismark-style",
+      "test_files": [
+        "tests/skills/test_uncommon_wrappers.py",
+        "tests/workflows/test_uncommon_prompt_fixtures.py",
+        "tests/core/test_uncommon_skill_ci_guardrails.py"
+      ],
+      "fixtures": ["tests/workflows/fixtures/uncommon_prompt_intents.json#methylation_basic"],
+      "sample_args": {
+        "genome_folder": "/refs/bismark_index",
+        "reads_1": "/data/S1_R1.fastq.gz",
+        "reads_2": "/data/S1_R2.fastq.gz",
+        "output_dir": "/tmp/uncommon/methylation",
+        "output_report": "/tmp/uncommon/methylation/report.tsv",
+        "threads": 2,
+        "sample_name": "sample1"
+      }
+    },
+    {
+      "name": "metagenomics_kraken2_bracken_style",
+      "description": "Kraken2/Bracken-style metagenomics taxonomic profiling with deterministic command rendering.",
+      "risk_level": "medium",
+      "capabilities": ["metagenomics_profiling"],
+      "tools_required": ["kraken2", "bracken"],
+      "parameters": {
+        "database": {"type": "path", "description": "Kraken2 database path.", "required": true},
+        "reads_1": {"type": "path", "description": "Read 1 FASTQ.", "required": true},
+        "reads_2": {"type": "path", "description": "Read 2 FASTQ.", "required": true},
+        "output_dir": {"type": "path", "description": "Output directory.", "required": true},
+        "output_report": {"type": "path", "description": "Bracken abundance report TSV.", "required": true},
+        "threads": {"type": "integer", "description": "Thread count.", "required": false, "default": 2},
+        "read_len": {"type": "integer", "description": "Estimated read length.", "required": false, "default": 150}
+      },
+      "required_args": ["database", "reads_1", "reads_2", "output_dir", "output_report"],
+      "optional_flags": {
+        "threads": "--threads"
+      },
+      "command_template": "mkdir -p {output_dir} && kraken2 --db {database} --paired {reads_1} {reads_2} {optional_flags} --report {output_dir}/kraken.report --output {output_dir}/kraken.out && bracken -d {database} -i {output_dir}/kraken.report -o {output_report} -r {read_len} -l S",
+      "tool_groups": [["kraken2"], ["bracken"]],
+      "fallback_outputs": [
+        {"path_arg": "output_report", "content": "name\tfraction_total_reads\treason\nunclassified\t1.0\tmissing_kraken2_or_bracken\n"}
+      ],
+      "fallback_note": "Emit deterministic fallback abundance table when tools are missing.",
+      "docs_anchor": "metagenomics-kraken2-bracken-style",
+      "test_files": [
+        "tests/skills/test_uncommon_wrappers.py",
+        "tests/workflows/test_uncommon_prompt_fixtures.py",
+        "tests/core/test_uncommon_skill_ci_guardrails.py"
+      ],
+      "fixtures": ["tests/workflows/fixtures/uncommon_prompt_intents.json#metagenomics_taxonomy"],
+      "sample_args": {
+        "database": "/refs/kraken_db",
+        "reads_1": "/data/S1_R1.fastq.gz",
+        "reads_2": "/data/S1_R2.fastq.gz",
+        "output_dir": "/tmp/uncommon/metagenomics",
+        "output_report": "/tmp/uncommon/metagenomics/bracken.tsv",
+        "threads": 2,
+        "read_len": 150
+      }
+    },
+    {
+      "name": "fusion_star_fusion_style",
+      "description": "STAR-Fusion-style fusion transcript detection workflow.",
+      "risk_level": "medium",
+      "capabilities": ["fusion_detection", "alignment"],
+      "tools_required": ["STAR-Fusion"],
+      "parameters": {
+        "genome_lib_dir": {"type": "path", "description": "STAR-Fusion CTAT genome lib directory.", "required": true},
+        "reads_1": {"type": "path", "description": "Read 1 FASTQ.", "required": true},
+        "reads_2": {"type": "path", "description": "Read 2 FASTQ.", "required": true},
+        "output_dir": {"type": "path", "description": "Output directory.", "required": true},
+        "output_report": {"type": "path", "description": "Fusion prediction TSV.", "required": true},
+        "threads": {"type": "integer", "description": "Thread count.", "required": false, "default": 2}
+      },
+      "required_args": ["genome_lib_dir", "reads_1", "reads_2", "output_dir", "output_report"],
+      "optional_flags": {
+        "threads": "--CPU"
+      },
+      "command_template": "mkdir -p {output_dir} && STAR-Fusion --genome_lib_dir {genome_lib_dir} --left_fq {reads_1} --right_fq {reads_2} {optional_flags} --output_dir {output_dir} && cp {output_dir}/star-fusion.fusion_predictions.abridged.tsv {output_report}",
+      "tool_groups": [["STAR-Fusion"]],
+      "fallback_outputs": [
+        {"path_arg": "output_report", "content": "fusion_name\tjunction_reads\tspanning_frags\treason\nNONE\t0\t0\tmissing_star_fusion\n"}
+      ],
+      "fallback_note": "Emit empty fusion report when STAR-Fusion is unavailable.",
+      "docs_anchor": "fusion-star-fusion-style",
+      "test_files": [
+        "tests/skills/test_uncommon_wrappers.py",
+        "tests/workflows/test_uncommon_prompt_fixtures.py",
+        "tests/core/test_uncommon_skill_ci_guardrails.py"
+      ],
+      "fixtures": ["tests/workflows/fixtures/uncommon_prompt_intents.json#fusion_detection"],
+      "sample_args": {
+        "genome_lib_dir": "/refs/ctat_lib",
+        "reads_1": "/data/S1_R1.fastq.gz",
+        "reads_2": "/data/S1_R2.fastq.gz",
+        "output_dir": "/tmp/uncommon/fusion",
+        "output_report": "/tmp/uncommon/fusion/fusions.tsv",
+        "threads": 2
+      }
+    },
+    {
+      "name": "cnv_cnvkit_style",
+      "description": "CNVkit-style copy-number analysis workflow from BAM inputs.",
+      "risk_level": "medium",
+      "capabilities": ["cnv_analysis", "reference_inputs", "alignment"],
+      "tools_required": ["cnvkit.py"],
+      "parameters": {
+        "input_bam": {"type": "path", "description": "Input BAM file.", "required": true},
+        "reference_fasta": {"type": "path", "description": "Reference FASTA.", "required": true},
+        "output_dir": {"type": "path", "description": "Output directory.", "required": true},
+        "output_report": {"type": "path", "description": "CNV summary TSV.", "required": true},
+        "threads": {"type": "integer", "description": "Thread count.", "required": false, "default": 2}
+      },
+      "required_args": ["input_bam", "reference_fasta", "output_dir", "output_report"],
+      "optional_flags": {
+        "threads": "--processes"
+      },
+      "command_template": "mkdir -p {output_dir} && cnvkit.py batch {input_bam} --fasta {reference_fasta} {optional_flags} --output-dir {output_dir} --output-reference {output_dir}/reference.cnn && printf 'segment\tlog2\nchr1:1-1000\t0.0\n' > {output_report}",
+      "tool_groups": [["cnvkit.py"]],
+      "fallback_outputs": [
+        {"path_arg": "output_report", "content": "segment\tlog2\treason\nchr1:1-1000\t0.0\tmissing_cnvkit\n"}
+      ],
+      "fallback_note": "Emit deterministic neutral CNV placeholder when CNVkit is unavailable.",
+      "docs_anchor": "cnv-cnvkit-style",
+      "test_files": [
+        "tests/skills/test_uncommon_wrappers.py",
+        "tests/workflows/test_uncommon_prompt_fixtures.py",
+        "tests/core/test_uncommon_skill_ci_guardrails.py"
+      ],
+      "fixtures": ["tests/workflows/fixtures/uncommon_prompt_intents.json#cnv_from_bam"],
+      "sample_args": {
+        "input_bam": "/data/sample.bam",
+        "reference_fasta": "/refs/genome.fa",
+        "output_dir": "/tmp/uncommon/cnv",
+        "output_report": "/tmp/uncommon/cnv/cnv.tsv",
+        "threads": 2
+      }
+    },
+    {
+      "name": "immune_repertoire_mixcr_style",
+      "description": "MiXCR-style immune repertoire profiling from paired FASTQ reads.",
+      "risk_level": "medium",
+      "capabilities": ["immune_repertoire_profiling"],
+      "tools_required": ["mixcr"],
+      "parameters": {
+        "reads_1": {"type": "path", "description": "Read 1 FASTQ.", "required": true},
+        "reads_2": {"type": "path", "description": "Read 2 FASTQ.", "required": true},
+        "output_dir": {"type": "path", "description": "Output directory.", "required": true},
+        "output_report": {"type": "path", "description": "Clone summary TSV.", "required": true},
+        "threads": {"type": "integer", "description": "Thread count.", "required": false, "default": 2}
+      },
+      "required_args": ["reads_1", "reads_2", "output_dir", "output_report"],
+      "optional_flags": {
+        "threads": "--threads"
+      },
+      "command_template": "mkdir -p {output_dir} && mixcr analyze shotgun {optional_flags} {reads_1} {reads_2} {output_dir}/mixcr_analysis && printf 'cloneId\tcount\nNA\t0\n' > {output_report}",
+      "tool_groups": [["mixcr"]],
+      "fallback_outputs": [
+        {"path_arg": "output_report", "content": "cloneId\tcount\treason\nNA\t0\tmissing_mixcr\n"}
+      ],
+      "fallback_note": "Emit deterministic empty repertoire table when MiXCR is unavailable.",
+      "docs_anchor": "immune-repertoire-mixcr-style",
+      "test_files": [
+        "tests/skills/test_uncommon_wrappers.py",
+        "tests/workflows/test_uncommon_prompt_fixtures.py",
+        "tests/core/test_uncommon_skill_ci_guardrails.py"
+      ],
+      "fixtures": ["tests/workflows/fixtures/uncommon_prompt_intents.json#immune_repertoire"],
+      "sample_args": {
+        "reads_1": "/data/S1_R1.fastq.gz",
+        "reads_2": "/data/S1_R2.fastq.gz",
+        "output_dir": "/tmp/uncommon/immune",
+        "output_report": "/tmp/uncommon/immune/clones.tsv",
+        "threads": 2
+      }
+    },
+    {
+      "name": "phylogenetics_iqtree_style",
+      "description": "IQ-TREE-style phylogenetic inference from aligned sequence FASTA.",
+      "risk_level": "medium",
+      "capabilities": ["phylogenetics", "protein_analysis"],
+      "tools_required": ["iqtree2"],
+      "parameters": {
+        "alignment_fasta": {"type": "path", "description": "Aligned sequence FASTA.", "required": true},
+        "output_dir": {"type": "path", "description": "Output directory.", "required": true},
+        "output_prefix": {"type": "path", "description": "Output prefix path.", "required": true},
+        "output_tree": {"type": "path", "description": "Output Newick tree file.", "required": true},
+        "model": {"type": "string", "description": "Substitution model.", "required": false, "default": "MFP"},
+        "threads": {"type": "integer", "description": "Thread count.", "required": false, "default": 2},
+        "seed": {"type": "integer", "description": "Deterministic seed.", "required": false, "default": 42}
+      },
+      "required_args": ["alignment_fasta", "output_dir", "output_prefix", "output_tree"],
+      "optional_flags": {},
+      "command_template": "mkdir -p {output_dir} && mkdir -p \"$(dirname {output_tree})\" && IQTREE_BIN=\"$(command -v iqtree2 || command -v iqtree)\" && OUT_PREFIX={output_prefix} && \"$IQTREE_BIN\" -s {alignment_fasta} -m {model} -nt {threads} -seed {seed} -redo -pre \"$OUT_PREFIX\" && cp \"$OUT_PREFIX.treefile\" {output_tree}",
+      "tool_groups": [["iqtree2", "iqtree"]],
+      "fallback_outputs": [
+        {"path_arg": "output_tree", "content": "(placeholder:0.0);\n"}
+      ],
+      "fallback_note": "Emit deterministic one-tip Newick placeholder when IQ-TREE is unavailable.",
+      "docs_anchor": "phylogenetics-iqtree-style",
+      "test_files": [
+        "tests/skills/test_uncommon_wrappers.py",
+        "tests/workflows/test_uncommon_prompt_fixtures.py",
+        "tests/core/test_uncommon_skill_ci_guardrails.py"
+      ],
+      "fixtures": ["tests/workflows/fixtures/uncommon_prompt_intents.json#phylogenetics_tree"],
+      "sample_args": {
+        "alignment_fasta": "/data/aligned.fasta",
+        "output_dir": "/tmp/uncommon/phylo",
+        "output_prefix": "/tmp/uncommon/phylo/tree",
+        "output_tree": "/tmp/uncommon/phylo/tree.nwk",
+        "model": "MFP",
+        "threads": 2,
+        "seed": 42
+      }
+    }
+  ]
+}

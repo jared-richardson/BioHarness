@@ -1,0 +1,49 @@
+[
+  {
+    "name": "somatic_blacklist_gatk",
+    "setup": "somatic_fastq",
+    "prompt": "Call somatic variants in tumor vs normal using Mutect2.",
+    "contract": {
+      "must_include_capabilities": ["alignment", "variant_calling", "group_comparison", "reference_inputs"],
+      "explicit_tool_hints": []
+    },
+    "preferences": {
+      "tool_blacklist": ["gatk"],
+      "mode": "conservative"
+    },
+    "expected_pipeline_id": "somatic_variant_bcftools_tn_degrade"
+  },
+  {
+    "name": "protein_prefer_hmmscan",
+    "setup": "protein_query",
+    "prompt": "Run protein annotation and homology analysis.",
+    "contract": {
+      "must_include_capabilities": ["protein_analysis", "annotation"],
+      "explicit_tool_hints": []
+    },
+    "preferences": {
+      "mode": "conservative",
+      "preferred_methods": {
+        "protein_analysis": ["protein_hmmscan_domains"],
+        "annotation": ["protein_hmmscan_domains"]
+      }
+    },
+    "expected_pipeline_id": "protein_hmmscan_domains"
+  },
+  {
+    "name": "de_prefer_counts_mode",
+    "setup": "counts_and_metadata",
+    "prompt": "Run differential expression from existing count matrix and metadata.",
+    "contract": {
+      "must_include_capabilities": ["differential_analysis", "group_comparison"],
+      "explicit_tool_hints": []
+    },
+    "preferences": {
+      "mode": "conservative",
+      "preferred_methods": {
+        "differential_analysis": ["differential_expression_deseq2_from_counts"]
+      }
+    },
+    "expected_pipeline_id": "differential_expression_deseq2_from_counts"
+  }
+]

@@ -1,0 +1,78 @@
+---
+name: snpeff_annotate
+description: Annotate variants with predicted functional impact via SnpEff.
+when_to_use: Use for variant functional annotation to predict impact of SNPs/indels on genes
+when_not_to_use: Not for variant calling (use GATK/FreeBayes) or clinical annotation (use VEP)
+risk_level: medium
+tools_required:
+- snpeff
+capabilities:
+- annotation
+- variant_calling
+input_types:
+- vcf
+- fasta_reference
+- gff
+output_types:
+- vcf
+analysis_categories:
+- variant_annotation
+parameters:
+  genome_db:
+    type: string
+    description: SnpEff genome database key.
+    required: true
+  reference_fasta:
+    type: path
+    description: Optional reference FASTA used to build a custom SnpEff database.
+    required: false
+    file_role: reference_genome
+  annotation_gff:
+    type: path
+    description: Optional GFF/GFF3 annotation used to build a custom SnpEff database.
+    required: false
+    file_role: annotation_gff
+  config_dir:
+    type: path
+    description: Optional working directory for custom SnpEff database/config generation.
+    required: false
+  genome_label:
+    type: string
+    description: Optional display label for a custom SnpEff genome entry.
+    required: false
+  codon_table:
+    type: string
+    description: Optional codon table name for custom-database builds.
+    required: false
+  check_protein:
+    type: boolean
+    description: Whether to enable protein validation for custom-database builds.
+    required: false
+  check_cds:
+    type: boolean
+    description: Whether to enable CDS validation for custom-database builds.
+    required: false
+  input_vcf:
+    type: path
+    description: Input VCF file.
+    required: true
+    file_role: input_vcf
+  output_vcf:
+    type: path
+    description: Output annotated VCF path.
+    required: true
+    file_role: output_dir
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 2
+command_template: snpEff {genome_db} {input_vcf} > {output_vcf}
+---
+Use for variant consequence annotation after calling/filtering. When `reference_fasta`,
+`annotation_gff`, and `config_dir` are provided, the wrapper will build a custom SnpEff
+database before annotating.
+
+## Onboarding Metadata
+- Source: https://pcingola.github.io/SnpEff/
+- Source Mode: official_docs
+- Installed At: curated_seed_v1
+- Install Workflow: controlled_curated_batch_onboarding:annotation_assembly_core

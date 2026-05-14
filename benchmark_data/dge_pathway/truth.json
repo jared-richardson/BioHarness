@@ -1,0 +1,40 @@
+{
+  "de_genes": [
+    "APOP_01",
+    "APOP_02",
+    "APOP_03",
+    "APOP_04",
+    "APOP_05",
+    "APOP_06",
+    "APOP_07",
+    "APOP_08",
+    "APOP_09",
+    "APOP_10",
+    "APOP_11",
+    "APOP_12",
+    "CCYC_01",
+    "CCYC_02",
+    "CCYC_03",
+    "CCYC_04",
+    "CCYC_05",
+    "CCYC_06",
+    "CCYC_07",
+    "CCYC_08",
+    "CCYC_09",
+    "CCYC_10"
+  ],
+  "de_gene_count": 22,
+  "total_genes": 100,
+  "enriched_pathways": [
+    "APOPTOSIS_SIGNALING",
+    "CELL_CYCLE_REGULATION"
+  ],
+  "non_enriched_pathways": [
+    "INFLAMMATION_RESPONSE",
+    "HOUSEKEEPING"
+  ],
+  "expected_de_direction": {
+    "APOP_*": "up",
+    "CCYC_*": "down"
+  }
+}

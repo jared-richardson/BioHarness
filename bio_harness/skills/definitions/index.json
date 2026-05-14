@@ -1,0 +1,5658 @@
+{
+  "version": 1,
+  "skills_count": 82,
+  "skills": [
+    {
+      "name": "artifact_schema_profile",
+      "description": "Build a compact schema and column-level data dictionary for a completed artifact such as CSV, TSV, VCF, GTF, or JSONL.",
+      "risk_level": "low",
+      "tools_required": [
+        "python3"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_path": {
+          "type": "path",
+          "description": "Path to the completed artifact that should be profiled.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_json": {
+          "type": "path",
+          "description": "Optional path for the emitted schema JSON report.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "sample_rows": {
+          "type": "integer",
+          "description": "Number of data rows to sample for type inference.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/artifact_schema_profile.md",
+      "when_to_use": "Use after a run finishes to inspect the exact columns, inferred types, and example values of a data artifact",
+      "when_not_to_use": "Do not use to execute or modify the scientific workflow itself",
+      "input_types": [
+        "csv",
+        "tsv",
+        "vcf",
+        "gtf",
+        "gff",
+        "jsonl"
+      ],
+      "output_types": [
+        "json"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "artifact_schema_profiling"
+      ]
+    },
+    {
+      "name": "bash_run",
+      "description": "Executes a user-approved shell command inside the workspace sandbox. Use this when a specialized skill is not yet available, but a safe command-line step is needed.\n",
+      "risk_level": "high",
+      "tools_required": [],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "command": {
+          "type": "string",
+          "description": "Full shell command to execute.",
+          "required": true
+        },
+        "working_directory": {
+          "type": "string",
+          "description": "Optional execution directory for the shell command. Must stay inside the selected workspace root."
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bash_run.md",
+      "when_to_use": "Use as a last resort when no specialized skill exists for the required single operation",
+      "when_not_to_use": "Do not use when a dedicated skill wrapper exists or when the workflow needs multiple operations",
+      "input_types": [],
+      "output_types": [],
+      "analysis_categories": [
+        "general"
+      ]
+    },
+    {
+      "name": "bcftools_call",
+      "description": "Call variants via bcftools mpileup + call pipeline.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bcftools",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA path.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM/CRAM file.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_vcf_gz": {
+          "type": "path",
+          "description": "Compressed output VCF path.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bcftools_call.md",
+      "when_to_use": "Use for variant calling via bcftools mpileup+call pipeline on aligned BAM data",
+      "when_not_to_use": "Not for somatic calling or haplotype-aware germline calling (use GATK or FreeBayes)",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "evolution",
+        "germline"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "bcftools_filter_run",
+      "description": "Filter one VCF with bcftools filter as a single atomic wrapper step.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bcftools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_vcf": {
+          "type": "path",
+          "description": "Input VCF or VCF.GZ path to filter.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output filtered VCF or VCF.GZ path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "filter_expression": {
+          "type": "string",
+          "description": "Include expression passed to `bcftools filter -i`.",
+          "required": true
+        },
+        "output_type": {
+          "type": "string",
+          "description": "Output encoding (`v`, `z`, or `b`). Defaults to bgzipped VCF (`z`).",
+          "required": false
+        },
+        "soft_filter_name": {
+          "type": "string",
+          "description": "Optional bcftools filter label to attach to the emitted records.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bcftools_filter_run.md",
+      "when_to_use": "Use for one deterministic VCF filtering step that keeps only variants matching a bcftools include expression",
+      "when_not_to_use": "Do not use when the workflow still needs subtraction, normalization, indexing, or CSV export in the same step",
+      "input_types": [
+        "vcf"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "comparative_genomics"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "filtering"
+      ]
+    },
+    {
+      "name": "bcftools_isec_run",
+      "description": "Perform one bcftools isec set operation as a single atomic wrapper step.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bcftools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_vcfs": {
+          "type": "list[path]",
+          "description": "Two or more VCF inputs for bcftools isec.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory where bcftools isec writes numbered VCF results.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Optional stable named VCF copied from the first numbered isec result.",
+          "required": false,
+          "file_role": "output_vcf"
+        },
+        "mode": {
+          "type": "string",
+          "description": "Set-operation mode (`intersection`, `complement`, or `private`).",
+          "required": false
+        },
+        "min_matches": {
+          "type": "integer",
+          "description": "Minimum matching input count for intersection mode.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bcftools_isec_run.md",
+      "when_to_use": "Use for one deterministic intersection, complement, or private-variant operation across multiple VCF inputs",
+      "when_not_to_use": "Do not use when the workflow still needs additional normalization or CSV export in the same step",
+      "input_types": [
+        "vcf"
+      ],
+      "output_types": [
+        "directory",
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "comparative_genomics"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "set_operations"
+      ]
+    },
+    {
+      "name": "bcftools_norm_run",
+      "description": "Normalize or atomize one VCF with bcftools norm as a single atomic wrapper step.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bcftools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_vcf": {
+          "type": "path",
+          "description": "Input VCF or VCF.GZ path to normalize.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA used by bcftools norm.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output normalized VCF or VCF.GZ path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "multiallelic_mode": {
+          "type": "string",
+          "description": "Optional bcftools norm multiallelic mode (`+any`, `-any`, or `none` to omit `-m`).",
+          "required": false
+        },
+        "atomize": {
+          "type": "boolean",
+          "description": "Whether to pass `--atomize`.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bcftools_norm_run.md",
+      "when_to_use": "Use for one VCF normalization step that needs a reference FASTA and a deterministic output path",
+      "when_not_to_use": "Do not use for multi-operation shell chains that also index, intersect, or export downstream summaries",
+      "input_types": [
+        "vcf",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "variant_annotation"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "normalization"
+      ]
+    },
+    {
+      "name": "bedtools_coverage",
+      "description": "Summarize interval coverage or overlap counts with bedtools coverage.",
+      "risk_level": "low",
+      "tools_required": [
+        "bedtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "a_intervals": {
+          "type": "path",
+          "description": "BED or interval file supplied as -a.",
+          "required": true
+        },
+        "b_features": {
+          "type": "path",
+          "description": "BED, BEDGRAPH, or BAM-derived feature file supplied as -b.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output path for the coverage summary.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "counts_only": {
+          "type": "boolean",
+          "description": "Emit only the overlap count per A interval.",
+          "required": false
+        },
+        "split_alignments": {
+          "type": "boolean",
+          "description": "Treat split BAM or BED12 alignments as distinct blocks.",
+          "required": false
+        },
+        "sorted_input": {
+          "type": "boolean",
+          "description": "Whether both inputs are already coordinate-sorted.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bedtools_coverage.md",
+      "when_to_use": "Use for deterministic interval coverage summaries against BED, BEDGRAPH, or BAM-derived features",
+      "when_not_to_use": "Do not use for BAM QC text summaries such as flagstat or idxstats",
+      "input_types": [
+        "bed"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "interval_operations"
+      ]
+    },
+    {
+      "name": "bedtools_genomecov",
+      "description": "Generate genome coverage profiles with bedtools genomecov from BAM or interval inputs.",
+      "risk_level": "low",
+      "tools_required": [
+        "bedtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_bam": {
+          "type": "path",
+          "description": "Optional BAM or CRAM input for genomecov -ibam mode.",
+          "required": false,
+          "file_role": "input_bam"
+        },
+        "input_bed": {
+          "type": "path",
+          "description": "Optional BED or interval input for genomecov -i mode.",
+          "required": false
+        },
+        "genome_file": {
+          "type": "path",
+          "description": "Genome sizes file required when input_bed is used.",
+          "required": false
+        },
+        "output_file": {
+          "type": "path",
+          "description": "Output path for the coverage profile.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "report_mode": {
+          "type": "string",
+          "description": "Coverage reporting mode (bedgraph, bedgraph_all, histogram, per_base).",
+          "required": false
+        },
+        "split_intervals": {
+          "type": "boolean",
+          "description": "Treat split alignments or BED12 blocks as distinct intervals.",
+          "required": false
+        },
+        "strand": {
+          "type": "string",
+          "description": "Optional strand restriction (+ or -).",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bedtools_genomecov.md",
+      "when_to_use": "Use for deterministic coverage track generation or depth profiling across a genome",
+      "when_not_to_use": "Do not use for simple overlap counts between two BED files or for BAM QC text summaries",
+      "input_types": [
+        "bam",
+        "bed"
+      ],
+      "output_types": [
+        "bedgraph"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "interval_operations",
+        "coverage_profiling"
+      ]
+    },
+    {
+      "name": "bedtools_intersect",
+      "description": "Intersect two genomic interval sets with bedtools and write the overlap result.",
+      "risk_level": "low",
+      "tools_required": [
+        "bedtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "a_intervals": {
+          "type": "path",
+          "description": "Primary BED or interval file supplied as -a.",
+          "required": true
+        },
+        "b_intervals": {
+          "type": "path",
+          "description": "Secondary BED or interval file supplied as -b.",
+          "required": true
+        },
+        "output_file": {
+          "type": "path",
+          "description": "Output path for the intersect result.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "report_mode": {
+          "type": "string",
+          "description": "Optional bedtools intersect reporting mode (default, wa, wb, wawb, wao, loj, u, v, c).",
+          "required": false
+        },
+        "sorted_input": {
+          "type": "boolean",
+          "description": "Whether the input interval files are already coordinate-sorted.",
+          "required": false
+        },
+        "min_overlap_fraction": {
+          "type": "number",
+          "description": "Optional minimum fraction of A that must overlap B.",
+          "required": false
+        },
+        "require_reciprocal_overlap": {
+          "type": "boolean",
+          "description": "Require reciprocal overlap when min_overlap_fraction is provided.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bedtools_intersect.md",
+      "when_to_use": "Use for deterministic overlap operations between two BED or interval-like files",
+      "when_not_to_use": "Do not use for BAM alignment QC summaries or for non-genomic tabular joins",
+      "input_types": [
+        "bed"
+      ],
+      "output_types": [
+        "bed",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "interval_operations"
+      ]
+    },
+    {
+      "name": "blast_formatter_run",
+      "description": "Format a BLAST archive file into tabular, XML, or HTML output.",
+      "risk_level": "low",
+      "tools_required": [
+        "blast_formatter"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "archive_file": {
+          "type": "path",
+          "description": "BLAST archive file produced with outfmt 11.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_file": {
+          "type": "path",
+          "description": "Formatted BLAST result output file.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST formatter outfmt string.",
+          "required": false
+        },
+        "html": {
+          "type": "boolean",
+          "description": "Emit HTML-wrapped output.",
+          "required": false
+        },
+        "max_target_seqs": {
+          "type": "integer",
+          "description": "Optional result limit.",
+          "required": false
+        },
+        "parse_deflines": {
+          "type": "boolean",
+          "description": "Parse sequence deflines.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blast_formatter_run.md",
+      "when_to_use": "Use after a BLAST run when archive output needs to be reformatted for downstream use or reporting",
+      "when_not_to_use": "Do not use to execute a BLAST search itself",
+      "input_types": [
+        "asn1"
+      ],
+      "output_types": [
+        "tsv",
+        "xml",
+        "html"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "blastdb_aliastool_run",
+      "description": "Create an alias BLAST database from one or more existing BLAST databases.",
+      "risk_level": "low",
+      "tools_required": [
+        "blastdb_aliastool"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "dblist": {
+          "type": "list[path]",
+          "description": "One or more BLAST database prefixes to alias.",
+          "required": true
+        },
+        "dbtype": {
+          "type": "string",
+          "description": "Database molecule type.",
+          "required": true
+        },
+        "output_alias": {
+          "type": "path",
+          "description": "Alias database output prefix.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional alias database title.",
+          "required": false
+        },
+        "num_volumes": {
+          "type": "integer",
+          "description": "Optional alias volume count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blastdb_aliastool_run.md",
+      "when_to_use": "Use to aggregate or relabel one or more BLAST databases into a reusable alias database",
+      "when_not_to_use": "Do not use to build a primary BLAST database from FASTA input",
+      "input_types": [
+        "directory"
+      ],
+      "output_types": [
+        "directory"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "blastdbcheck_run",
+      "description": "Verify integrity of a BLAST database or BLAST database directory.",
+      "risk_level": "low",
+      "tools_required": [
+        "blastdbcheck"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "database": {
+          "type": "string",
+          "description": "BLAST database name or path prefix.",
+          "required": false
+        },
+        "directory": {
+          "type": "path",
+          "description": "Directory containing BLAST databases.",
+          "required": false
+        },
+        "dbtype": {
+          "type": "string",
+          "description": "Database molecule type.",
+          "required": false
+        },
+        "verbosity": {
+          "type": "integer",
+          "description": "Output verbosity level.",
+          "required": false
+        },
+        "full": {
+          "type": "boolean",
+          "description": "Check all sequences.",
+          "required": false
+        },
+        "recursive": {
+          "type": "boolean",
+          "description": "Recurse through a directory tree.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blastdbcheck_run.md",
+      "when_to_use": "Use after BLAST database creation or before downstream search execution to verify integrity",
+      "when_not_to_use": "Do not use to execute searches or retrieve entries",
+      "input_types": [
+        "directory"
+      ],
+      "output_types": [
+        "txt"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "blastdbcmd_run",
+      "description": "Retrieve sequences or metadata from a BLAST database.",
+      "risk_level": "low",
+      "tools_required": [
+        "blastdbcmd"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "database": {
+          "type": "string",
+          "description": "BLAST database name or path prefix.",
+          "required": true
+        },
+        "output_file": {
+          "type": "path",
+          "description": "Optional output file path.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "dbtype": {
+          "type": "string",
+          "description": "Database molecule type.",
+          "required": false
+        },
+        "entry": {
+          "type": "string",
+          "description": "Entry identifier or all.",
+          "required": false
+        },
+        "entry_batch": {
+          "type": "path",
+          "description": "File of entry identifiers.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "blastdbcmd output format.",
+          "required": false
+        },
+        "info": {
+          "type": "boolean",
+          "description": "Emit database info instead of entries.",
+          "required": false
+        },
+        "metadata": {
+          "type": "boolean",
+          "description": "Emit database metadata.",
+          "required": false
+        },
+        "tax_info": {
+          "type": "boolean",
+          "description": "Emit taxonomy info.",
+          "required": false
+        },
+        "show_search_path": {
+          "type": "boolean",
+          "description": "Print BLAST DB search path.",
+          "required": false
+        },
+        "range_spec": {
+          "type": "string",
+          "description": "Optional subsequence range.",
+          "required": false
+        },
+        "strand": {
+          "type": "string",
+          "description": "Optional nucleotide strand.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blastdbcmd_run.md",
+      "when_to_use": "Use to inspect BLAST database contents, retrieve entries, or print database metadata",
+      "when_not_to_use": "Do not use to execute sequence similarity searches",
+      "input_types": [
+        "directory"
+      ],
+      "output_types": [
+        "fasta",
+        "tsv",
+        "txt"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "blastn_search",
+      "description": "Run BLASTN nucleotide homology search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "blastn",
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Nucleotide FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "BLAST nucleotide database name/path or subject FASTA.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "task": {
+          "type": "string",
+          "description": "Optional BLASTN task such as megablast or blastn-short.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blastn_search.md",
+      "when_to_use": "Use for nucleotide sequence similarity searches against a nucleotide database",
+      "when_not_to_use": "Not for protein searches (use blastp) or translated searches (use blastx/tblastn)",
+      "input_types": [
+        "fasta_nucleotide"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation"
+      ]
+    },
+    {
+      "name": "blastp_search",
+      "description": "Run BLASTP protein homology search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "blastp"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Protein FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "BLAST protein database name/path.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output tabular hit file.",
+          "required": true
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blastp_search.md",
+      "when_to_use": "Use for protein sequence similarity searches against a protein database",
+      "when_not_to_use": "Not for nucleotide searches (use blastn) or translated searches (use blastx/tblastn)",
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "protein_analysis",
+        "annotation"
+      ]
+    },
+    {
+      "name": "blastx_search",
+      "description": "Run BLASTX translated nucleotide-to-protein search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "blastx",
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Nucleotide FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "BLAST protein database name/path or subject FASTA.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "strand": {
+          "type": "string",
+          "description": "Optional query strand setting.",
+          "required": false
+        },
+        "query_gencode": {
+          "type": "integer",
+          "description": "Optional genetic code for query translation.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/blastx_search.md",
+      "when_to_use": "Use when nucleotide queries need to be searched against protein databases",
+      "when_not_to_use": "Not for direct protein-vs-protein searches (use blastp) or nucleotide-vs-nucleotide searches (use blastn)",
+      "input_types": [
+        "fasta_nucleotide"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "bowtie2_align",
+      "description": "Align short-read DNA sequencing reads with Bowtie2 and produce indexed BAM output.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bowtie2",
+        "bowtie2-build",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA used to build Bowtie2 index when needed.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "index_base": {
+          "type": "path",
+          "description": "Bowtie2 index base path.",
+          "required": true,
+          "file_role": "buildable_index"
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "output_bam": {
+          "type": "path",
+          "description": "Sorted BAM output path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "cache_index_base": {
+          "type": "path",
+          "description": "Optional shared index base for reusable Bowtie2 index artifacts.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bowtie2_align.md",
+      "when_to_use": "Use for short-read alignment when BWA is unavailable or for gapped alignment to a reference",
+      "when_not_to_use": "Not for spliced RNA-seq alignment (use STAR/HISAT2) or long reads (use minimap2)",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "evolution",
+        "germline",
+        "metagenomics"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "bwa_mem_align",
+      "description": "Align short-read DNA sequencing reads with BWA-MEM and produce indexed BAM output.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bwa",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA for BWA indexing/alignment.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "output_bam": {
+          "type": "path",
+          "description": "Sorted BAM output path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "cache_index_prefix": {
+          "type": "path",
+          "description": "Optional shared index prefix path for cached BWA index files.",
+          "required": false,
+          "file_role": "buildable_index"
+        },
+        "postprocess_mode": {
+          "type": "string",
+          "description": "Optional deterministic postprocessing mode, for example fixmate_markdup_q20.",
+          "required": false
+        },
+        "output_unmapped_bam": {
+          "type": "path",
+          "description": "Optional BAM path for unmapped reads emitted by supported postprocessing modes.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "read_group": {
+          "type": "string",
+          "description": "Optional explicit read-group string passed to BWA-MEM.",
+          "required": false
+        },
+        "sample_name": {
+          "type": "string",
+          "description": "Optional sample name used to derive the read-group when one is not provided directly.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/bwa_mem_align.md",
+      "when_to_use": "Use for short-read DNA alignment to a reference genome with BWA-MEM2",
+      "when_not_to_use": "Not for spliced alignment (use STAR/HISAT2) or long reads (use minimap2)",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "evolution",
+        "germline"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "cellranger_count",
+      "description": "Run 10x Cell Ranger gene-expression counting pipeline.",
+      "risk_level": "high",
+      "tools_required": [
+        "cellranger"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 32,
+        "min_cores": 8
+      },
+      "parameters": {
+        "run_id": {
+          "type": "string",
+          "description": "Cell Ranger run identifier.",
+          "required": true
+        },
+        "transcriptome_ref": {
+          "type": "path",
+          "description": "Cell Ranger reference package directory.",
+          "required": true
+        },
+        "fastq_dir": {
+          "type": "path",
+          "description": "Directory containing FASTQ files.",
+          "required": true
+        },
+        "sample_name": {
+          "type": "string",
+          "description": "Sample prefix in FASTQ names.",
+          "required": true
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/cellranger_count.md",
+      "when_to_use": "Use for 10x Genomics single-cell RNA-seq counting from raw FASTQ data",
+      "when_not_to_use": "Not for non-10x data or pre-processed h5ad files (use scanpy/seurat)",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "h5ad",
+        "bam",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "single_cell_rna_seq"
+      ],
+      "capabilities": [
+        "single_cell_analysis",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "cnv_cnvkit_style",
+      "description": "Run CNVkit-style copy-number analysis with deterministic fallback behavior.",
+      "risk_level": "medium",
+      "tools_required": [
+        "cnvkit.py"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM path.",
+          "required": true
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA path.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        },
+        "output_report": {
+          "type": "path",
+          "description": "CNV summary TSV output.",
+          "required": true
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Process count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/cnv_cnvkit_style.md",
+      "when_to_use": "Use for copy number variation detection from WGS or targeted sequencing BAM data",
+      "when_not_to_use": "Not for SNP/indel calling or structural variant detection",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "tsv",
+        "bed"
+      ],
+      "analysis_categories": [
+        "variant_calling"
+      ],
+      "capabilities": [
+        "cnv_analysis",
+        "reference_inputs",
+        "alignment"
+      ]
+    },
+    {
+      "name": "cutadapt_run",
+      "description": "Trim sequencing adapters from FASTQ reads with Cutadapt.",
+      "risk_level": "medium",
+      "tools_required": [
+        "cutadapt"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz) input.",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Optional Read 2 FASTQ(.gz) input for paired-end trimming.",
+          "required": false,
+          "file_role": "input_fastq_r2"
+        },
+        "output_reads_1": {
+          "type": "path",
+          "description": "Trimmed Read 1 FASTQ(.gz) output path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "output_reads_2": {
+          "type": "path",
+          "description": "Optional trimmed Read 2 FASTQ(.gz) output path for paired-end trimming.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "adapter_3prime_r1": {
+          "type": "string",
+          "description": "One or more 3-prime adapter sequences for Read 1.",
+          "required": false
+        },
+        "adapter_3prime_r2": {
+          "type": "string",
+          "description": "One or more 3-prime adapter sequences for Read 2.",
+          "required": false
+        },
+        "front_adapter_r1": {
+          "type": "string",
+          "description": "Optional 5-prime adapter sequences for Read 1.",
+          "required": false
+        },
+        "front_adapter_r2": {
+          "type": "string",
+          "description": "Optional 5-prime adapter sequences for Read 2.",
+          "required": false
+        },
+        "minimum_length": {
+          "type": "integer",
+          "description": "Minimum retained read length after trimming.",
+          "required": false
+        },
+        "quality_cutoff": {
+          "type": "string",
+          "description": "Optional quality cutoff argument passed to Cutadapt, for example 20 or 20,20.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Number of CPU cores for Cutadapt.",
+          "required": false
+        },
+        "discard_untrimmed": {
+          "type": "boolean",
+          "description": "Discard reads where no adapter match is found.",
+          "required": false
+        },
+        "json_report": {
+          "type": "path",
+          "description": "Optional JSON report output path.",
+          "required": false,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/cutadapt_run.md",
+      "when_to_use": "Use when explicit adapter trimming is needed before alignment, quantification, or downstream read processing",
+      "when_not_to_use": "Not for read quality assessment alone (use FastQC) or when no adapter trimming is required",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastq",
+        "json"
+      ],
+      "analysis_categories": [
+        "general",
+        "metagenomics",
+        "rna_seq_differential_expression",
+        "transcript_quantification",
+        "variant_calling"
+      ],
+      "capabilities": [
+        "preprocessing",
+        "read_trimming"
+      ]
+    },
+    {
+      "name": "deltablast_search",
+      "description": "Run DELTA-BLAST protein search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "deltablast",
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Protein FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "Protein BLAST database name/path or subject FASTA.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "domain_database": {
+          "type": "string",
+          "description": "Optional RPS domain database path for conserved-domain seeding.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/deltablast_search.md",
+      "when_to_use": "Use for domain-seeded protein homology searches when a conserved-domain database is available",
+      "when_not_to_use": "Not for direct nucleotide searches or when no conserved-domain database is available",
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "deseq2_run",
+      "description": "Run DESeq2 differential expression from count matrix + sample metadata.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rscript",
+        "deseq2"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "script_path": {
+          "type": "path",
+          "description": "Path to DESeq2 wrapper R script.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "counts_matrix": {
+          "type": "path",
+          "description": "Gene/sample counts TSV matrix.",
+          "required": true,
+          "file_role": "counts_matrix",
+          "ownership": "user_input"
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Sample metadata table.",
+          "required": true,
+          "file_role": "sample_metadata",
+          "ownership": "user_input"
+        },
+        "design_formula": {
+          "type": "string",
+          "description": "Design formula (e.g. ~ condition).",
+          "required": true,
+          "ownership": "tuning"
+        },
+        "contrast": {
+          "type": "string",
+          "description": "Contrast tuple/list label.",
+          "required": true,
+          "ownership": "tuning"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for DE tables.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        },
+        "engine": {
+          "type": "string",
+          "description": "Optional implementation engine. Use `pydeseq2` to run the bundled Python backend instead of the default R/DESeq2 wrapper.",
+          "required": false,
+          "ownership": "tuning"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/deseq2_run.md",
+      "when_to_use": "Use for differential gene expression analysis with DESeq2 from a counts matrix",
+      "when_not_to_use": "Not for transcript-level DE (use Sleuth) or when sample size < 3 per group",
+      "input_types": [
+        "tsv",
+        "csv"
+      ],
+      "output_types": [
+        "tsv",
+        "csv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression",
+        "multi_model_dge_pathway"
+      ],
+      "capabilities": [
+        "differential_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "dexseq_run",
+      "description": "Run exon-level differential usage analysis via a DEXSeq-compatible Rscript interface.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rscript"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "script_path": {
+          "type": "path",
+          "description": "Path to DEXSeq-compatible R wrapper.",
+          "required": false
+        },
+        "counts_matrix": {
+          "type": "path",
+          "description": "Exon-level count matrix.",
+          "required": true
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Sample metadata table.",
+          "required": true
+        },
+        "design_formula": {
+          "type": "string",
+          "description": "Design formula (for example ~ condition).",
+          "required": true
+        },
+        "contrast": {
+          "type": "string",
+          "description": "Contrast string (for example condition_treatment_vs_control).",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/dexseq_run.md",
+      "when_to_use": "Use for differential exon usage analysis in RNA-seq data",
+      "when_not_to_use": "Not for gene-level differential expression (use DESeq2/edgeR/limma)",
+      "input_types": [
+        "tsv",
+        "gtf"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "splicing_analysis",
+        "differential_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "edger_run",
+      "description": "Run edgeR GLM differential expression from counts and metadata.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rscript",
+        "edger"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "script_path": {
+          "type": "path",
+          "description": "Path to edgeR wrapper R script.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "counts_matrix": {
+          "type": "path",
+          "description": "Raw count matrix file.",
+          "required": true,
+          "file_role": "counts_matrix",
+          "ownership": "user_input"
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Sample metadata table.",
+          "required": true,
+          "file_role": "sample_metadata",
+          "ownership": "user_input"
+        },
+        "design_formula": {
+          "type": "string",
+          "description": "GLM design formula.",
+          "required": true,
+          "ownership": "tuning"
+        },
+        "contrast": {
+          "type": "string",
+          "description": "edgeR contrast specification.",
+          "required": true,
+          "ownership": "tuning"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for result tables.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/edger_run.md",
+      "when_to_use": "Use for differential gene expression with edgeR, alternative to DESeq2",
+      "when_not_to_use": "Not for transcript-level quantification; DESeq2 may be preferred for small samples",
+      "input_types": [
+        "tsv",
+        "csv"
+      ],
+      "output_types": [
+        "tsv",
+        "csv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression",
+        "multi_model_dge_pathway"
+      ],
+      "capabilities": [
+        "differential_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "fallback_skill_builder",
+      "description": "Build and maintain deterministic fallback pipeline skills/templates with inventory-driven reuse/extend/create selection, optional multi-template composition for multi-domain contracts, preflight safety checks, contract validation, and artifact-driven troubleshooting/retry loops.",
+      "risk_level": "medium",
+      "tools_required": [
+        "python"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "target_capability_set": {
+          "type": "string",
+          "description": "Comma-separated required capabilities for the fallback contract.",
+          "required": true
+        },
+        "allowed_tools": {
+          "type": "string",
+          "description": "Comma-separated tools/wrappers allowed for generated fallback plans.",
+          "required": true
+        },
+        "data_reference_constraints": {
+          "type": "string",
+          "description": "JSON object with required paths/references and optional controls.",
+          "required": true
+        },
+        "strictness_mode": {
+          "type": "string",
+          "description": "conservative or aggressive.",
+          "required": true
+        },
+        "request_text": {
+          "type": "string",
+          "description": "Optional free text used for capability/tool inference.",
+          "required": false
+        },
+        "out_json": {
+          "type": "path",
+          "description": "Output path for builder audit/report JSON.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/fallback_skill_builder.md",
+      "when_to_use": "Use as internal meta-skill for generating pipeline plans when no dedicated skill exists",
+      "when_not_to_use": "Not for direct use in analysis plans; used internally by the system",
+      "input_types": [],
+      "output_types": [],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "alignment",
+        "variant_calling",
+        "differential_analysis",
+        "splicing_analysis",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "fastp_run",
+      "description": "Trim adapters and low-quality bases from FASTQ reads with fastp.",
+      "risk_level": "medium",
+      "tools_required": [
+        "fastp"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz) input.",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Optional Read 2 FASTQ(.gz) input for paired-end trimming.",
+          "required": false,
+          "file_role": "input_fastq_r2"
+        },
+        "output_reads_1": {
+          "type": "path",
+          "description": "Trimmed Read 1 FASTQ(.gz) output path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "output_reads_2": {
+          "type": "path",
+          "description": "Optional trimmed Read 2 FASTQ(.gz) output path for paired-end trimming.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "detect_adapter_for_pe": {
+          "type": "boolean",
+          "description": "Enable fastp paired-end adapter auto-detection.",
+          "required": false
+        },
+        "adapter_sequence": {
+          "type": "string",
+          "description": "Optional explicit adapter sequence for Read 1.",
+          "required": false
+        },
+        "adapter_sequence_r2": {
+          "type": "string",
+          "description": "Optional explicit adapter sequence for Read 2.",
+          "required": false
+        },
+        "cut_front": {
+          "type": "boolean",
+          "description": "Trim low-quality bases from the front of reads.",
+          "required": false
+        },
+        "cut_tail": {
+          "type": "boolean",
+          "description": "Trim low-quality bases from the tail of reads.",
+          "required": false
+        },
+        "cut_right": {
+          "type": "boolean",
+          "description": "Trim low-quality tails using the sliding-window right-cut mode.",
+          "required": false
+        },
+        "correction": {
+          "type": "boolean",
+          "description": "Enable overlap-based base correction for paired-end reads.",
+          "required": false
+        },
+        "cut_mean_quality": {
+          "type": "integer",
+          "description": "Mean quality threshold for quality trimming.",
+          "required": false
+        },
+        "length_required": {
+          "type": "integer",
+          "description": "Minimum retained read length after trimming.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Number of CPU threads for fastp.",
+          "required": false
+        },
+        "json_report": {
+          "type": "path",
+          "description": "Optional JSON report output path.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "html_report": {
+          "type": "path",
+          "description": "Optional HTML report output path.",
+          "required": false,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/fastp_run.md",
+      "when_to_use": "Use for general-purpose read preprocessing when adapter trimming or quality filtering is needed before downstream analysis",
+      "when_not_to_use": "Not for read quality assessment alone (use FastQC) or when RNA-specific adapter trimming should be handled with Cutadapt",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastq",
+        "html",
+        "json"
+      ],
+      "analysis_categories": [
+        "general",
+        "metagenomics_classification",
+        "viral_metagenomics",
+        "bacterial_evolution_variant_calling",
+        "transcript_quantification",
+        "variant_calling"
+      ],
+      "capabilities": [
+        "preprocessing",
+        "read_trimming"
+      ]
+    },
+    {
+      "name": "fastqc_run",
+      "description": "Performs quality control on raw sequencing data (FASTQ files) using FastQC.\n",
+      "risk_level": "medium",
+      "tools_required": [
+        "fastqc"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "input_file": {
+          "type": "path",
+          "description": "Path to the input FASTQ file(s). Can be a single file or a space-separated list of files.",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Directory to save FastQC reports.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Number of threads to use. Defaults to 2.",
+          "default": 2
+        },
+        "contaminants": {
+          "type": "path",
+          "description": "An optional file containing a list of contaminants to screen against.",
+          "required": false
+        },
+        "casava": {
+          "type": "boolean",
+          "description": "Files come from raw Casava 1.8 or later output, so only the first in a pair is checked for Ns.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/fastqc.md",
+      "when_to_use": "Use for quality control assessment of raw FASTQ sequencing data before processing",
+      "when_not_to_use": "Not a processing step; does not filter or trim reads (use fastp/trimmomatic)",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "html",
+        "zip"
+      ],
+      "analysis_categories": [
+        "general",
+        "evolution",
+        "rna_seq_differential_expression",
+        "variant_calling"
+      ],
+      "capabilities": [
+        "fastqc"
+      ]
+    },
+    {
+      "name": "featurecounts_run",
+      "description": "Quantify aligned reads to genes/exons using featureCounts.",
+      "risk_level": "medium",
+      "tools_required": [
+        "featurecounts",
+        "subread"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "threads": {
+          "type": "integer",
+          "description": "Number of worker threads.",
+          "required": true
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "Reference GTF annotation.",
+          "required": true,
+          "file_role": "annotation_gtf"
+        },
+        "output_counts": {
+          "type": "path",
+          "description": "Output counts file path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "input_bams": {
+          "type": "string",
+          "description": "Space-separated BAM inputs.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "annotation_format": {
+          "type": "string",
+          "description": "Optional annotation format override such as `GFF` when the annotation file is not GTF.",
+          "required": false
+        },
+        "feature_type": {
+          "type": "string",
+          "description": "Optional feature type to count, for example `gene` when using GFF annotations.",
+          "required": false
+        },
+        "attribute_type": {
+          "type": "string",
+          "description": "Optional GFF/GTF attribute to aggregate counts by, such as `ID` or `gene_id`.",
+          "required": false
+        },
+        "is_paired_end": {
+          "type": "boolean",
+          "description": "Treat the BAM inputs as paired-end and pass `-p` to featureCounts.",
+          "required": false
+        },
+        "count_read_pairs": {
+          "type": "boolean",
+          "description": "When paired-end counting is enabled, count read pairs instead of individual reads.",
+          "required": false
+        },
+        "strand_specificity": {
+          "type": "integer",
+          "description": "featureCounts strandedness setting (`0`, `1`, or `2`).",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/featurecounts_run.md",
+      "when_to_use": "Use for gene-level read counting from aligned BAM files using a GTF/GFF annotation",
+      "when_not_to_use": "Not for transcript-level quantification (use salmon/kallisto)",
+      "input_types": [
+        "bam",
+        "gtf"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression",
+        "multi_model_dge_pathway"
+      ],
+      "capabilities": [
+        "quantification"
+      ]
+    },
+    {
+      "name": "flye_assemble",
+      "description": "Assemble long reads with Flye.",
+      "risk_level": "high",
+      "tools_required": [
+        "flye"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 32,
+        "min_cores": 8
+      },
+      "parameters": {
+        "reads_fastq": {
+          "type": "path",
+          "description": "Long-read FASTQ input.",
+          "required": true
+        },
+        "read_mode": {
+          "type": "string",
+          "description": "Flye read mode such as nano-raw, nano-hq, pacbio-raw, or pacbio-hifi.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        },
+        "genome_size": {
+          "type": "string",
+          "description": "Estimated genome size (e.g. 5m, 3g).",
+          "required": true
+        },
+        "meta_mode": {
+          "type": "boolean",
+          "description": "Enable Flye metagenome mode for mixed-community long-read assembly.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/flye_assemble.md",
+      "when_to_use": "Use for de novo assembly of long reads (PacBio/Nanopore)",
+      "when_not_to_use": "Not for short-read assembly (use SPAdes) or hybrid assembly",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "analysis_categories": [
+        "comparative_genomics"
+      ],
+      "capabilities": [
+        "genome_assembly"
+      ]
+    },
+    {
+      "name": "freebayes_call",
+      "description": "Call variants with haplotype-based FreeBayes.",
+      "risk_level": "medium",
+      "tools_required": [
+        "freebayes",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA path.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM file.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output VCF path.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "output_vcf_gz": {
+          "type": "path",
+          "description": "Optional bgzip-compressed VCF output path.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "ploidy": {
+          "type": "integer",
+          "description": "Optional organism ploidy passed to FreeBayes with -p.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/freebayes_call.md",
+      "when_to_use": "Use for haplotype-based variant calling from aligned BAM data",
+      "when_not_to_use": "Not for somatic variant calling (use Mutect2) or large cohorts (use GATK)",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "evolution",
+        "germline"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "fusion_star_fusion_style",
+      "description": "Run STAR-Fusion-style fusion transcript detection with deterministic fallback output.",
+      "risk_level": "medium",
+      "tools_required": [
+        "STAR-Fusion"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "genome_lib_dir": {
+          "type": "path",
+          "description": "CTAT genome lib directory.",
+          "required": true
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ path.",
+          "required": true
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ path.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        },
+        "output_report": {
+          "type": "path",
+          "description": "Fusion prediction TSV output.",
+          "required": true
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/fusion_star_fusion_style.md",
+      "when_to_use": "Use for detecting gene fusions from RNA-seq data using STAR-Fusion",
+      "when_not_to_use": "Not for general RNA-seq alignment or gene expression analysis",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "fusion_detection",
+        "alignment"
+      ]
+    },
+    {
+      "name": "gatk_haplotypecaller",
+      "description": "Call germline SNPs/indels with GATK HaplotypeCaller.",
+      "risk_level": "high",
+      "tools_required": [
+        "gatk"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "input_bam": {
+          "type": "path",
+          "description": "Deduplicated BAM input.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output VCF or gVCF path.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/gatk_haplotypecaller.md",
+      "when_to_use": "Use for germline SNP/indel calling with GATK best practices pipeline",
+      "when_not_to_use": "Not for somatic calling (use Mutect2) or bacterial genomes (use FreeBayes/bcftools)",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "germline_variant_calling",
+        "variant_calling"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "gatk_mutect2_call",
+      "description": "Call somatic variants with GATK Mutect2 (tumor-only or tumor-normal mode).",
+      "risk_level": "high",
+      "tools_required": [
+        "gatk"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA path.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "tumor_bam": {
+          "type": "path",
+          "description": "Tumor BAM path.",
+          "required": true
+        },
+        "tumor_sample": {
+          "type": "string",
+          "description": "Tumor sample ID.",
+          "required": true
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output VCF(.gz) path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "normal_bam": {
+          "type": "path",
+          "description": "Optional normal/control BAM.",
+          "required": false
+        },
+        "normal_sample": {
+          "type": "string",
+          "description": "Optional normal/control sample ID.",
+          "required": false
+        },
+        "panel_of_normals": {
+          "type": "path",
+          "description": "Optional panel-of-normals VCF.",
+          "required": false
+        },
+        "germline_resource": {
+          "type": "path",
+          "description": "Optional germline resource VCF.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Native pair-HMM thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/gatk_mutect2_call.md",
+      "when_to_use": "Use for somatic variant calling from tumor/normal paired samples",
+      "when_not_to_use": "Not for germline calling (use HaplotypeCaller) or bacterial genomes",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "reference_inputs",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "hisat2_align",
+      "description": "Align reads to genome/transcriptome using HISAT2.",
+      "risk_level": "medium",
+      "tools_required": [
+        "hisat2"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 8
+      },
+      "parameters": {
+        "index_base": {
+          "type": "path",
+          "description": "HISAT2 index basename.",
+          "required": true,
+          "file_role": "buildable_index"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Optional FASTA used to build index if index files are missing.",
+          "required": false
+        },
+        "cache_index_base": {
+          "type": "path",
+          "description": "Optional shared cache index basename.",
+          "required": false,
+          "file_role": "buildable_index"
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "output_sam": {
+          "type": "path",
+          "description": "Output SAM path.",
+          "required": true
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/hisat2_align.md",
+      "when_to_use": "Use for splice-aware RNA-seq alignment as an alternative to STAR",
+      "when_not_to_use": "Not for DNA-seq alignment (use BWA/bowtie2) or long reads (use minimap2)",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression",
+        "transcript_quantification"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "hmmscan_search",
+      "description": "Run HMMER hmmscan for protein domain annotation against an HMM database.",
+      "risk_level": "medium",
+      "tools_required": [
+        "hmmscan"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Protein FASTA query file.",
+          "required": true
+        },
+        "hmm_db": {
+          "type": "path",
+          "description": "HMM database (for example Pfam-A.hmm).",
+          "required": true
+        },
+        "output_tbl": {
+          "type": "path",
+          "description": "hmmscan table output path.",
+          "required": true
+        },
+        "output_txt": {
+          "type": "path",
+          "description": "Optional full-text hmmscan report.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "CPU thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/hmmscan_search.md",
+      "when_to_use": "Use for protein domain searches against HMM profile databases (Pfam, TIGRFAM)",
+      "when_not_to_use": "Not for sequence similarity (use BLAST) or gene prediction",
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "annotation",
+        "comparative_genomics"
+      ],
+      "capabilities": [
+        "protein_analysis",
+        "annotation"
+      ]
+    },
+    {
+      "name": "immune_repertoire_mixcr_style",
+      "description": "Run MiXCR-style immune repertoire profiling with deterministic fallback output.",
+      "risk_level": "medium",
+      "tools_required": [
+        "mixcr"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ path.",
+          "required": true
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ path.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        },
+        "output_report": {
+          "type": "path",
+          "description": "Clone summary TSV output.",
+          "required": true
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/immune_repertoire_mixcr_style.md",
+      "when_to_use": "Use for immune receptor repertoire analysis (TCR/BCR) from sequencing data",
+      "when_not_to_use": "Not for general RNA-seq or non-immune sequencing data",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "immune_repertoire"
+      ],
+      "capabilities": [
+        "immune_repertoire_profiling"
+      ]
+    },
+    {
+      "name": "kallisto_quant",
+      "description": "Quantify transcript abundance with kallisto pseudoalignment.",
+      "risk_level": "medium",
+      "tools_required": [
+        "kallisto"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "index_path": {
+          "type": "path",
+          "description": "kallisto index file.",
+          "required": true,
+          "file_role": "buildable_index"
+        },
+        "transcriptome_fasta": {
+          "type": "path",
+          "description": "Optional transcriptome FASTA used to build the index when it does not already exist.",
+          "required": false,
+          "file_role": "fasta_transcriptome"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/kallisto_quant.md",
+      "when_to_use": "Use for fast transcript-level quantification as an alternative to Salmon",
+      "when_not_to_use": "Not for genome-level alignment or gene-level counting (use featureCounts)",
+      "input_types": [
+        "fastq",
+        "fasta_transcriptome"
+      ],
+      "output_types": [
+        "tsv",
+        "h5"
+      ],
+      "analysis_categories": [
+        "transcript_quantification",
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "quantification"
+      ]
+    },
+    {
+      "name": "limma_voom_run",
+      "description": "Run limma-voom differential expression analysis from counts and metadata.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rscript",
+        "limma"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "script_path": {
+          "type": "path",
+          "description": "Path to limma-voom wrapper script.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "counts_matrix": {
+          "type": "path",
+          "description": "Count matrix input.",
+          "required": true,
+          "file_role": "counts_matrix",
+          "ownership": "user_input"
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Sample annotation table.",
+          "required": true,
+          "file_role": "sample_metadata",
+          "ownership": "user_input"
+        },
+        "design_formula": {
+          "type": "string",
+          "description": "limma design formula.",
+          "required": true,
+          "ownership": "tuning"
+        },
+        "contrast": {
+          "type": "string",
+          "description": "Target contrast.",
+          "required": true,
+          "ownership": "tuning"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/limma_voom_run.md",
+      "when_to_use": "Use for differential expression with limma-voom, good for complex designs",
+      "when_not_to_use": "Use DESeq2 for simpler two-group comparisons with small sample sizes",
+      "input_types": [
+        "tsv",
+        "csv"
+      ],
+      "output_types": [
+        "tsv",
+        "csv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression",
+        "multi_model_dge_pathway"
+      ],
+      "capabilities": [
+        "differential_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "macs2_atacseq_callpeak",
+      "description": "Call ATAC-seq accessibility peaks with MACS2/3 tuned flags.",
+      "risk_level": "medium",
+      "tools_required": [
+        "macs2"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "treatment_bam": {
+          "type": "path",
+          "description": "ATAC paired-end BAM file.",
+          "required": true
+        },
+        "genome_size": {
+          "type": "string",
+          "description": "Effective genome size (hs, mm, etc.).",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "description": "Output sample label.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/macs2_atacseq_callpeak.md",
+      "when_to_use": "Use for ATAC-seq peak calling to identify open chromatin regions",
+      "when_not_to_use": "Not for ChIP-seq (use macs2_chipseq_callpeak) or RNA-seq analysis",
+      "input_types": [
+        "bam"
+      ],
+      "output_types": [
+        "bed",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "atacseq_analysis"
+      ],
+      "capabilities": [
+        "atacseq_analysis"
+      ]
+    },
+    {
+      "name": "macs2_chipseq_callpeak",
+      "description": "Call ChIP-seq peaks with MACS2/3 callpeak mode.",
+      "risk_level": "medium",
+      "tools_required": [
+        "macs2"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "treatment_bam": {
+          "type": "path",
+          "description": "Treatment BAM file.",
+          "required": true
+        },
+        "control_bam": {
+          "type": "path",
+          "description": "Matched control/input BAM file.",
+          "required": true
+        },
+        "genome_size": {
+          "type": "string",
+          "description": "Effective genome size (hs, mm, etc.).",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "description": "Output sample label.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/macs2_chipseq_callpeak.md",
+      "when_to_use": "Use for ChIP-seq peak calling to identify protein-DNA binding sites",
+      "when_not_to_use": "Not for ATAC-seq (use macs2_atacseq_callpeak) or RNA-seq analysis",
+      "input_types": [
+        "bam"
+      ],
+      "output_types": [
+        "bed",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "chipseq_analysis"
+      ],
+      "capabilities": [
+        "chipseq_analysis"
+      ]
+    },
+    {
+      "name": "mafft_align",
+      "description": "Align multiple nucleotide or protein sequences with MAFFT.",
+      "risk_level": "low",
+      "tools_required": [
+        "mafft"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "input_fasta": {
+          "type": "path",
+          "description": "Input FASTA with two or more sequences to align.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_fasta": {
+          "type": "path",
+          "description": "Output aligned FASTA path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count for MAFFT.",
+          "required": false
+        },
+        "strategy_mode": {
+          "type": "string",
+          "description": "MAFFT strategy mode (auto, localpair, globalpair, genafpair).",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/mafft_align.md",
+      "when_to_use": "Use for deterministic multiple-sequence alignment before phylogenetic inference",
+      "when_not_to_use": "Do not use as the tree inference step itself or for general shell execution",
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "fasta_alignment"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "capabilities": [
+        "phylogenetics"
+      ]
+    },
+    {
+      "name": "majiq_run",
+      "description": "Build splice graphs and run MAJIQ deltapsi comparison for two sample groups.",
+      "risk_level": "medium",
+      "tools_required": [
+        "majiq"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "config_file": {
+          "type": "path",
+          "description": "MAJIQ build config file.",
+          "required": false
+        },
+        "group1_bams": {
+          "type": "string",
+          "description": "Group 1 BAM path(s) or list token.",
+          "required": false
+        },
+        "group2_bams": {
+          "type": "string",
+          "description": "Group 2 BAM path(s) or list token.",
+          "required": false
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": false
+        },
+        "analysis_name": {
+          "type": "string",
+          "description": "Comparison label.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/majiq_run.md",
+      "when_to_use": "Use for local splicing variation analysis in RNA-seq data",
+      "when_not_to_use": "Not for differential gene expression (use DESeq2) or exon usage (use DEXSeq)",
+      "input_types": [
+        "bam",
+        "gff"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "splicing_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "makeblastdb_run",
+      "description": "Build a nucleotide or protein BLAST database from a FASTA file.",
+      "risk_level": "low",
+      "tools_required": [
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_fasta": {
+          "type": "path",
+          "description": "FASTA input to convert into a BLAST database.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_prefix": {
+          "type": "path",
+          "description": "Output database prefix path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "dbtype": {
+          "type": "string",
+          "description": "BLAST database type, either prot or nucl.",
+          "required": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional BLAST database title.",
+          "required": false
+        },
+        "parse_seqids": {
+          "type": "boolean",
+          "description": "Enable sequence identifier parsing in the generated database.",
+          "required": false
+        },
+        "input_type": {
+          "type": "string",
+          "description": "Input type passed to makeblastdb.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/makeblastdb_run.md",
+      "when_to_use": "Use to build a reusable BLAST database from a FASTA file before running BLAST searches",
+      "when_not_to_use": "Not for executing a search itself",
+      "input_types": [
+        "fasta_nucleotide",
+        "fasta_protein"
+      ],
+      "output_types": [
+        "directory"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation"
+      ]
+    },
+    {
+      "name": "makeprofiledb_run",
+      "description": "Build an RPS, DELTA, or COBALT profile database for domain-aware BLAST workflows.",
+      "risk_level": "medium",
+      "tools_required": [
+        "makeprofiledb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_list": {
+          "type": "path",
+          "description": "File listing scoremat or PSSM files.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_prefix": {
+          "type": "path",
+          "description": "Profile database output prefix.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "dbtype": {
+          "type": "string",
+          "description": "Output database type (rps, delta, cobalt).",
+          "required": false
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional database title.",
+          "required": false
+        },
+        "binary": {
+          "type": "boolean",
+          "description": "Input scoremats are binary.",
+          "required": false
+        },
+        "index": {
+          "type": "boolean",
+          "description": "Create index files.",
+          "required": false
+        },
+        "threshold": {
+          "type": "number",
+          "description": "Optional word score threshold.",
+          "required": false
+        },
+        "matrix": {
+          "type": "string",
+          "description": "Optional substitution matrix name.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/makeprofiledb_run.md",
+      "when_to_use": "Use to prepare profile databases required by RPS-BLAST, RPSTBLASTN, or DELTA-BLAST",
+      "when_not_to_use": "Do not use for ordinary nucleotide or protein FASTA databases; use makeblastdb_run instead",
+      "input_types": [
+        "txt"
+      ],
+      "output_types": [
+        "directory"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "metabolomics_diff_abundance",
+      "description": "Run deterministic differential metabolite-feature abundance analysis from a processed feature table and sample metadata.",
+      "risk_level": "medium",
+      "tools_required": [
+        "python"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "feature_table": {
+          "type": "path",
+          "description": "Metabolomics feature-intensity matrix in wide sample-column format.",
+          "required": true,
+          "file_role": "input_csv",
+          "ownership": "user_input"
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Sample metadata table describing group assignments.",
+          "required": true,
+          "file_role": "metadata_table",
+          "ownership": "user_input"
+        },
+        "script_path": {
+          "type": "path",
+          "description": "Optional path to a custom metabolomics workflow script. Defaults to the bundled deterministic workflow.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for canonical metabolomics result artifacts.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        },
+        "output_csv": {
+          "type": "path",
+          "description": "Optional explicit path for the differential-abundance CSV.",
+          "required": false,
+          "file_role": "output_csv",
+          "ownership": "execution_output"
+        },
+        "sample_id_column": {
+          "type": "string",
+          "description": "Optional explicit sample-ID column name in the metadata table.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "group_column": {
+          "type": "string",
+          "description": "Optional explicit grouping column in the metadata table.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "group_a": {
+          "type": "string",
+          "description": "Optional reference group label.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "group_b": {
+          "type": "string",
+          "description": "Optional comparison group label.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "normalization_method": {
+          "type": "string",
+          "description": "Deterministic normalization method. Currently only median_center is supported.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "min_present_fraction": {
+          "type": "number",
+          "description": "Minimum observed fraction required to retain one feature before imputation.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "impute_method": {
+          "type": "string",
+          "description": "Deterministic missing-value imputation method.",
+          "required": false,
+          "ownership": "tuning"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/metabolomics_diff_abundance.md",
+      "when_to_use": "Use for table-first metabolomics inputs with one feature-intensity matrix and one sample metadata table.",
+      "when_not_to_use": "Not for raw LC-MS peak detection, mzML preprocessing, or spectral annotation workflows.",
+      "input_types": [
+        "csv",
+        "tsv"
+      ],
+      "output_types": [
+        "csv",
+        "tsv",
+        "json",
+        "md"
+      ],
+      "canonical_output_filenames": {
+        "output_dir": [
+          "metabolomics_differential_abundance.csv",
+          "metabolomics_qc_summary.json",
+          "normalized_feature_matrix.tsv",
+          "volcano_plot_data.tsv",
+          "metabolomics_summary.md"
+        ]
+      },
+      "analysis_categories": [
+        "metabolomics"
+      ],
+      "capabilities": [
+        "metabolomics",
+        "differential_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "metagenomics_kraken2_bracken_style",
+      "description": "Run Kraken2/Bracken-style metagenomics profiling with deterministic fallback output when tools are missing.",
+      "risk_level": "medium",
+      "tools_required": [
+        "kraken2",
+        "bracken"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "database": {
+          "type": "path",
+          "description": "Kraken2 database path.",
+          "required": true,
+          "file_role": "buildable_database"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Optional reference FASTA used to build a tiny Kraken2 database or regenerate Bracken support files.",
+          "required": false
+        },
+        "taxonomy_names": {
+          "type": "path",
+          "description": "Optional taxonomy names.dmp file used when building a database.",
+          "required": false
+        },
+        "taxonomy_nodes": {
+          "type": "path",
+          "description": "Optional taxonomy nodes.dmp file used when building a database.",
+          "required": false
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ path.",
+          "required": true
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ path.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "output_report": {
+          "type": "path",
+          "description": "Bracken abundance report TSV output.",
+          "required": true
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "read_len": {
+          "type": "integer",
+          "description": "Estimated read length.",
+          "required": false
+        },
+        "threshold": {
+          "type": "integer",
+          "description": "Minimum read threshold passed to Bracken abundance estimation.",
+          "required": false
+        },
+        "taxonomy_level": {
+          "type": "string",
+          "description": "Taxonomic level passed to Bracken abundance estimation, for example S or G.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/metagenomics_kraken2_bracken_style.md",
+      "when_to_use": "Use for taxonomic classification of metagenomic reads with Kraken2+Bracken",
+      "when_not_to_use": "Not for functional annotation or viral metagenomics assembly",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "capabilities": [
+        "metagenomics_profiling"
+      ]
+    },
+    {
+      "name": "methylation_bismark_style",
+      "description": "Run Bismark-style bisulfite methylation analysis with deterministic degrade behavior when the binary is unavailable.",
+      "risk_level": "medium",
+      "tools_required": [
+        "bismark"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "genome_folder": {
+          "type": "path",
+          "description": "Bismark genome folder.",
+          "required": true
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ path.",
+          "required": true
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ path.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true
+        },
+        "output_report": {
+          "type": "path",
+          "description": "Methylation summary TSV output.",
+          "required": true
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "sample_name": {
+          "type": "string",
+          "description": "Sample basename.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/methylation_bismark_style.md",
+      "when_to_use": "Use for bisulfite sequencing methylation analysis with Bismark",
+      "when_not_to_use": "Not for general DNA-seq alignment or RNA-seq analysis",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "methylation_analysis"
+      ],
+      "capabilities": [
+        "methylation_analysis",
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "minimap2_align",
+      "description": "Align long-read (or mixed) sequencing reads with minimap2 and produce indexed BAM output.",
+      "risk_level": "medium",
+      "tools_required": [
+        "minimap2",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA path.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "reads": {
+          "type": "path",
+          "description": "FASTQ path for single-file long-read input.",
+          "required": false
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Optional read 1 FASTQ.",
+          "required": false
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Optional read 2 FASTQ.",
+          "required": false
+        },
+        "output_bam": {
+          "type": "path",
+          "description": "Sorted BAM output path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "preset": {
+          "type": "string",
+          "description": "Minimap2 preset (for example splice, map-ont, map-pb).",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "cache_index_path": {
+          "type": "path",
+          "description": "Optional shared minimap2 .mmi index path.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/minimap2_align.md",
+      "when_to_use": "Use for long-read alignment (PacBio/Nanopore) or fast approximate alignment",
+      "when_not_to_use": "Not for short-read DNA (use BWA) or spliced RNA-seq alignment (use STAR)",
+      "input_types": [
+        "fastq",
+        "fasta",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "comparative_genomics"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "multiqc_report",
+      "description": "Build a researcher-facing run report bundle and aggregate discovered QC outputs with MultiQC when the binary is installed.",
+      "risk_level": "low",
+      "tools_required": [
+        "python3"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "run_input": {
+          "type": "path",
+          "description": "Completed selected-dir path, result.json path, or a directory of QC artifacts.",
+          "required": true,
+          "file_role": "input_file"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Optional output directory for the generated report bundle.",
+          "required": false,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/multiqc_report.md",
+      "when_to_use": "Use after a run completes to build a shareable report bundle with MultiQC aggregation",
+      "when_not_to_use": "Do not use for primary analysis execution or when no completed run directory exists",
+      "input_types": [
+        "directory",
+        "json"
+      ],
+      "output_types": [
+        "directory",
+        "html",
+        "markdown"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "run_reporting"
+      ]
+    },
+    {
+      "name": "phylogenetics_iqtree_style",
+      "description": "Run IQ-TREE-style phylogenetic inference with deterministic fallback tree generation.",
+      "risk_level": "medium",
+      "tools_required": [
+        "iqtree"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "alignment_fasta": {
+          "type": "path",
+          "description": "Aligned sequence FASTA.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "output_prefix": {
+          "type": "path",
+          "description": "IQ-TREE output prefix.",
+          "required": true
+        },
+        "output_tree": {
+          "type": "path",
+          "description": "Output Newick tree path.",
+          "required": true
+        },
+        "model": {
+          "type": "string",
+          "description": "Substitution model.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Deterministic seed.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/phylogenetics_iqtree_style.md",
+      "when_to_use": "Use for maximum-likelihood phylogenetic tree inference from aligned sequences",
+      "when_not_to_use": "Not for sequence alignment (use MAFFT) or distance-based trees",
+      "input_types": [
+        "fasta_alignment"
+      ],
+      "output_types": [
+        "newick"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "capabilities": [
+        "phylogenetics",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "prodigal_annotate",
+      "description": "Predict bacterial genes from an assembled genome with Prodigal.",
+      "risk_level": "medium",
+      "tools_required": [
+        "prodigal"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_fasta": {
+          "type": "path",
+          "description": "Input assembled genome FASTA.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "output_gff": {
+          "type": "path",
+          "description": "Output gene predictions in GFF format.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "output_faa": {
+          "type": "path",
+          "description": "Output translated protein sequences in FASTA format.",
+          "required": true
+        },
+        "mode": {
+          "type": "string",
+          "description": "Prodigal mode: auto, single, or meta. Auto uses meta for short assemblies that cannot train single-genome models.",
+          "required": false,
+          "default": "auto"
+        },
+        "require_cds": {
+          "type": "boolean",
+          "description": "Fail the wrapper when Prodigal emits no CDS/protein predictions.",
+          "required": false,
+          "default": true
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/prodigal_annotate.md",
+      "when_to_use": "Use for prokaryotic gene prediction from assembled genomes",
+      "when_not_to_use": "Not for eukaryotic gene prediction or full functional annotation (use Prokka)",
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "gff",
+        "fasta_protein"
+      ],
+      "analysis_categories": [
+        "annotation",
+        "comparative_genomics",
+        "evolution"
+      ],
+      "capabilities": [
+        "annotation",
+        "assembly"
+      ]
+    },
+    {
+      "name": "prokka_annotate",
+      "description": "Annotate prokaryotic assemblies with Prokka.",
+      "risk_level": "medium",
+      "tools_required": [
+        "prokka"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "sample_prefix": {
+          "type": "string",
+          "description": "Output file prefix.",
+          "required": true
+        },
+        "input_fasta": {
+          "type": "path",
+          "description": "Assembly FASTA input.",
+          "required": true,
+          "file_role": "input_fasta"
+        },
+        "cpus": {
+          "type": "integer",
+          "description": "Optional thread count passed to Prokka.",
+          "required": false
+        },
+        "kingdom": {
+          "type": "string",
+          "description": "Optional Prokka kingdom label, such as Bacteria or Archaea.",
+          "required": false
+        },
+        "genus": {
+          "type": "string",
+          "description": "Optional genus name used for annotation metadata.",
+          "required": false
+        },
+        "species": {
+          "type": "string",
+          "description": "Optional species name used for annotation metadata.",
+          "required": false
+        },
+        "strain": {
+          "type": "string",
+          "description": "Optional strain name used for annotation metadata.",
+          "required": false
+        },
+        "locustag": {
+          "type": "string",
+          "description": "Optional locus tag prefix passed to Prokka.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/prokka_annotate.md",
+      "when_to_use": "Use for rapid prokaryotic genome annotation (gene prediction + functional annotation)",
+      "when_not_to_use": "Not for eukaryotic genomes or metagenome annotation",
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "gff",
+        "fasta_protein",
+        "gbk"
+      ],
+      "analysis_categories": [
+        "annotation",
+        "comparative_genomics",
+        "evolution"
+      ],
+      "capabilities": [
+        "annotation",
+        "genome_assembly"
+      ]
+    },
+    {
+      "name": "proteomics_diff_abundance",
+      "description": "Run deterministic differential protein abundance analysis from a processed abundance table and sample metadata.",
+      "risk_level": "medium",
+      "tools_required": [
+        "python"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "abundance_matrix": {
+          "type": "path",
+          "description": "Protein abundance matrix in wide sample-column format.",
+          "required": true,
+          "file_role": "input_csv",
+          "ownership": "user_input"
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Sample metadata table describing group assignments.",
+          "required": true,
+          "file_role": "metadata_table",
+          "ownership": "user_input"
+        },
+        "script_path": {
+          "type": "path",
+          "description": "Optional path to a custom proteomics workflow script. Defaults to the bundled deterministic workflow.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for canonical proteomics result artifacts.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        },
+        "output_csv": {
+          "type": "path",
+          "description": "Optional explicit path for the differential-abundance CSV.",
+          "required": false,
+          "file_role": "output_csv",
+          "ownership": "execution_output"
+        },
+        "sample_id_column": {
+          "type": "string",
+          "description": "Optional explicit sample-ID column name in the metadata table.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "group_column": {
+          "type": "string",
+          "description": "Optional explicit grouping column in the metadata table.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "group_a": {
+          "type": "string",
+          "description": "Optional reference group label.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "group_b": {
+          "type": "string",
+          "description": "Optional comparison group label.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "normalization_method": {
+          "type": "string",
+          "description": "Deterministic normalization method. Currently only median_center is supported.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "min_present_fraction": {
+          "type": "number",
+          "description": "Minimum observed fraction required to retain one protein before imputation.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "impute_method": {
+          "type": "string",
+          "description": "Deterministic missing-value imputation method.",
+          "required": false,
+          "ownership": "tuning"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/proteomics_diff_abundance.md",
+      "when_to_use": "Use for table-first proteomics inputs with one protein abundance matrix and one sample metadata table.",
+      "when_not_to_use": "Not for raw mzML processing, peptide-spectrum matching, or sequence-level protein annotation workflows.",
+      "input_types": [
+        "csv",
+        "tsv"
+      ],
+      "output_types": [
+        "csv",
+        "tsv",
+        "json",
+        "md"
+      ],
+      "canonical_output_filenames": {
+        "output_dir": [
+          "proteomics_differential_abundance.csv",
+          "proteomics_qc_summary.json",
+          "normalized_abundance_matrix.tsv",
+          "volcano_plot_data.tsv",
+          "proteomics_summary.md"
+        ]
+      },
+      "analysis_categories": [
+        "proteomics"
+      ],
+      "capabilities": [
+        "proteomics",
+        "differential_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "psiblast_search",
+      "description": "Run PSI-BLAST iterative protein-to-protein search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "psiblast",
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Protein FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "Protein BLAST database name/path or subject FASTA.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "num_iterations": {
+          "type": "integer",
+          "description": "Optional PSI-BLAST iteration count.",
+          "required": false
+        },
+        "inclusion_ethresh": {
+          "type": "string",
+          "description": "Optional inclusion E-value threshold.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/psiblast_search.md",
+      "when_to_use": "Use for iterative protein homology searches when standard BLASTP sensitivity is not enough",
+      "when_not_to_use": "Not for nucleotide queries or when a single-pass protein search is sufficient",
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "quarto_report",
+      "description": "Build a researcher-facing run report bundle and render the generated Quarto document when Quarto is available.",
+      "risk_level": "low",
+      "tools_required": [
+        "python3"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "run_input": {
+          "type": "path",
+          "description": "Completed selected-dir path or result.json path.",
+          "required": true,
+          "file_role": "input_file"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Optional output directory for the generated report bundle.",
+          "required": false,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/quarto_report.md",
+      "when_to_use": "Use after a run completes to render a polished Quarto report from the generated run bundle",
+      "when_not_to_use": "Do not use before the run is complete or as a substitute for the core analysis workflow",
+      "input_types": [
+        "directory",
+        "json"
+      ],
+      "output_types": [
+        "directory",
+        "html",
+        "pdf",
+        "docx"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "run_reporting"
+      ]
+    },
+    {
+      "name": "rmats_run",
+      "description": "Run rMATS alternative splicing analysis for two BAM groups using an annotation GTF.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rmats"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "group1_bams": {
+          "type": "string",
+          "description": "Group 1 BAM path(s), as a comma-separated string or JSON-style list.",
+          "required": true
+        },
+        "group2_bams": {
+          "type": "string",
+          "description": "Group 2 BAM path(s), as a comma-separated string or JSON-style list.",
+          "required": true
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "Reference annotation GTF.",
+          "required": true,
+          "file_role": "reference_annotation"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for rMATS result tables.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "tmp_dir": {
+          "type": "path",
+          "description": "Temporary working directory for rMATS.",
+          "required": false
+        },
+        "read_length": {
+          "type": "integer",
+          "description": "Read length used by rMATS. Defaults to 100.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count. Defaults to 2.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/rmats_run.md",
+      "when_to_use": "Use for differential alternative splicing analysis between conditions in RNA-seq",
+      "when_not_to_use": "Not for gene-level differential expression (use DESeq2)",
+      "input_types": [
+        "bam",
+        "gtf"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "splicing_analysis",
+        "group_comparison"
+      ]
+    },
+    {
+      "name": "rpsblast_search",
+      "description": "Run RPS-BLAST protein-to-domain search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rpsblast"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Protein FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "Conserved-domain/profile BLAST database path.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "comp_based_stats": {
+          "type": "string",
+          "description": "Optional composition-based statistics mode.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/rpsblast_search.md",
+      "when_to_use": "Use to search protein queries against a conserved-domain or profile BLAST database",
+      "when_not_to_use": "Not for ordinary protein databases built with makeblastdb",
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "rpstblastn_search",
+      "description": "Run RPSTBLASTN translated nucleotide-to-domain search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rpstblastn"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Nucleotide FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "Conserved-domain/profile BLAST database path.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "strand": {
+          "type": "string",
+          "description": "Optional query strand setting.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/rpstblastn_search.md",
+      "when_to_use": "Use when nucleotide queries need to be translated and searched against a conserved-domain or profile BLAST database",
+      "when_not_to_use": "Not for ordinary nucleotide or protein databases built with makeblastdb",
+      "input_types": [
+        "fasta_nucleotide"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "salmon_quant",
+      "description": "Quantify transcript abundance with Salmon quasi-mapping.",
+      "risk_level": "medium",
+      "tools_required": [
+        "salmon"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "index_dir": {
+          "type": "path",
+          "description": "Salmon transcriptome index directory.",
+          "required": true,
+          "file_role": "buildable_index"
+        },
+        "transcriptome_fasta": {
+          "type": "path",
+          "description": "Optional transcriptome FASTA used to build the index when it does not already exist.",
+          "required": false,
+          "file_role": "fasta_transcriptome"
+        },
+        "library_type": {
+          "type": "string",
+          "description": "Library type string (e.g. A, ISR).",
+          "required": false
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/salmon_quant.md",
+      "when_to_use": "Use for fast transcript-level quantification via quasi-mapping in RNA-seq",
+      "when_not_to_use": "Not for genome-level alignment or gene counting (use featureCounts/STAR)",
+      "input_types": [
+        "fastq",
+        "fasta_transcriptome"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "transcript_quantification",
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "quantification"
+      ]
+    },
+    {
+      "name": "samtools_flagstat",
+      "description": "Compute alignment summary counts from BAM or CRAM with samtools flagstat.",
+      "risk_level": "low",
+      "tools_required": [
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM or CRAM path.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_txt": {
+          "type": "path",
+          "description": "Output path for the flagstat report.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count for samtools flagstat.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/samtools_flagstat.md",
+      "when_to_use": "Use for deterministic alignment QC summaries such as mapped, paired, duplicate, and properly paired counts",
+      "when_not_to_use": "Do not use for per-reference counts (use samtools_idxstats) or full detailed metrics (use samtools_stats)",
+      "input_types": [
+        "bam"
+      ],
+      "output_types": [
+        "txt"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "alignment_qc"
+      ]
+    },
+    {
+      "name": "samtools_idxstats",
+      "description": "Report per-reference mapped and unmapped read counts with samtools idxstats.",
+      "risk_level": "low",
+      "tools_required": [
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM or CRAM path.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output path for the idxstats table.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/samtools_idxstats.md",
+      "when_to_use": "Use for deterministic per-contig alignment count summaries from indexed BAM or CRAM files",
+      "when_not_to_use": "Do not use for aggregate mapping summaries (use samtools_flagstat) or full statistics (use samtools_stats)",
+      "input_types": [
+        "bam"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "alignment_qc"
+      ]
+    },
+    {
+      "name": "samtools_stats",
+      "description": "Compute detailed alignment statistics from BAM or CRAM with samtools stats.",
+      "risk_level": "low",
+      "tools_required": [
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM or CRAM path.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_txt": {
+          "type": "path",
+          "description": "Output path for the samtools stats report.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count for samtools stats.",
+          "required": false
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Optional reference FASTA for CRAM-aware statistics.",
+          "required": false,
+          "file_role": "reference_genome"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/samtools_stats.md",
+      "when_to_use": "Use for deterministic detailed alignment QC metrics beyond flagstat or idxstats",
+      "when_not_to_use": "Do not use for interval overlap operations or lightweight mapped-read counts alone",
+      "input_types": [
+        "bam"
+      ],
+      "output_types": [
+        "txt"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "capabilities": [
+        "alignment_qc"
+      ]
+    },
+    {
+      "name": "sc_count_and_cluster",
+      "description": "Single-cell RNA-seq pipeline from 10x FASTQs to clusters via kmer counting + scanpy.",
+      "risk_level": "medium",
+      "tools_required": [
+        "python",
+        "scanpy"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "r1": {
+          "type": "path",
+          "description": "R1 FASTQ (barcode + UMI).",
+          "required": true
+        },
+        "r2": {
+          "type": "path",
+          "description": "R2 FASTQ (cDNA).",
+          "required": true
+        },
+        "whitelist": {
+          "type": "path",
+          "description": "Optional barcode whitelist file. When omitted, the wrapper infers one from observed R1 barcodes.",
+          "required": false
+        },
+        "reference": {
+          "type": "path",
+          "description": "Reference genome FASTA.",
+          "required": true
+        },
+        "gtf": {
+          "type": "path",
+          "description": "Gene annotation GTF.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for results.",
+          "required": true
+        },
+        "barcode_len": {
+          "type": "integer",
+          "description": "Barcode length in R1.",
+          "required": false
+        },
+        "umi_len": {
+          "type": "integer",
+          "description": "UMI length in R1.",
+          "required": false
+        },
+        "kmer_size": {
+          "type": "integer",
+          "description": "Kmer size for read-to-gene mapping.",
+          "required": false
+        },
+        "min_genes": {
+          "type": "integer",
+          "description": "Minimum genes per cell for QC.",
+          "required": false
+        },
+        "min_cells": {
+          "type": "integer",
+          "description": "Minimum cells per gene for QC.",
+          "required": false
+        },
+        "leiden_resolution": {
+          "type": "float",
+          "description": "Leiden clustering resolution.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/sc_count_and_cluster.md",
+      "when_to_use": "Use for single-cell counting and clustering with STARsolo or equivalent",
+      "when_not_to_use": "Not for bulk RNA-seq or pre-processed h5ad files",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "h5ad",
+        "csv",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "single_cell_rna_seq"
+      ],
+      "capabilities": [
+        "single_cell_analysis",
+        "differential_analysis",
+        "demultiplexing",
+        "clustering"
+      ]
+    },
+    {
+      "name": "scanpy_workflow",
+      "description": "Run a deterministic Scanpy preprocessing and clustering workflow on pre-counted single-cell input.",
+      "risk_level": "medium",
+      "tools_required": [
+        "python",
+        "scanpy"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "input_path": {
+          "type": "path",
+          "description": "Input single-cell dataset path (h5ad, loom, 10x h5, or 10x MTX directory).",
+          "required": true,
+          "file_role": "input_matrix",
+          "ownership": "user_input"
+        },
+        "script_path": {
+          "type": "path",
+          "description": "Optional path to a custom scanpy workflow script. Defaults to the bundled deterministic workflow.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for plots/tables.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        },
+        "min_genes": {
+          "type": "integer",
+          "description": "Minimum genes detected per cell during QC filtering.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "min_cells": {
+          "type": "integer",
+          "description": "Minimum cells expressing a gene during QC filtering.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "max_mito_pct": {
+          "type": "number",
+          "description": "Maximum mitochondrial read percentage allowed per cell.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "n_hvgs": {
+          "type": "integer",
+          "description": "Number of highly variable genes to retain before PCA/clustering.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "leiden_resolution": {
+          "type": "number",
+          "description": "Leiden resolution parameter for cluster granularity.",
+          "required": false,
+          "ownership": "tuning"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/scanpy_workflow.md",
+      "when_to_use": "Use for single-cell RNA-seq analysis with scanpy (Python-based preprocessing/clustering)",
+      "when_not_to_use": "Not for bulk RNA-seq or when R/Seurat workflow is preferred",
+      "input_types": [
+        "h5ad",
+        "csv",
+        "mtx"
+      ],
+      "output_types": [
+        "h5ad",
+        "csv",
+        "png"
+      ],
+      "analysis_categories": [
+        "single_cell_rna_seq"
+      ],
+      "capabilities": [
+        "single_cell_analysis",
+        "differential_analysis"
+      ]
+    },
+    {
+      "name": "seurat_rscript_workflow",
+      "description": "Run Seurat workflow from an Rscript wrapper for CLI orchestration.",
+      "risk_level": "medium",
+      "tools_required": [
+        "rscript",
+        "seurat"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "script_path": {
+          "type": "path",
+          "description": "Path to Seurat wrapper script.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "input_matrix": {
+          "type": "path",
+          "description": "Input matrix path (e.g. MTX/H5).",
+          "required": true,
+          "file_role": "input_matrix",
+          "ownership": "user_input"
+        },
+        "metadata_table": {
+          "type": "path",
+          "description": "Cell metadata table.",
+          "required": true,
+          "file_role": "sample_metadata",
+          "ownership": "user_input"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/seurat_rscript_workflow.md",
+      "when_to_use": "Use for single-cell RNA-seq analysis with Seurat in R",
+      "when_not_to_use": "Not for Python-based analysis (use scanpy) or bulk RNA-seq",
+      "input_types": [
+        "h5ad",
+        "csv",
+        "mtx"
+      ],
+      "output_types": [
+        "h5ad",
+        "csv",
+        "png"
+      ],
+      "analysis_categories": [
+        "single_cell_rna_seq"
+      ],
+      "capabilities": [
+        "single_cell_analysis"
+      ]
+    },
+    {
+      "name": "shared_variants_export_run",
+      "description": "Export shared annotated variants from two VCF inputs to CSV as one atomic helper-backed step.",
+      "risk_level": "medium",
+      "tools_required": [],
+      "system_requirements": {
+        "min_ram_gb": 2,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_vcf_a": {
+          "type": "path",
+          "description": "First annotated or normalized VCF input.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "input_vcf_b": {
+          "type": "path",
+          "description": "Second annotated or normalized VCF input.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "output_csv": {
+          "type": "path",
+          "description": "Output CSV path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "min_impact": {
+          "type": "string",
+          "description": "Minimum impact tier to keep (`LOW`, `MODERATE`, or `HIGH`).",
+          "required": false
+        },
+        "status": {
+          "type": "string",
+          "description": "Status label written into the export rows.",
+          "required": false
+        },
+        "header_case": {
+          "type": "string",
+          "description": "Header case for the CSV (`upper` or `lower`).",
+          "required": false
+        },
+        "dedupe_by_gene": {
+          "type": "boolean",
+          "description": "Whether to keep only one row per gene.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/shared_variants_export_run.md",
+      "when_to_use": "Use to build a shared-variant CSV from two annotated or normalized VCF inputs",
+      "when_not_to_use": "Do not use when the workflow still needs annotation, normalization, or comparison setup first",
+      "input_types": [
+        "vcf"
+      ],
+      "output_types": [
+        "csv"
+      ],
+      "analysis_categories": [
+        "variant_annotation",
+        "comparative_genomics"
+      ],
+      "capabilities": [
+        "variant_annotation",
+        "reporting"
+      ]
+    },
+    {
+      "name": "sniffles_sv_call",
+      "description": "Call structural variants from aligned long-read BAM or CRAM data with Sniffles.",
+      "risk_level": "medium",
+      "tools_required": [
+        "sniffles",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 16,
+        "min_cores": 4
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA path.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "input_bam": {
+          "type": "path",
+          "description": "Coordinate-sorted long-read BAM or CRAM input.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output structural-variant VCF path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "sample_id": {
+          "type": "string",
+          "description": "Optional sample identifier to embed in the output VCF.",
+          "required": false
+        },
+        "min_support": {
+          "type": "integer",
+          "description": "Minimum supporting-read count required per variant call.",
+          "required": false
+        },
+        "min_sv_length": {
+          "type": "integer",
+          "description": "Minimum structural-variant length to emit.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/sniffles_sv_call.md",
+      "when_to_use": "Use for long-read structural-variant calling from an aligned BAM or CRAM against a matching reference",
+      "when_not_to_use": "Not for SNP or small-indel calling, or for raw reads that have not already been aligned",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "structural_variant_calling"
+      ],
+      "capabilities": [
+        "structural_variant_calling",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "snpeff_annotate",
+      "description": "Annotate variants with predicted functional impact via SnpEff.",
+      "risk_level": "medium",
+      "tools_required": [
+        "snpeff"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "genome_db": {
+          "type": "string",
+          "description": "SnpEff genome database key.",
+          "required": true
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Optional reference FASTA used to build a custom SnpEff database.",
+          "required": false,
+          "file_role": "reference_genome"
+        },
+        "annotation_gff": {
+          "type": "path",
+          "description": "Optional GFF/GFF3 annotation used to build a custom SnpEff database.",
+          "required": false,
+          "file_role": "annotation_gff"
+        },
+        "config_dir": {
+          "type": "path",
+          "description": "Optional working directory for custom SnpEff database/config generation.",
+          "required": false
+        },
+        "genome_label": {
+          "type": "string",
+          "description": "Optional display label for a custom SnpEff genome entry.",
+          "required": false
+        },
+        "codon_table": {
+          "type": "string",
+          "description": "Optional codon table name for custom-database builds.",
+          "required": false
+        },
+        "check_protein": {
+          "type": "boolean",
+          "description": "Whether to enable protein validation for custom-database builds.",
+          "required": false
+        },
+        "check_cds": {
+          "type": "boolean",
+          "description": "Whether to enable CDS validation for custom-database builds.",
+          "required": false
+        },
+        "input_vcf": {
+          "type": "path",
+          "description": "Input VCF file.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output annotated VCF path.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/snpeff_annotate.md",
+      "when_to_use": "Use for variant functional annotation to predict impact of SNPs/indels on genes",
+      "when_not_to_use": "Not for variant calling (use GATK/FreeBayes) or clinical annotation (use VEP)",
+      "input_types": [
+        "vcf",
+        "fasta_reference",
+        "gff"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "variant_calling"
+      ]
+    },
+    {
+      "name": "spades_assemble",
+      "description": "Assemble short-read genomes/transcriptomes with SPAdes.",
+      "risk_level": "high",
+      "tools_required": [
+        "spades.py"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 32,
+        "min_cores": 8
+      },
+      "parameters": {
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "memory_gb": {
+          "type": "integer",
+          "description": "Memory cap in GB.",
+          "required": true
+        },
+        "careful": {
+          "type": "boolean",
+          "description": "Enable SPAdes careful mode.",
+          "required": false
+        },
+        "meta_mode": {
+          "type": "boolean",
+          "description": "Enable metaSPAdes mode for metagenomic assemblies.",
+          "required": false
+        },
+        "isolate_mode": {
+          "type": "boolean",
+          "description": "Enable SPAdes isolate mode for microbial isolate genomes.",
+          "required": false
+        },
+        "phred_offset": {
+          "type": "integer",
+          "description": "FASTQ PHRED quality offset. Defaults to 33; set to 64 only for legacy PHRED+64 reads, or auto to use SPAdes auto-detection.",
+          "required": false
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Assembly output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/spades_assemble.md",
+      "when_to_use": "Use for de novo short-read genome assembly of bacterial/small genomes",
+      "when_not_to_use": "Not for long reads (use Flye) or large eukaryotic genomes",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "evolution"
+      ],
+      "capabilities": [
+        "genome_assembly"
+      ]
+    },
+    {
+      "name": "spatial_transcriptomics_workflow",
+      "description": "Run a deterministic processed-input spatial transcriptomics workflow on an AnnData spatial dataset.",
+      "risk_level": "medium",
+      "tools_required": [
+        "python"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "input_path": {
+          "type": "path",
+          "description": "Input spatial AnnData `.h5ad` path.",
+          "required": true,
+          "file_role": "input_h5ad",
+          "ownership": "user_input"
+        },
+        "script_path": {
+          "type": "path",
+          "description": "Optional path to a custom spatial workflow script. Defaults to the bundled deterministic workflow.",
+          "required": false,
+          "ownership": "harness_managed"
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory for canonical spatial result artifacts.",
+          "required": true,
+          "file_role": "output_dir",
+          "ownership": "execution_output"
+        },
+        "domain_assignments_csv": {
+          "type": "path",
+          "description": "Optional explicit path for the domain-assignment CSV.",
+          "required": false,
+          "file_role": "output_csv",
+          "ownership": "execution_output"
+        },
+        "marker_genes_csv": {
+          "type": "path",
+          "description": "Optional explicit path for the marker-gene CSV.",
+          "required": false,
+          "file_role": "output_csv",
+          "ownership": "execution_output"
+        },
+        "results_h5ad": {
+          "type": "path",
+          "description": "Optional explicit path for the processed output AnnData file.",
+          "required": false,
+          "file_role": "output_h5ad",
+          "ownership": "execution_output"
+        },
+        "min_genes": {
+          "type": "integer",
+          "description": "Minimum detected genes per retained spot.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "min_cells": {
+          "type": "integer",
+          "description": "Minimum expressing spots per retained gene.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "n_hvgs": {
+          "type": "integer",
+          "description": "Maximum number of variable genes retained for clustering.",
+          "required": false,
+          "ownership": "tuning"
+        },
+        "n_pcs": {
+          "type": "integer",
+          "description": "Maximum number of expression PCs retained before spatial fusion.",
+          "required": false,
+          "ownership": "tuning"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/spatial_transcriptomics_workflow.md",
+      "when_to_use": "Use for processed Visium-style or AnnData spatial transcriptomics inputs with spot coordinates already present.",
+      "when_not_to_use": "Not for raw FASTQ/image preprocessing or Space Ranger-style reconstruction from raw Visium data.",
+      "input_types": [
+        "h5ad"
+      ],
+      "output_types": [
+        "csv",
+        "h5ad",
+        "json"
+      ],
+      "analysis_categories": [
+        "spatial_transcriptomics"
+      ],
+      "capabilities": [
+        "spatial_transcriptomics",
+        "single_cell_analysis"
+      ]
+    },
+    {
+      "name": "star_2pass_align",
+      "description": "Run STAR two-pass alignment mode for improved novel junction detection.",
+      "risk_level": "medium",
+      "tools_required": [
+        "star"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 32,
+        "min_cores": 8
+      },
+      "parameters": {
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "genome_dir": {
+          "type": "path",
+          "description": "STAR genome index directory.",
+          "required": true,
+          "file_role": "buildable_genome_index"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA used to build the STAR genome directory if it does not already exist.",
+          "required": false,
+          "file_role": "reference_genome"
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "Gene annotation GTF used to build the STAR genome directory if it does not already exist.",
+          "required": false
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "output_prefix": {
+          "type": "path",
+          "description": "Output prefix path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "star_index_cache_root": {
+          "type": "path",
+          "description": "Optional STAR index cache root used when materializing a genome dir.",
+          "required": false
+        },
+        "sjdb_overhang": {
+          "type": "integer",
+          "description": "Optional sjdbOverhang used for STAR genomeGenerate.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/star_2pass_align.md",
+      "when_to_use": "Use for STAR 2-pass alignment for improved novel junction detection in RNA-seq",
+      "when_not_to_use": "Not needed for routine RNA-seq; use single-pass STAR for speed",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "star_align",
+      "description": "Align RNA-seq reads to reference genome using STAR.",
+      "risk_level": "medium",
+      "tools_required": [
+        "star"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 24,
+        "min_cores": 8
+      },
+      "parameters": {
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "genome_dir": {
+          "type": "path",
+          "description": "STAR genome index directory.",
+          "required": true,
+          "file_role": "buildable_genome_index"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA used to build the STAR genome directory if it does not already exist.",
+          "required": false,
+          "file_role": "reference_genome"
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "Gene annotation GTF used to build the STAR genome directory if it does not already exist.",
+          "required": false
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "output_prefix": {
+          "type": "path",
+          "description": "Output prefix path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "star_index_cache_root": {
+          "type": "path",
+          "description": "Optional STAR index cache root used when materializing a genome dir.",
+          "required": false
+        },
+        "sjdb_overhang": {
+          "type": "integer",
+          "description": "Optional sjdbOverhang used for STAR genomeGenerate.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/star_align.md",
+      "when_to_use": "Use for splice-aware RNA-seq read alignment to a reference genome",
+      "when_not_to_use": "Not for DNA-seq alignment (use BWA/bowtie2) or long reads (use minimap2)",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression",
+        "transcript_quantification"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "star_solo_count",
+      "description": "Run STARsolo for single-cell alignment and UMI counting.",
+      "risk_level": "high",
+      "tools_required": [
+        "star"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 32,
+        "min_cores": 8
+      },
+      "parameters": {
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "genome_dir": {
+          "type": "path",
+          "description": "STAR genome index directory.",
+          "required": true
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA used to build the STAR genome directory if it does not already exist.",
+          "required": false
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "Gene annotation GTF used to build the STAR genome directory if it does not already exist.",
+          "required": false
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true
+        },
+        "whitelist": {
+          "type": "path",
+          "description": "Cell barcode whitelist.",
+          "required": true
+        },
+        "output_prefix": {
+          "type": "path",
+          "description": "Output prefix path.",
+          "required": true
+        },
+        "star_index_cache_root": {
+          "type": "path",
+          "description": "Optional STAR index cache root used when materializing a genome dir.",
+          "required": false
+        },
+        "sjdb_overhang": {
+          "type": "integer",
+          "description": "Optional sjdbOverhang used for STAR genomeGenerate.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/star_solo_count.md",
+      "when_to_use": "Use for single-cell RNA-seq counting with STARsolo as CellRanger alternative",
+      "when_not_to_use": "Not for bulk RNA-seq alignment or pre-processed single-cell data",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "h5ad",
+        "tsv",
+        "bam"
+      ],
+      "analysis_categories": [
+        "single_cell_rna_seq"
+      ],
+      "capabilities": [
+        "single_cell_analysis",
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "stringtie_quant",
+      "description": "Quantify expression from aligned RNA-seq BAMs with StringTie.",
+      "risk_level": "medium",
+      "tools_required": [
+        "stringtie",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 4
+      },
+      "parameters": {
+        "input_bam": {
+          "type": "path",
+          "description": "Coordinate-sorted RNA-seq BAM file.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "Reference transcript annotation GTF.",
+          "required": true,
+          "file_role": "reference_annotation"
+        },
+        "output_gtf": {
+          "type": "path",
+          "description": "Output GTF with assembled or quantified transcripts.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "gene_abundance_tsv": {
+          "type": "path",
+          "description": "Optional gene abundance output TSV.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "ballgown_dir": {
+          "type": "path",
+          "description": "Optional Ballgown output directory.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        },
+        "estimate_reference_only": {
+          "type": "boolean",
+          "description": "Restrict estimates to reference transcripts with `-e`.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/stringtie_quant.md",
+      "when_to_use": "Use for alignment-based transcript expression estimation and guided transcript reconstruction from RNA-seq BAM files",
+      "when_not_to_use": "Not for raw FASTQ pseudoalignment quantification when Salmon or kallisto is sufficient",
+      "input_types": [
+        "bam",
+        "gtf"
+      ],
+      "output_types": [
+        "gtf",
+        "tsv"
+      ],
+      "canonical_output_filenames": {
+        "output_gtf": "assembled.gtf",
+        "gene_abundance_tsv": "gene_abundances.tsv"
+      },
+      "analysis_categories": [
+        "transcript_quantification",
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "quantification"
+      ]
+    },
+    {
+      "name": "subread_align",
+      "description": "Align paired-end reads with the Subread suite using Subjunc/Subread and produce a sorted indexed BAM.",
+      "risk_level": "medium",
+      "tools_required": [
+        "subread",
+        "samtools"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "index_base": {
+          "type": "path",
+          "description": "Alignment index basename to use at runtime.",
+          "required": true,
+          "file_role": "buildable_index"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA used to build the Subread index if needed.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ path.",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ path.",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "output_bam": {
+          "type": "path",
+          "description": "Coordinate-sorted BAM output path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Alignment and sorting threads.",
+          "required": false
+        },
+        "cache_index_base": {
+          "type": "path",
+          "description": "Optional reusable Subread index basename.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/subread_align.md",
+      "when_to_use": "Use for fast short-read alignment as an alternative to BWA/bowtie2",
+      "when_not_to_use": "Not for spliced alignment (use STAR) or long reads (use minimap2)",
+      "input_types": [
+        "fastq",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "bam"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "rna_seq_differential_expression"
+      ],
+      "capabilities": [
+        "alignment",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "tabix_index_run",
+      "description": "Build one tabix index for a bgzipped genomic file as a single atomic step.",
+      "risk_level": "low",
+      "tools_required": [
+        "tabix"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 1,
+        "min_cores": 1
+      },
+      "parameters": {
+        "input_file": {
+          "type": "path",
+          "description": "Bgzip-compressed file to index.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "preset": {
+          "type": "string",
+          "description": "Tabix preset (`vcf`, `gff`, or `bed`).",
+          "required": false
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Whether to pass `-f` and overwrite an existing index.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/tabix_index_run.md",
+      "when_to_use": "Use to index a bgzipped VCF, GFF, or BED file with tabix",
+      "when_not_to_use": "Do not use when the file still needs compression or other upstream transformations first",
+      "input_types": [
+        "vcf",
+        "gff",
+        "bed"
+      ],
+      "output_types": [
+        "index"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "annotation"
+      ],
+      "capabilities": [
+        "indexing",
+        "variant_calling"
+      ]
+    },
+    {
+      "name": "tblastn_search",
+      "description": "Run TBLASTN protein-to-translated-nucleotide search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "tblastn",
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Protein FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "BLAST nucleotide database name/path or subject FASTA.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "db_gencode": {
+          "type": "integer",
+          "description": "Optional genetic code for database translation.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/tblastn_search.md",
+      "when_to_use": "Use when protein queries need to be searched against translated nucleotide databases",
+      "when_not_to_use": "Not for direct protein-vs-protein searches (use blastp) or nucleotide-vs-nucleotide searches (use blastn)",
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "tblastx_search",
+      "description": "Run TBLASTX translated nucleotide-to-translated-nucleotide search and emit tabular hits.",
+      "risk_level": "medium",
+      "tools_required": [
+        "tblastx",
+        "makeblastdb"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 4,
+        "min_cores": 2
+      },
+      "parameters": {
+        "query_fasta": {
+          "type": "path",
+          "description": "Nucleotide FASTA query file.",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "BLAST nucleotide database name/path or subject FASTA.",
+          "required": true
+        },
+        "output_tsv": {
+          "type": "path",
+          "description": "Output hit file.",
+          "required": true
+        },
+        "strand": {
+          "type": "string",
+          "description": "Optional query strand setting.",
+          "required": false
+        },
+        "query_gencode": {
+          "type": "integer",
+          "description": "Optional genetic code for query translation.",
+          "required": false
+        },
+        "db_gencode": {
+          "type": "integer",
+          "description": "Optional genetic code for database translation.",
+          "required": false
+        },
+        "outfmt": {
+          "type": "string",
+          "description": "BLAST outfmt string.",
+          "required": false
+        },
+        "evalue": {
+          "type": "string",
+          "description": "E-value threshold.",
+          "required": false
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/tblastx_search.md",
+      "when_to_use": "Use when translated nucleotide queries need to be searched against translated nucleotide databases",
+      "when_not_to_use": "Not for direct nucleotide-vs-nucleotide searches (use blastn) or direct protein-vs-protein searches (use blastp)",
+      "input_types": [
+        "fasta_nucleotide"
+      ],
+      "output_types": [
+        "tsv",
+        "xml"
+      ],
+      "analysis_categories": [
+        "comparative_genomics",
+        "annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "protein_analysis"
+      ]
+    },
+    {
+      "name": "trinity_assemble",
+      "description": "Assemble transcriptomes de novo with Trinity.",
+      "risk_level": "high",
+      "tools_required": [
+        "trinity"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 32,
+        "min_cores": 8
+      },
+      "parameters": {
+        "reads_1": {
+          "type": "path",
+          "description": "Read 1 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r1"
+        },
+        "reads_2": {
+          "type": "path",
+          "description": "Read 2 FASTQ(.gz).",
+          "required": true,
+          "file_role": "input_fastq_r2"
+        },
+        "threads": {
+          "type": "integer",
+          "description": "Thread count.",
+          "required": true
+        },
+        "max_memory_gb": {
+          "type": "integer",
+          "description": "Max memory allocation in GB.",
+          "required": true
+        },
+        "output_dir": {
+          "type": "path",
+          "description": "Output directory.",
+          "required": true,
+          "file_role": "output_dir"
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/trinity_assemble.md",
+      "when_to_use": "Use for de novo transcriptome assembly from RNA-seq reads without a reference genome",
+      "when_not_to_use": "Not for genome assembly (use SPAdes/Flye) or when a reference is available",
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "analysis_categories": [
+        "transcript_quantification"
+      ],
+      "capabilities": [
+        "genome_assembly"
+      ]
+    },
+    {
+      "name": "varscan_call",
+      "description": "Call germline variants from a BAM using VarScan2 mpileup2cns.",
+      "risk_level": "high",
+      "tools_required": [
+        "samtools",
+        "varscan",
+        "java"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 8,
+        "min_cores": 2
+      },
+      "parameters": {
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA.",
+          "required": true,
+          "file_role": "reference_genome"
+        },
+        "input_bam": {
+          "type": "path",
+          "description": "Input BAM path.",
+          "required": true,
+          "file_role": "input_bam"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output VCF path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "min_var_freq": {
+          "type": "float",
+          "description": "Optional minimum variant allele frequency.",
+          "required": false
+        },
+        "p_value": {
+          "type": "float",
+          "description": "Optional VarScan p-value threshold.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/varscan_call.md",
+      "when_to_use": "Use for variant calling with VarScan2, suitable for tumor/normal or pooled samples",
+      "when_not_to_use": "Use GATK HaplotypeCaller for germline best practices or FreeBayes for haplotype-aware calling",
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "analysis_categories": [
+        "variant_calling"
+      ],
+      "capabilities": [
+        "variant_calling",
+        "reference_inputs"
+      ]
+    },
+    {
+      "name": "vep_annotate",
+      "description": "Annotate variants with Ensembl VEP using either offline cache/database mode or a deterministic local GFF/FASTA reference.",
+      "risk_level": "medium",
+      "tools_required": [
+        "vep"
+      ],
+      "system_requirements": {
+        "min_ram_gb": 12,
+        "min_cores": 4
+      },
+      "parameters": {
+        "assembly": {
+          "type": "string",
+          "description": "Genome assembly name (e.g. GRCh38) for cache/database mode.",
+          "required": false
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name for VEP. Defaults to homo_sapiens for cache/database mode and custom for local GFF mode.",
+          "required": false
+        },
+        "input_vcf": {
+          "type": "path",
+          "description": "Input VCF file.",
+          "required": true,
+          "file_role": "input_vcf"
+        },
+        "output_vcf": {
+          "type": "path",
+          "description": "Output VCF path.",
+          "required": true,
+          "file_role": "output_dir"
+        },
+        "reference_fasta": {
+          "type": "path",
+          "description": "Reference FASTA for custom local annotation mode.",
+          "required": false,
+          "file_role": "reference_genome"
+        },
+        "annotation_gff": {
+          "type": "path",
+          "description": "GFF3 annotation file for deterministic custom-reference annotation mode.",
+          "required": false,
+          "file_role": "annotation_gff"
+        },
+        "annotation_gtf": {
+          "type": "path",
+          "description": "GTF annotation file for deterministic custom-reference annotation mode.",
+          "required": false,
+          "file_role": "annotation_gtf"
+        },
+        "cache_dir": {
+          "type": "path",
+          "description": "Optional VEP cache directory when using offline cache mode.",
+          "required": false,
+          "file_role": "output_dir"
+        },
+        "use_database": {
+          "type": "boolean",
+          "description": "Use Ensembl database mode instead of offline cache mode.",
+          "required": false
+        }
+      },
+      "file_path": "bio_harness/skills/definitions/vep_annotate.md",
+      "when_to_use": "Use for clinical-grade variant annotation with Ensembl VEP",
+      "when_not_to_use": "Not for bacterial/custom genomes (use SnpEff with custom database)",
+      "input_types": [
+        "vcf"
+      ],
+      "output_types": [
+        "vcf",
+        "tsv"
+      ],
+      "analysis_categories": [
+        "variant_annotation"
+      ],
+      "capabilities": [
+        "annotation",
+        "variant_calling"
+      ]
+    }
+  ]
+}

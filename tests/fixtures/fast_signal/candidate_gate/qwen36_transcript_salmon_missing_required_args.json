@@ -1,0 +1,126 @@
+{
+  "analysis_family": "transcript_quantification",
+  "analysis_type": "transcript_quantification",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "salmon_quant"
+      }
+    ]
+  },
+  "covers_fix": [
+    "stepwise_single_step_compiler_rebind"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "index_dir": "salmon_index",
+      "output_dir": "salmon_quant",
+      "reads_1": "reads_1.fq.gz",
+      "reads_2": "reads_2.fq.gz",
+      "threads": "4",
+      "transcriptome_fasta": "transcriptome.fa"
+    },
+    "accepted_tool_name": "salmon_quant"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "failure_class_id": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_transcript_salmon_missing_required_args",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits the correct transcript quantification wrapper, but normalization leaves salmon_quant with no required input arguments.",
+    "user_request": "Quantify transcripts from the provided paired-end RNA-seq reads using the transcriptome reference.",
+    "workspace_files": [
+      "{{data_root}}/reads_1.fq.gz",
+      "{{data_root}}/reads_2.fq.gz",
+      "{{data_root}}/transcriptome.fa"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "transcript_quantification",
+      "benchmark_policy": "scientific_harness",
+      "discovered_data_files": [
+        {
+          "name": "reads_1.fq.gz",
+          "path": "{{data_root}}/reads_1.fq.gz"
+        },
+        {
+          "name": "reads_2.fq.gz",
+          "path": "{{data_root}}/reads_2.fq.gz"
+        },
+        {
+          "name": "transcriptome.fa",
+          "path": "{{data_root}}/transcriptome.fa"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "salmon_quant"
+        ],
+        "execution_mode": "direct_wrapper"
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/reads_1.fq.gz",
+            "role": "input_fastq_r1",
+            "sample_id": "sample"
+          },
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/reads_2.fq.gz",
+            "role": "input_fastq_r2",
+            "sample_id": "sample"
+          },
+          {
+            "file_type": "fasta",
+            "resolved_path": "{{data_root}}/transcriptome.fa",
+            "role": "transcriptome_fasta",
+            "sample_id": null
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "plan_skeleton": [
+        [
+          "salmon_quant",
+          "Quantify transcripts with Salmon"
+        ]
+      ],
+      "preferred_tools": [
+        "salmon_quant"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "transcript_quantification",
+        "execution_mode": "direct_wrapper",
+        "grounded": true,
+        "required_tools": [
+          "salmon_quant"
+        ]
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "qwen36_full24_clean_r15",
+  "tags": [
+    "band1",
+    "control_transcript",
+    "direct_wrapper",
+    "required_arguments",
+    "transcript_quantification"
+  ],
+  "temperature": 0.3
+}

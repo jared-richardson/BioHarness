@@ -1,0 +1,95 @@
+---
+name: cutadapt_run
+description: Trim sequencing adapters from FASTQ reads with Cutadapt.
+when_to_use: Use when explicit adapter trimming is needed before alignment, quantification, or downstream read processing
+when_not_to_use: Not for read quality assessment alone (use FastQC) or when no adapter trimming is required
+risk_level: medium
+tools_required:
+- cutadapt
+capabilities:
+- preprocessing
+- read_trimming
+input_types:
+- fastq
+output_types:
+- fastq
+- json
+analysis_categories:
+- general
+- metagenomics
+- rna_seq_differential_expression
+- transcript_quantification
+- variant_calling
+parameters:
+  reads_1:
+    type: path
+    description: Read 1 FASTQ(.gz) input.
+    required: true
+    file_role: input_fastq_r1
+  reads_2:
+    type: path
+    description: Optional Read 2 FASTQ(.gz) input for paired-end trimming.
+    required: false
+    file_role: input_fastq_r2
+  output_reads_1:
+    type: path
+    description: Trimmed Read 1 FASTQ(.gz) output path.
+    required: true
+    file_role: output_dir
+  output_reads_2:
+    type: path
+    description: Optional trimmed Read 2 FASTQ(.gz) output path for paired-end trimming.
+    required: false
+    file_role: output_dir
+  adapter_3prime_r1:
+    type: string
+    description: One or more 3-prime adapter sequences for Read 1.
+    required: false
+  adapter_3prime_r2:
+    type: string
+    description: One or more 3-prime adapter sequences for Read 2.
+    required: false
+  front_adapter_r1:
+    type: string
+    description: Optional 5-prime adapter sequences for Read 1.
+    required: false
+  front_adapter_r2:
+    type: string
+    description: Optional 5-prime adapter sequences for Read 2.
+    required: false
+  minimum_length:
+    type: integer
+    description: Minimum retained read length after trimming.
+    required: false
+  quality_cutoff:
+    type: string
+    description: Optional quality cutoff argument passed to Cutadapt, for example 20 or 20,20.
+    required: false
+  threads:
+    type: integer
+    description: Number of CPU cores for Cutadapt.
+    required: false
+  discard_untrimmed:
+    type: boolean
+    description: Discard reads where no adapter match is found.
+    required: false
+  json_report:
+    type: path
+    description: Optional JSON report output path.
+    required: false
+    file_role: output_dir
+system_requirements:
+  min_ram_gb: 4
+  min_cores: 2
+command_template: cutadapt -a {adapter_3prime_r1} -o {output_reads_1} {reads_1}
+---
+Use for explicit adapter trimming when you know the adapter sequences that must
+be removed. The wrapper supports single-end and paired-end data, repeated
+adapter flags, optional 5-prime trimming, minimum read length filters, quality
+cutoffs, JSON reports, and discard-untrimmed behavior.
+
+## Onboarding Metadata
+- Source: https://cutadapt.readthedocs.io/
+- Source Mode: official_docs
+- Installed At: user_priority_v1
+- Install Workflow: controlled_curated_batch_onboarding:preprocessing_core

@@ -1,0 +1,79 @@
+{
+  "tools": {
+    "flye": {
+      "default_env_name": "flye",
+      "default_env_root": ".tool-envs",
+      "description": "Create an isolated Ubuntu-based amd64 launcher for Flye long-read assembly.",
+      "dockerfile_relpath": "docker/isolated-tools/flye.Dockerfile",
+      "image": "bioharness/flye-ubuntu-amd64:2.9.6",
+      "launcher_name": "flye",
+      "mode": "docker_build_wrapper",
+      "platform": "linux/amd64",
+      "tool_binary": "flye",
+      "tool_relpath": "bin/flye"
+    },
+    "STAR-Fusion": {
+      "aliases": [
+        "star-fusion"
+      ],
+      "default_env_name": "star-fusion",
+      "default_env_root": ".tool-envs",
+      "description": "Create an isolated Docker-backed launcher for STAR-Fusion.",
+      "image": "quay.io/biocontainers/star-fusion:1.15.1--hdfd78af_1",
+      "launcher_name": "STAR-Fusion",
+      "mode": "docker_wrapper",
+      "platform": "linux/amd64",
+      "tool_binary": "STAR-Fusion",
+      "tool_relpath": "bin/STAR-Fusion"
+    },
+    "cnvkit.py": {
+      "default_env_name": "cnvkit",
+      "default_env_root": ".tool-envs",
+      "description": "Create a dedicated Python virtual environment for CNVkit and register its launcher path.",
+      "launcher_name": "cnvkit.py",
+      "mode": "pip_venv",
+      "packages": [
+        "cnvkit"
+      ],
+      "python_bin_name": "python",
+      "tool_relpath": "bin/cnvkit.py"
+    },
+    "prokka": {
+      "default_env_name": "prokka",
+      "default_env_root": ".tool-envs",
+      "description": "Create an isolated Docker-backed launcher for Prokka.",
+      "image": "quay.io/biocontainers/prokka:1.14.6--pl5321hdfd78af_4",
+      "launcher_name": "prokka",
+      "mode": "docker_wrapper",
+      "platform": "linux/amd64",
+      "tool_binary": "prokka",
+      "tool_relpath": "bin/prokka"
+    },
+    "trinity": {
+      "aliases": [
+        "Trinity"
+      ],
+      "default_env_name": "trinity",
+      "default_env_root": ".tool-envs",
+      "description": "Create an isolated Ubuntu-based amd64 launcher for Trinity RNA assembly.",
+      "dockerfile_relpath": "docker/isolated-tools/trinity.Dockerfile",
+      "image": "bioharness/trinity-ubuntu-amd64:2.15.2",
+      "launcher_name": "trinity",
+      "mode": "docker_build_wrapper",
+      "platform": "linux/amd64",
+      "tool_binary": "Trinity",
+      "tool_relpath": "bin/trinity"
+    },
+    "vep": {
+      "default_env_name": "vep",
+      "default_env_root": ".tool-envs",
+      "description": "Create an isolated Docker-backed launcher for Ensembl VEP.",
+      "image": "ensemblorg/ensembl-vep:release_115.2",
+      "launcher_name": "vep",
+      "mode": "docker_wrapper",
+      "tool_binary": "vep",
+      "tool_relpath": "bin/vep"
+    }
+  },
+  "version": 1
+}

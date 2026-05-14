@@ -1,0 +1,102 @@
+[workspace]
+name = "bio_harness"
+channels = ["conda-forge", "bioconda"]
+platforms = ["osx-arm64", "linux-64"]
+
+[dependencies]
+python = ">=3.10"
+psutil = ">=7.2.2,<8"
+pydantic = ">=2.12.5,<3"
+httpx = ">=0.28.1,<0.29"
+ollama-python = ">=0.1.0"
+python-frontmatter = ">=1.0.0"
+streamlit = ">=1.0.0"
+python-graphviz = ">=0.14"
+langgraph = "*"
+langchain-community = ">=0.0.30"
+biopython = ">=1.80"
+
+# Bio-Dependencies
+samtools = ">=1.22.1,<2"
+bcftools = ">=1.15"
+gatk4 = ">=4.6.0"
+minimap2 = ">=2.24"
+star = ">=2.7.11b,<3"
+bwa-mem2 = ">=2.2.1"
+salmon = ">=1.9.0"
+subread = ">=2.0.3"
+varscan = ">=2.4.6"
+fastqc = ">=0.12.1,<0.13"
+fastp = ">=0.23.2"
+cutadapt = ">=4.9"
+kraken2 = ">=2.1.2"
+bracken = "*"
+spades = ">=3.15.5"
+flye = ">=2.9.1"
+iqtree = ">=2.2.0.3"
+sniffles = ">=2.0.7"
+bedtools = ">=2.30.0"
+rmats = ">=4.3.0,<5"
+snpeff = ">=5.2"
+prodigal = ">=2.6.3"
+blast = ">=2.16.0,<3"
+openjdk = ">=21"
+mafft = ">=7.526,<8"
+scanpy = ">=1.11.5,<2"
+leidenalg = ">=0.10.2,<0.11"
+snpsift = ">=5.4.0c,<6"
+
+[pypi-dependencies]
+pymupdf4llm = ">=0.0.2"
+duckduckgo-search = ">=5.1.0"
+docling = ">=0.1.0"
+semanticscholar = ">=0.2.0"
+reportlab = ">=4.0.0" # Added for testing PDF creation
+gseapy = ">=1.1.3"
+mygene = ">=3.2.2"
+pydeseq2 = ">=0.5.2"
+
+[feature.reports.dependencies]
+multiqc = ">=1.33"
+quarto = ">=1.8.27"
+
+[feature.alignment-extra.dependencies]
+bowtie2 = ">=2.5.5"
+hisat2 = ">=2.2.2"
+kallisto = ">=0.51.1"
+stringtie = ">=2.2.3"
+
+[feature.variant-extra.dependencies]
+freebayes = ">=1.3.10,<2"
+
+[feature.r-bulk.dependencies]
+bioconductor-edger = ">=4.4.0,<4.5"
+bioconductor-limma = ">=3.62.1,<3.63"
+
+[feature.r-splicing.dependencies]
+bioconductor-dexseq = ">=1.56.0"
+
+[feature.r-singlecell.dependencies]
+r-seurat = ">=5.4.0"
+
+[feature.specialty-general.dependencies]
+hmmer = ">=3.4"
+macs2 = ">=2.2.9.1"
+bismark = ">=0.25.1"
+
+[feature.specialty-assembly.dependencies]
+trinity = ">=2.15.2"
+
+[feature.specialty-annotation.dependencies]
+ensembl-vep = ">=115.2"
+
+[environments]
+reports = { features = ["reports"], no-default-feature = true }
+alignment-extra = { features = ["alignment-extra"], no-default-feature = true }
+variant-extra = { features = ["variant-extra"], no-default-feature = true }
+r-bulk = { features = ["r-bulk"], no-default-feature = true }
+r-splicing = { features = ["r-splicing"], no-default-feature = true }
+r-singlecell = { features = ["r-singlecell"], no-default-feature = true }
+specialty-general = { features = ["specialty-general"], no-default-feature = true }
+specialty-assembly = { features = ["specialty-assembly"], no-default-feature = true }
+specialty-annotation = { features = ["specialty-annotation"], no-default-feature = true }

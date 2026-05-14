@@ -1,0 +1,69 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "output_bam": "{{selected_dir}}/align/evol2_aligned.bam",
+          "reads_1": "{{data_root}}/evol2_R1.fastq.gz",
+          "reads_2": "{{data_root}}/evol2_R2.fastq.gz",
+          "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+        },
+        "objective": "Align evolved lineage 2 reads",
+        "step_id": 6,
+        "tool_name": "bwa_mem_align"
+      }
+    ],
+    "thought_process": "Continue the missing branch rather than annotating evol1 early."
+  },
+  "covers_fix": [
+    "28"
+  ],
+  "expected_outcome": {
+    "duplicate_rejected": false,
+    "passed": true
+  },
+  "failure_class": "duplicate_detector_granularity",
+  "id": "exp44_duplicate_branch",
+  "kind": "candidate_gate",
+  "metadata": {
+    "scenario": "Sibling branch output evol2_aligned.bam must not fuzzy-resolve to existing evol1_aligned.bam.",
+    "workspace_files": [
+      "{{selected_dir}}/align/evol1_aligned.bam",
+      "{{selected_dir}}/assembly/scaffolds.fasta",
+      "{{data_root}}/evol1_R1.fastq.gz",
+      "{{data_root}}/evol1_R2.fastq.gz",
+      "{{data_root}}/evol2_R1.fastq.gz",
+      "{{data_root}}/evol2_R2.fastq.gz"
+    ]
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/align/evol1_aligned.bam",
+            "reads_1": "{{data_root}}/evol1_R1.fastq.gz",
+            "reads_2": "{{data_root}}/evol1_R2.fastq.gz",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "objective": "Align evolved lineage 1 reads",
+          "step_id": 5,
+          "tool_name": "bwa_mem_align"
+        }
+      ],
+      "thought_process": ""
+    },
+    "step_statuses": [
+      "completed"
+    ]
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "exp44",
+  "temperature": 0.3
+}

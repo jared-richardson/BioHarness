@@ -1,0 +1,44 @@
+[
+  {
+    "id": "methylation_basic",
+    "setup": "paired_with_ref",
+    "prompt": "Run bisulfite methylation analysis with Bismark-style processing.",
+    "contract": {"must_include_capabilities": ["methylation_analysis", "alignment", "reference_inputs"], "explicit_tool_hints": ["bismark"]},
+    "expected_pipeline_id": "methylation_bismark_style"
+  },
+  {
+    "id": "metagenomics_taxonomy",
+    "setup": "paired_fastq",
+    "prompt": "Profile metagenomics reads with Kraken2 and Bracken.",
+    "contract": {"must_include_capabilities": ["metagenomics_profiling"], "explicit_tool_hints": ["kraken2", "bracken"]},
+    "expected_pipeline_id": "metagenomics_kraken2_bracken_style"
+  },
+  {
+    "id": "fusion_detection",
+    "setup": "paired_fastq",
+    "prompt": "Detect RNA fusions using STAR-Fusion style workflow.",
+    "contract": {"must_include_capabilities": ["fusion_detection", "alignment"], "explicit_tool_hints": ["STAR-Fusion"]},
+    "expected_pipeline_id": "fusion_star_fusion_style"
+  },
+  {
+    "id": "cnv_from_bam",
+    "setup": "bam_with_ref",
+    "prompt": "Perform CNV analysis with CNVkit-style methods on this BAM.",
+    "contract": {"must_include_capabilities": ["cnv_analysis", "reference_inputs", "alignment"], "explicit_tool_hints": ["cnvkit"]},
+    "expected_pipeline_id": "cnv_cnvkit_style"
+  },
+  {
+    "id": "immune_repertoire",
+    "setup": "paired_fastq",
+    "prompt": "Profile the immune repertoire with MiXCR.",
+    "contract": {"must_include_capabilities": ["immune_repertoire_profiling"], "explicit_tool_hints": ["mixcr"]},
+    "expected_pipeline_id": "immune_repertoire_mixcr_style"
+  },
+  {
+    "id": "phylogenetics_tree",
+    "setup": "protein_fasta",
+    "prompt": "Infer a phylogenetic tree with IQ-TREE.",
+    "contract": {"must_include_capabilities": ["phylogenetics", "protein_analysis"], "explicit_tool_hints": ["iqtree"]},
+    "expected_pipeline_id": "phylogenetics_iqtree_style"
+  }
+]

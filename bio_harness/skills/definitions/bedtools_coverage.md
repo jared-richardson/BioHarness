@@ -1,0 +1,49 @@
+---
+name: bedtools_coverage
+description: Summarize interval coverage or overlap counts with bedtools coverage.
+when_to_use: Use for deterministic interval coverage summaries against BED, BEDGRAPH, or BAM-derived features
+when_not_to_use: Do not use for BAM QC text summaries such as flagstat or idxstats
+risk_level: low
+tools_required:
+- bedtools
+capabilities:
+- interval_operations
+input_types:
+- bed
+output_types:
+- tsv
+analysis_categories:
+- general
+parameters:
+  a_intervals:
+    type: path
+    description: BED or interval file supplied as -a.
+    required: true
+  b_features:
+    type: path
+    description: BED, BEDGRAPH, or BAM-derived feature file supplied as -b.
+    required: true
+  output_tsv:
+    type: path
+    description: Output path for the coverage summary.
+    required: true
+    file_role: output_dir
+  counts_only:
+    type: boolean
+    description: Emit only the overlap count per A interval.
+    required: false
+  split_alignments:
+    type: boolean
+    description: Treat split BAM or BED12 alignments as distinct blocks.
+    required: false
+  sorted_input:
+    type: boolean
+    description: Whether both inputs are already coordinate-sorted.
+    required: false
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+command_template: bedtools coverage -a {a_intervals} -b {b_features} > {output_tsv}
+---
+Use for deterministic coverage summaries over genomic intervals without pushing
+`bedtools coverage` planning into free-form shell code.

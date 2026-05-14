@@ -1,0 +1,68 @@
+---
+name: edger_run
+description: Run edgeR GLM differential expression from counts and metadata.
+when_to_use: Use for differential gene expression with edgeR, alternative to DESeq2
+when_not_to_use: Not for transcript-level quantification; DESeq2 may be preferred for small samples
+risk_level: medium
+tools_required:
+- rscript
+- edger
+capabilities:
+- differential_analysis
+- group_comparison
+input_types:
+- tsv
+- csv
+output_types:
+- tsv
+- csv
+analysis_categories:
+- rna_seq_differential_expression
+- multi_model_dge_pathway
+parameters:
+  script_path:
+    type: path
+    description: Path to edgeR wrapper R script.
+    required: false
+    ownership: harness_managed
+  counts_matrix:
+    type: path
+    description: Raw count matrix file.
+    required: true
+    file_role: counts_matrix
+    ownership: user_input
+  metadata_table:
+    type: path
+    description: Sample metadata table.
+    required: true
+    file_role: sample_metadata
+    ownership: user_input
+  design_formula:
+    type: string
+    description: GLM design formula.
+    required: true
+    ownership: tuning
+  contrast:
+    type: string
+    description: edgeR contrast specification.
+    required: true
+    ownership: tuning
+  output_dir:
+    type: path
+    description: Output directory for result tables.
+    required: true
+    file_role: output_dir
+    ownership: execution_output
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 2
+command_template: Rscript {script_path} --counts {counts_matrix} --metadata {metadata_table} --design {design_formula} --contrast
+  {contrast} --outdir {output_dir}
+---
+Use for negative-binomial differential expression workflows with edgeR.
+
+## Onboarding Metadata
+- Source: https://bioconductor.org/packages/edgeR/
+- Source Mode: official_docs
+- Installed At: curated_seed_v1
+- Install Workflow: controlled_curated_batch_onboarding:expression_core

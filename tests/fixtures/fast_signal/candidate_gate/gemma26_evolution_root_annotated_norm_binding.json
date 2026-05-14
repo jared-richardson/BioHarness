@@ -1,0 +1,243 @@
+{
+  "analysis_family": "evolution",
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "input_vcf": "{{selected_dir}}/variants/evol1.annotated.vcf",
+          "output_vcf": "{{selected_dir}}/variants/evol1.annotated.normalized.vcf.gz"
+        },
+        "branch_id": "evol1",
+        "objective": "Normalize the evol1 annotated VCF.",
+        "tool_name": "bcftools_norm_run"
+      }
+    ],
+    "thought_process": "Gemma emitted the correct branch-local normalization stage after annotation."
+  },
+  "captured_against_model_digest": "5571076f3d70",
+  "covers_fix": [
+    "gemma26_generalization",
+    "A3"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "input_vcf": "evol1.annotated.vcf.gz",
+      "output_vcf": "variants/evol1.annotated.normalized.vcf.gz",
+      "reference_fasta": "assembly/scaffolds.fasta"
+    },
+    "accepted_branch_id": "evol1",
+    "accepted_tool_name": "bcftools_norm_run"
+  },
+  "failure_class": "annotated_vcf_handoff_binding",
+  "failure_class_id": "annotated_vcf_handoff_binding",
+  "id": "gemma26_evolution_root_annotated_norm_binding",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "workspace_files": [
+      "{{data_root}}/anc_R1.fastq.gz",
+      "{{data_root}}/anc_R2.fastq.gz",
+      "{{data_root}}/evol1_R1.fastq.gz",
+      "{{data_root}}/evol1_R2.fastq.gz",
+      "{{data_root}}/evol2_R1.fastq.gz",
+      "{{data_root}}/evol2_R2.fastq.gz",
+      "{{selected_dir}}/assembly/scaffolds.fasta",
+      "{{selected_dir}}/annotation/genes.gff",
+      "{{selected_dir}}/alignments/anc_aligned.bam",
+      "{{selected_dir}}/alignments/evol1_aligned.bam",
+      "{{selected_dir}}/alignments/evol2_aligned.bam",
+      "{{selected_dir}}/variants/anc_raw.vcf",
+      "{{selected_dir}}/variants/evol1_raw.vcf",
+      "{{selected_dir}}/variants/evol2_raw.vcf",
+      "{{selected_dir}}/variants/anc.filtered.vcf.gz",
+      "{{selected_dir}}/variants/anc.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol2.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol2.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz",
+      "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz",
+      "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz.tbi",
+      "{{selected_dir}}/evol1.annotated.vcf.gz",
+      "{{selected_dir}}/variants/evol2.annotated.vcf"
+    ]
+  },
+  "model": "gemma4:26b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "benchmark_policy": "scientific_harness",
+      "protocol_grounding": {
+        "min_variant_branches": 2,
+        "requires_shared_comparison": true
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {
+            "output_dir": "{{selected_dir}}/assembly",
+            "reads_1": "{{data_root}}/anc_R1.fastq.gz",
+            "reads_2": "{{data_root}}/anc_R2.fastq.gz"
+          },
+          "step_id": 0,
+          "tool_name": "spades_assemble"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/anc_aligned.bam"
+          },
+          "branch_id": "ancestor",
+          "step_id": 1,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/anc_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/anc_raw.vcf"
+          },
+          "branch_id": "ancestor",
+          "step_id": 2,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/anc_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+          },
+          "branch_id": "ancestor",
+          "step_id": 3,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol1_aligned.bam"
+          },
+          "branch_id": "evol1",
+          "step_id": 4,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol1_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol1_raw.vcf"
+          },
+          "branch_id": "evol1",
+          "step_id": 5,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol1_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol1.filtered.vcf.gz"
+          },
+          "branch_id": "evol1",
+          "step_id": 6,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol2_aligned.bam"
+          },
+          "branch_id": "evol2",
+          "step_id": 7,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol2_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol2_raw.vcf"
+          },
+          "branch_id": "evol2",
+          "step_id": 8,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol2_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol2.filtered.vcf.gz"
+          },
+          "branch_id": "evol2",
+          "step_id": 9,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "input_vcfs": [
+              "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+              "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+            ],
+            "output_dir": "{{selected_dir}}/variants/.isec_evol1.ancestor_subtracted",
+            "output_vcf": "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz"
+          },
+          "branch_id": "evol1",
+          "step_id": 10,
+          "tool_name": "bcftools_isec_run"
+        },
+        {
+          "arguments": {
+            "input_vcfs": [
+              "{{selected_dir}}/variants/evol2.filtered.vcf.gz",
+              "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+            ],
+            "output_dir": "{{selected_dir}}/variants/.isec_evol2.ancestor_subtracted",
+            "output_vcf": "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz"
+          },
+          "branch_id": "evol2",
+          "step_id": 11,
+          "tool_name": "bcftools_isec_run"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz",
+            "output_vcf": "{{selected_dir}}/evol1.annotated.vcf.gz"
+          },
+          "branch_id": "evol1",
+          "step_id": 12,
+          "tool_name": "snpeff_annotate"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz",
+            "output_vcf": "{{selected_dir}}/variants/evol2.annotated.vcf"
+          },
+          "branch_id": "evol2",
+          "step_id": 13,
+          "tool_name": "snpeff_annotate"
+        }
+      ],
+      "thought_process": ""
+    },
+    "step_statuses": [
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed"
+    ]
+  },
+  "schema_version": 1,
+  "source_run": "gemma26_final_generalization_mini_preflight_20260501",
+  "tags": [
+    "evolution",
+    "candidate_gate",
+    "bcftools_norm_run",
+    "snpeff_annotate",
+    "gemma26"
+  ],
+  "temperature": null
+}

@@ -1,0 +1,26 @@
+{
+  "analysis_type": "mixed",
+  "candidate": {},
+  "covers_fix": [],
+  "expected_outcome": {
+    "forbid_silent_corruption": true,
+    "min_steps": 2,
+    "passed": true,
+    "required_tools": [
+      "featurecounts_run",
+      "deseq2_run"
+    ]
+  },
+  "failure_class": "corpus_idiom",
+  "id": "corpus_qwen36_top10_idioms",
+  "kind": "planner_shape",
+  "metadata": {
+    "scenario": "Representative mixed idiom fixture until the empirical corpus promotes generated fixtures."
+  },
+  "model": "qwen3.6",
+  "prefix_state": {},
+  "raw_emission": "{\"plan_outline\":[{\"step_id\":1,\"tool_name\":\"featurecounts_run\",\"objective\":\"Quantify gene counts\",\"parameter_hints\":{\"input_bam\":\"aligned/sample1.bam\",\"output_counts\":\"counts.tsv\"}},{\"step_id\":2,\"tool_name\":\"deseq2_run\",\"objective\":\"Run differential expression\",\"depends_on\":[1],\"parameter_hints\":{\"counts_table\":\"counts.tsv\",\"output_csv\":\"de_results.csv\"}}]}",
+  "schema_version": 1,
+  "source_run": "plan_shape_corpus_seed",
+  "temperature": 0.7
+}

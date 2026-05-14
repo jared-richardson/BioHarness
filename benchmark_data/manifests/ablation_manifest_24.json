@@ -1,0 +1,31 @@
+{
+  "description": "24-case expanded ablation suite across 3 bands",
+  "cases": [
+    {"id": "control_evolution", "band": 1, "data_root": "workspace/benchmarks/bioagent-bench/tasks/evolution/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/evolution/prompt.txt"},
+    {"id": "control_deseq", "band": 1, "data_root": "workspace/benchmarks/bioagent-bench/tasks/deseq/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/deseq/prompt.txt"},
+    {"id": "control_germline", "band": 1, "data_root": "workspace/benchmarks/bioagent-bench/tasks/germline-vc/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/germline-vc/prompt.txt"},
+    {"id": "control_transcript", "band": 1, "data_root": "workspace/benchmarks/bioagent-bench/tasks/transcript-quant/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/transcript-quant/prompt.txt"},
+    {"id": "control_phylogenetics", "band": 1, "data_root": "workspace/benchmarks/bioagent-bench/tasks/phylogenetics/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/phylogenetics/prompt.txt"},
+    {"id": "control_singlecell", "band": 1, "data_root": "workspace/benchmarks/bioagent-bench/tasks/single-cell/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/single-cell/prompt.txt"},
+
+    {"id": "domain_longread_sv", "band": 2, "data_root": "workspace/benchmark_data/long_read/dna_sv/data", "prompt_file": "workspace/benchmark_data/long_read/dna_sv/prompt.txt"},
+    {"id": "domain_longread_assembly", "band": 2, "data_root": "workspace/benchmark_data/long_read/assembly/data", "prompt_file": "workspace/benchmark_data/long_read/assembly/prompt.txt"},
+    {"id": "domain_spatial", "band": 2, "data_root": "workspace/benchmark_data/spatial/clean_visium/data", "prompt_file": "workspace/benchmark_data/spatial/clean_visium/prompt.txt"},
+    {"id": "domain_proteomics", "band": 2, "data_root": "workspace/benchmark_data/proteomics/clean/data", "prompt_file": "workspace/benchmark_data/proteomics/clean/prompt.txt"},
+    {"id": "domain_metabolomics", "band": 2, "data_root": "workspace/benchmark_data/metabolomics/clean/data", "prompt_file": "workspace/benchmark_data/metabolomics/clean/prompt.txt"},
+    {"id": "domain_metagenomics", "band": 2, "data_root": "workspace/benchmarks/bioagent-bench/tasks/metagenomics/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/metagenomics/prompt.txt"},
+    {"id": "domain_viral_meta", "band": 2, "data_root": "workspace/benchmarks/bioagent-bench/tasks/viral-metagenomics/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/viral-metagenomics/prompt.txt"},
+    {"id": "domain_variant_annot", "band": 2, "data_root": "workspace/benchmarks/bioagent-bench/tasks/variant-annotation/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/variant-annotation/prompt.txt"},
+    {"id": "domain_alzheimer", "band": 2, "data_root": "workspace/benchmarks/bioagent-bench/tasks/alzheimer-mouse/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/alzheimer-mouse/prompt.txt"},
+    {"id": "domain_cystic_fibrosis", "band": 2, "data_root": "workspace/benchmarks/bioagent-bench/tasks/cystic-fibrosis/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/cystic-fibrosis/prompt.txt"},
+
+    {"id": "stress_longread_wrong_preset", "band": 3, "data_root": "workspace/benchmark_data/long_read/dna_sv_pacbio/data", "prompt_file": "workspace/benchmark_data/long_read/dna_sv_pacbio/prompt.txt"},
+    {"id": "stress_proteomics_missing", "band": 3, "data_root": "workspace/benchmark_data/proteomics/high_missingness/data", "prompt_file": "workspace/benchmark_data/proteomics/high_missingness/prompt.txt"},
+    {"id": "stress_metabolomics_missing", "band": 3, "data_root": "workspace/benchmark_data/metabolomics/high_missingness/data", "prompt_file": "workspace/benchmark_data/metabolomics/high_missingness/prompt.txt"},
+    {"id": "stress_spatial_fragment", "band": 3, "data_root": "workspace/benchmark_data/spatial/mild_fragmentation/data", "prompt_file": "workspace/benchmark_data/spatial/mild_fragmentation/prompt.txt"},
+    {"id": "stress_noisy_evolution", "band": 3, "data_root": "workspace/benchmarks/bioagent-bench/tasks/evolution/data", "prompt_file": "workspace/benchmark_data/ablation_prompts/noisy_evolution.txt"},
+    {"id": "stress_noisy_deseq", "band": 3, "data_root": "workspace/benchmarks/bioagent-bench/tasks/deseq/data", "prompt_file": "workspace/benchmark_data/ablation_prompts/noisy_deseq.txt"},
+    {"id": "stress_assembly_malformed", "band": 3, "data_root": "workspace/benchmark_data/long_read/assembly_malformed/data", "prompt_file": "workspace/benchmark_data/long_read/assembly_malformed/prompt.txt"},
+    {"id": "stress_germline_no_rg", "band": 3, "data_root": "workspace/benchmark_data/ablation_data/germline_no_rg/data", "prompt_file": "workspace/benchmarks/bioagent-bench/tasks/germline-vc/prompt.txt"}
+  ]
+}

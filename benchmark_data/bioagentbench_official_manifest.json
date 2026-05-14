@@ -1,0 +1,331 @@
+[
+  {
+    "task_id": "alzheimer-mouse",
+    "task_name": "Alzheimer Mouse Models: Comparative Pathway Analysis",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/alzheimer-mouse",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/alzheimer-mouse/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/alzheimer-mouse",
+    "task_prompt": "Perform a comparative differential expression analysis of the 5xFAD, 3xTG-AD, and PS3O1S Alzheimer's mouse models to identify shared molecular KEGG pathways. Use the provided count matrices and differential-expression table, and produce the shared-pathway comparison CSV in the requested schema.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300,
+      "planner_hierarchical_mode": "off"
+    },
+    "deliverables": [
+      {
+        "path": "final/pathway_comparison.csv",
+        "description": "Write the shared-pathway comparison CSV final deliverable.",
+        "columns": ["Pathway", "5xFAD_pvalue", "3xTG_AD_pvalue", "PS3O1S_pvalue"]
+      }
+    ],
+    "validator_script": "scripts/validate_alzheimer_mouse.py",
+    "validator_args": [
+      "{task_dir}/results/pathway_comparison.csv",
+      "{selected_dir}/final/pathway_comparison.csv"
+    ]
+  },
+  {
+    "task_id": "evolution",
+    "task_name": "Experimental Evolution Variant Calling (E. coli)",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/evolution",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/evolution/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/evolution",
+    "task_prompt": "Identify and annotate genome variants in two evolved lines relative to an ancestor line of E. coli; report only variants shared by both evolved lines with moderate or higher predicted severity.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300,
+      "planner_hierarchical_mode": "off",
+      "planner_model_name": "qwen3-coder-next:latest"
+    },
+    "deliverables": [
+      {
+        "path": "final/variants_shared.csv",
+        "description": "Write the shared-variant CSV final deliverable.",
+        "columns": ["chrom", "pos", "ref", "alt", "gene", "impact", "effect", "status"]
+      }
+    ],
+    "validator_script": "scripts/validate_evolution.py",
+    "validator_args": [
+      "{task_dir}/results/variants_shared.csv",
+      "{selected_dir}/final/variants_shared.csv"
+    ]
+  },
+  {
+    "task_id": "cystic-fibrosis",
+    "task_name": "Cystic Fibrosis Mendelian Variant Identification",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/cystic-fibrosis",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/cystic-fibrosis/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/cystic-fibrosis",
+    "task_prompt": "Find the genetic cause of cystic fibrosis; identify the causal recessive CFTR variant consistent with affected siblings NA12885, NA12886, and NA12879. Use the already annotated family VCF in {data_root}, use the family structure in {data_root}/family_description.txt, and when helpful use the local ClinVar reference at {task_dir}/references/clinvar_20250521.vcf.gz. The output should be a CSV with the requested clinical columns.",
+    "runner_defaults": {
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300,
+      "planner_hierarchical_mode": "off"
+    },
+    "deliverables": [
+      {
+        "path": "final/cf_variants.csv",
+        "description": "Write the final cystic-fibrosis variant CSV.",
+        "columns": ["chromosome", "position", "variant_id", "reference", "alternate", "gene_name", "gene_id", "annotation", "impact", "transcript_id", "hgvs_c", "hgvs_p", "clinical_significance", "diseases", "review_status", "rs_id"]
+      }
+    ],
+    "validator_script": "scripts/validate_cystic_fibrosis.py",
+    "validator_args": [
+      "{task_dir}/results/cf_variants.csv",
+      "{selected_dir}/final/cf_variants.csv"
+    ]
+  },
+  {
+    "task_id": "transcript-quant",
+    "task_name": "Transcript Quantification (Simulated RNA-Seq)",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/transcript-quant",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/transcript-quant/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/transcript-quant",
+    "task_prompt": "Perform transcript quantification on the provided paired-end RNA-seq reads using the transcriptome reference.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "deliverables": [
+      {
+        "path": "final/transcript_counts.tsv",
+        "description": "Write the transcript-count TSV final deliverable.",
+        "columns": ["transcript_id", "count"]
+      }
+    ],
+    "validator_script": "scripts/validate_transcript_quant.py",
+    "validator_args": [
+      "{task_dir}/results/truth.tsv",
+      "{selected_dir}/final/transcript_counts.tsv"
+    ]
+  },
+  {
+    "task_id": "giab",
+    "task_name": "GIAB Germline Variant Calling",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/germline-vc",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/germline-vc/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/giab",
+    "task_prompt": "Use the provided NA12878 sequencing data and reference genome to perform germline variant calling.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "deliverables": [
+      {
+        "path": "final/variants.vcf",
+        "description": "Write the final germline variant calls as a VCF."
+      }
+    ],
+    "validator_script": "scripts/validate_germline_vc.py",
+    "validator_args": [
+      "{task_dir}/results/truth_variants.vcf",
+      "{selected_dir}/final/variants.vcf"
+    ]
+  },
+  {
+    "task_id": "single-cell",
+    "task_name": "Single-Cell RNA-Seq Exercise Response",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/single-cell",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/single-cell/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/single-cell",
+    "task_prompt": "Analyze single-cell RNA-seq data from pre- and post-exercise skeletal muscle samples. Perform clustering, cell type identification, and differential expression analysis within each cell type between conditions. The output should be a CSV file with the following columns: 'cluster_id','predicted_cell_type','gene_name','logfoldchanges','pvals','pvals_adj','direction','abs_logfc'.",
+    "output_requirements": [
+      "For automated evaluation, write the final CSV deliverable at {selected_dir}/final/single_cell_results.csv.",
+      "For automated evaluation, write cluster assignments JSON mapping barcode to cluster ID at {selected_dir}/cluster_assignments.json.",
+      "For automated evaluation, write marker genes JSON mapping cluster ID to marker-gene lists at {selected_dir}/marker_genes.json."
+    ],
+    "deliverables": [
+      {
+        "path": "final/single_cell_results.csv",
+        "description": "Write the final single-cell summary CSV.",
+        "columns": [
+          "cluster_id",
+          "predicted_cell_type",
+          "gene_name",
+          "logfoldchanges",
+          "pvals",
+          "pvals_adj",
+          "direction",
+          "abs_logfc"
+        ]
+      },
+      {
+        "path": "cluster_assignments.json",
+        "description": "Write the cluster-assignment JSON."
+      },
+      {
+        "path": "marker_genes.json",
+        "description": "Write the marker-genes JSON."
+      }
+    ],
+    "runner_defaults": {
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "validator_script": "scripts/validate_single_cell.py",
+    "validator_args": [
+      "{task_dir}/results",
+      "{selected_dir}"
+    ]
+  },
+  {
+    "task_id": "deseq",
+    "task_name": "RNA-Seq Differential Expression (DESeq2)",
+    "benchmark_family": "bioagentbench_official",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/deseq",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/deseq/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/deseq",
+    "task_prompt": "Identify differentially expressed genes between planktonic and biofilm conditions of Candida parapsilosis using DESeq2.",
+    "deliverables": [
+      {
+        "path": "final/deseq_results.csv",
+        "description": "Write the differential-expression result CSV.",
+        "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+      }
+    ],
+    "validator_script": "scripts/validate_deseq.py",
+    "validator_args": [
+      "{task_dir}/results/results/up_regulated_genes.csv",
+      "{selected_dir}/final/deseq_results.csv"
+    ],
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300,
+      "planner_hierarchical_mode": "off"
+    }
+  },
+  {
+    "task_id": "metagenomics",
+    "task_name": "Metagenomics Classification (Local Structured Eval)",
+    "benchmark_family": "bioharness_local_eval",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/metagenomics",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/metagenomics/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/metagenomics",
+    "task_prompt": "Classify the provided shotgun metagenomic reads with Kraken2 and use the prebuilt Kraken2 database at {task_dir}/references/kraken2_db. Produce a community-composition report and keep the analysis within the selected directory.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "output_requirements": [
+      "Write the Kraken2 classification report at {selected_dir}/output/sample_kraken2_report.txt.",
+      "Write the assembly contigs FASTA at {selected_dir}/assembly/metaspades/contigs.fasta."
+    ],
+    "deliverables": [
+      {
+        "path": "output/sample_kraken2_report.txt",
+        "description": "Write the Kraken2 report."
+      },
+      {
+        "path": "assembly/metaspades/contigs.fasta",
+        "description": "Write the metagenome assembly contigs FASTA."
+      }
+    ],
+    "validator_script": "scripts/validate_metagenomics.py",
+    "validator_args": [
+      "{task_dir}/results/truth.json",
+      "{selected_dir}/output/sample_kraken2_report.txt",
+      "{selected_dir}/assembly/metaspades/contigs.fasta"
+    ]
+  },
+  {
+    "task_id": "viral-metagenomics",
+    "task_name": "Viral Metagenomics (Local Structured Eval)",
+    "benchmark_family": "bioharness_local_eval",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/viral-metagenomics",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/viral-metagenomics/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/viral-metagenomics",
+    "task_prompt": "Identify viruses in the paired-end reads by mapping against the viral reference FASTAs staged in {task_dir}/references. Use short-read minimap2 alignment against the local viral panel and write the required final files under {selected_dir}/output.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "output_requirements": [],
+    "deliverables": [
+      {
+        "path": "output/classification_report.tsv",
+        "description": "Write the viral classification report TSV."
+      },
+      {
+        "path": "output/detected_viruses.txt",
+        "description": "Write the detected viruses list."
+      }
+    ],
+    "validator_script": "scripts/validate_viral_metagenomics.py",
+    "validator_args": [
+      "{task_dir}/results/truth.json",
+      "{selected_dir}/output"
+    ]
+  },
+  {
+    "task_id": "phylogenetics",
+    "task_name": "Phylogenetics (Local Structured Eval)",
+    "benchmark_family": "bioharness_local_eval",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/phylogenetics",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/phylogenetics/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/phylogenetics",
+    "task_prompt": "Infer a phylogenetic tree from the provided unaligned sequences using multiple-sequence alignment and tree inference.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "deliverables": [
+      {
+        "path": "final/phylogeny.treefile",
+        "description": "Write the inferred Newick tree."
+      }
+    ],
+    "validator_script": "scripts/validate_phylogenetics.py",
+    "validator_args": [
+      "{task_dir}/results/truth_tree.nwk",
+      "{selected_dir}/final/phylogeny.treefile"
+    ]
+  },
+  {
+    "task_id": "variant-annotation",
+    "task_name": "Variant Annotation (Local Structured Eval)",
+    "benchmark_family": "bioharness_local_eval",
+    "task_dir": "workspace/benchmarks/bioagent-bench/tasks/variant-annotation",
+    "data_root": "workspace/benchmarks/bioagent-bench/tasks/variant-annotation/data",
+    "runs_root": "workspace/benchmarks/bioagent-bench/official_runs/variant-annotation",
+    "task_prompt": "Annotate the provided VCF with functional impact predictions using the provided reference FASTA and GFF annotation, then filter for HIGH and MODERATE impact variants.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300
+    },
+    "output_requirements": [
+      "Write the annotated VCF at {selected_dir}/output/annotated.vcf.",
+      "Write the filtered HIGH/MODERATE-impact VCF at {selected_dir}/output/filtered_pathogenic.vcf."
+    ],
+    "deliverables": [
+      {
+        "path": "output/annotated.vcf",
+        "description": "Write the annotated VCF."
+      },
+      {
+        "path": "output/filtered_pathogenic.vcf",
+        "description": "Write the filtered VCF."
+      }
+    ],
+    "validator_script": "scripts/validate_variant_annotation.py",
+    "validator_args": [
+      "{task_dir}/results/truth.json",
+      "{selected_dir}/output/annotated.vcf",
+      "{selected_dir}/output/filtered_pathogenic.vcf"
+    ]
+  }
+]

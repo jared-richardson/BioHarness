@@ -1,0 +1,27 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {},
+  "covers_fix": [
+    "24"
+  ],
+  "expected_outcome": {
+    "forbid_silent_corruption": true,
+    "min_steps": 1,
+    "passed": true,
+    "required_tools": [
+      "freebayes_call"
+    ]
+  },
+  "failure_class": "branch_identity",
+  "id": "exp40_empty_branch_id",
+  "kind": "planner_shape",
+  "metadata": {
+    "scenario": "Branch identity is missing as a field but recoverable from objective text."
+  },
+  "model": "qwen3.6",
+  "prefix_state": {},
+  "raw_emission": "{\"workflow\":[{\"step_id\":1,\"tool_name\":\"freebayes_call\",\"branch_id\":\"\",\"objective\":\"Call variants for evolved lineage 1\",\"parameter_hints\":{\"input_bam\":\"evol1_aligned.bam\",\"output_vcf\":\"evol1_raw.vcf\"}}]}",
+  "schema_version": 1,
+  "source_run": "exp40",
+  "temperature": 0.3
+}

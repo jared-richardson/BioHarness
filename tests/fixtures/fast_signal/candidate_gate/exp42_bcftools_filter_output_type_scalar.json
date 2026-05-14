@@ -1,0 +1,90 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "filter_expression": "QUAL>=30",
+          "input_vcf": "/tmp/bogus/evol1_raw.vcf",
+          "output_type": "z",
+          "output_vcf": "/tmp/bogus/evol1.filtered.vcf.gz"
+        },
+        "branch_id": "evol1",
+        "objective": "Filter evol1 raw variants and keep the bgzipped VCF output mode.",
+        "step_id": 4,
+        "tool_name": "bcftools_filter_run"
+      }
+    ],
+    "thought_process": "Use the typed bcftools filter wrapper with output_type as a scalar flag."
+  },
+  "covers_fix": [
+    "26"
+  ],
+  "expected_outcome": {
+    "bound_arguments_contains": {
+      "input_vcf": "evol1_raw.vcf",
+      "output_vcf": "evol1.filtered.vcf.gz"
+    },
+    "bound_arguments_equals": {
+      "output_type": "z"
+    }
+  },
+  "failure_class": "tool_registry_scalar_output_type",
+  "id": "exp42_bcftools_filter_output_type_scalar",
+  "kind": "candidate_gate",
+  "metadata": {
+    "scenario": "Fix #26: bcftools_filter_run output_type must stay the scalar flag `z`, not be rewritten as an output path.",
+    "workspace_files": [
+      "{{selected_dir}}/variants/evol1_raw.vcf"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "benchmark_policy": "bioagentbench_planning_strict",
+      "execution_contract": {
+        "compatible_tools": [
+          "bcftools_filter_run"
+        ],
+        "execution_mode": "direct_wrapper",
+        "required_tools": []
+      },
+      "plan_skeleton": [
+        [
+          "bcftools_filter_run",
+          "Filter evol1 raw variants",
+          {
+            "output_type": "z"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "bcftools_filter_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "variant_calling",
+        "compatible_tools": [
+          "bcftools_filter_run"
+        ],
+        "execution_mode": "direct_wrapper"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "exp42",
+  "tags": [
+    "direct_wrapper",
+    "output_type",
+    "scalar_argument",
+    "variant_filtering"
+  ],
+  "temperature": 0.3
+}

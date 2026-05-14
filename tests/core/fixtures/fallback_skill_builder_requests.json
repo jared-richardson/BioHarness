@@ -1,0 +1,83 @@
+[
+  {
+    "name": "splicing",
+    "setup": "two_group_fastq",
+    "target_capability_set": ["splicing_analysis", "alignment", "group_comparison", "reference_inputs"],
+    "allowed_tools": ["star", "rmats", "samtools", "fastqc"],
+    "strictness_mode": "conservative",
+    "request_text": "Run alternative splicing analysis with rMATS comparing control and treatment.",
+    "expected_actions": ["reuse"],
+    "expected_pipeline_token": "sr_rna_splicing_rmats_star"
+  },
+  {
+    "name": "variant",
+    "setup": "single_pair",
+    "target_capability_set": ["alignment", "variant_calling", "reference_inputs"],
+    "allowed_tools": ["bcftools", "bwa", "samtools"],
+    "strictness_mode": "conservative",
+    "request_text": "Call germline variants using bcftools.",
+    "expected_actions": ["reuse"],
+    "expected_pipeline_token": "germline_variant_bcftools"
+  },
+  {
+    "name": "de",
+    "setup": "counts",
+    "target_capability_set": ["differential_analysis", "group_comparison"],
+    "allowed_tools": ["rscript"],
+    "strictness_mode": "conservative",
+    "request_text": "Run differential expression from counts and metadata.",
+    "expected_actions": ["reuse"],
+    "expected_pipeline_token": "differential_expression_deseq2_from_counts"
+  },
+  {
+    "name": "protein",
+    "setup": "protein",
+    "target_capability_set": ["protein_analysis", "annotation"],
+    "allowed_tools": ["blastp"],
+    "strictness_mode": "conservative",
+    "request_text": "Run a protein homology search with BLASTP.",
+    "expected_actions": ["reuse"],
+    "expected_pipeline_token": "protein_blastp_homology"
+  },
+  {
+    "name": "novel",
+    "setup": "none",
+    "target_capability_set": ["methylation_analysis"],
+    "allowed_tools": ["bismark"],
+    "strictness_mode": "aggressive",
+    "request_text": "Run a methylation fallback.",
+    "expected_actions": ["reuse", "extend"],
+    "expected_pipeline_token": "methylation_bismark_style"
+  },
+  {
+    "name": "uncommon_metagenomics",
+    "setup": "single_pair",
+    "target_capability_set": ["metagenomics_profiling"],
+    "allowed_tools": ["kraken2", "bracken"],
+    "strictness_mode": "conservative",
+    "request_text": "Profile metagenomics reads with Kraken2 and Bracken.",
+    "expected_actions": ["reuse"],
+    "expected_pipeline_token": "metagenomics_kraken2_bracken_style"
+  },
+  {
+    "name": "uncommon_phylogenetics",
+    "setup": "protein",
+    "target_capability_set": ["phylogenetics", "protein_analysis"],
+    "allowed_tools": ["iqtree2"],
+    "strictness_mode": "conservative",
+    "request_text": "Infer a phylogenetic tree with IQ-TREE.",
+    "expected_actions": ["reuse"],
+    "expected_pipeline_token": "phylogenetics_iqtree_style"
+  },
+  {
+    "name": "multi_domain_composed",
+    "setup": "single_pair_plus_protein",
+    "target_capability_set": ["alignment", "variant_calling", "reference_inputs", "annotation", "protein_analysis"],
+    "allowed_tools": ["bcftools", "bwa", "samtools", "blastp"],
+    "strictness_mode": "aggressive",
+    "request_text": "Run an all-in-one fallback covering variants and protein annotation.",
+    "expected_actions": ["extend"],
+    "expected_pipeline_token": "germline_variant_bcftools",
+    "expect_composition": true
+  }
+]

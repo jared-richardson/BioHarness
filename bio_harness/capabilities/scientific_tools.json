@@ -1,0 +1,1348 @@
+{
+  "version": 1,
+  "tools": [
+    {
+      "name": "compare_pathways.py",
+      "aliases": [
+        "compare_pathways"
+      ],
+      "support_tier": "helper_script",
+      "family": "pathway_enrichment",
+      "description": "Repo-local helper that compares shared KEGG pathway enrichment across multiple models from real count or differential-expression tables.",
+      "when_to_use": "Use for multi-model pathway comparison tasks that must compute or verify pathway overlap from real expression-derived inputs.",
+      "when_not_to_use": "Do not replace upstream differential expression or fabricate pathway tables inline.",
+      "capabilities": [
+        "pathway_enrichment",
+        "differential_analysis"
+      ],
+      "analysis_categories": [
+        "multi_model_dge_pathway"
+      ],
+      "input_types": [
+        "csv",
+        "tsv"
+      ],
+      "output_types": [
+        "csv"
+      ],
+      "required_parameters": [
+        "input_csv",
+        "output_csv"
+      ],
+      "optional_parameters": [
+        "input_txt",
+        "count_table",
+        "precomputed_de_table",
+        "output_dir",
+        "run_differential_analysis"
+      ],
+      "executables": [
+        "python3"
+      ],
+      "augment_capability_catalog": true
+    },
+    {
+      "name": "classify_metagenomics_kmer.py",
+      "aliases": [
+        "classify_metagenomics_kmer"
+      ],
+      "support_tier": "helper_script",
+      "family": "metagenomics_profiling",
+      "description": "Repo-local k-mer helper for deterministic metagenomics taxonomic profiling from paired-end reads against a staged reference set.",
+      "when_to_use": "Use when strict mode needs a helper-backed metagenomics classifier that stays within the repo scaffold.",
+      "when_not_to_use": "Do not emit fabricated abundance tables or bypass the staged reference/taxonomy inputs.",
+      "capabilities": [
+        "metagenomics_profiling"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "input_types": [
+        "fastq",
+        "reference_dir",
+        "tsv"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "reads_1",
+        "reads_2",
+        "reference_dir",
+        "taxonomy_tsv",
+        "output_report"
+      ],
+      "optional_parameters": [
+        "kmer_size"
+      ],
+      "executables": [
+        "python3"
+      ],
+      "augment_capability_catalog": true
+    },
+    {
+      "name": "classify_viral_reads_kmer.py",
+      "aliases": [
+        "classify_viral_reads_kmer"
+      ],
+      "support_tier": "helper_script",
+      "family": "metagenomics_profiling",
+      "description": "Repo-local helper for viral read classification and coverage-style detection from paired-end sequencing reads.",
+      "when_to_use": "Use for strict viral metagenomics tasks that need helper-backed detection inside the staged harness scaffold.",
+      "when_not_to_use": "Do not guess detected viruses or write final reports without processing the staged reads and reference set.",
+      "capabilities": [
+        "metagenomics_profiling"
+      ],
+      "analysis_categories": [
+        "viral_metagenomics"
+      ],
+      "input_types": [
+        "fastq",
+        "reference_dir"
+      ],
+      "output_types": [
+        "csv",
+        "tsv"
+      ],
+      "required_parameters": [
+        "reads_1",
+        "reads_2",
+        "reference_dir",
+        "output_report",
+        "output_detected"
+      ],
+      "optional_parameters": [
+        "coverage_threshold",
+        "kmer_size"
+      ],
+      "executables": [
+        "python3"
+      ],
+      "augment_capability_catalog": true
+    },
+    {
+      "name": "infer_phylogeny_biopython.py",
+      "aliases": [
+        "infer_phylogeny_biopython"
+      ],
+      "support_tier": "helper_script",
+      "family": "phylogenetics",
+      "description": "Repo-local helper that infers a phylogenetic tree from an aligned FASTA and writes a Newick tree.",
+      "when_to_use": "Use when strict mode needs a helper-backed tree inference path that stays inside the repo scaffold.",
+      "when_not_to_use": "Do not emit placeholder Newick strings or infer a tree from unaligned raw reads.",
+      "capabilities": [
+        "phylogenetics"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "tree"
+      ],
+      "required_parameters": [
+        "input_fasta",
+        "output_tree"
+      ],
+      "optional_parameters": [],
+      "executables": [
+        "python3"
+      ],
+      "augment_capability_catalog": true
+    },
+    {
+      "name": "multiqc",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "quality_control",
+      "description": "Aggregate QC reports across many samples into one summary report.",
+      "when_to_use": "Use after per-sample QC has already been generated and you need one combined report.",
+      "when_not_to_use": "Do not use as a substitute for generating the underlying QC metrics.",
+      "capabilities": [
+        "fastqc"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "input_types": [
+        "report_dir"
+      ],
+      "output_types": [
+        "html"
+      ],
+      "required_parameters": [
+        "input_dir",
+        "output_dir"
+      ],
+      "optional_parameters": [],
+      "executables": [
+        "multiqc"
+      ],
+      "repo_alternatives": [
+        "fastqc_run"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://seqera.io/multiqc/"
+    },
+    {
+      "name": "fastp",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "preprocessing",
+      "description": "Fast all-in-one read preprocessing for adapter trimming, filtering, and QC summary generation.",
+      "when_to_use": "Use for quick read trimming and filtering before downstream alignment or assembly.",
+      "when_not_to_use": "Do not use when raw reads must remain unchanged for strict benchmark comparison.",
+      "capabilities": [
+        "fastqc"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastq",
+        "html",
+        "json"
+      ],
+      "required_parameters": [
+        "in1",
+        "out1"
+      ],
+      "optional_parameters": [
+        "in2",
+        "out2",
+        "html",
+        "json"
+      ],
+      "executables": [
+        "fastp"
+      ],
+      "augment_capability_catalog": false,
+      "documentation_url": "https://github.com/OpenGene/fastp"
+    },
+    {
+      "name": "cutadapt",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "preprocessing",
+      "description": "Adapter trimming and read filtering for sequencing reads.",
+      "when_to_use": "Use when adapter contamination must be removed before downstream analysis.",
+      "when_not_to_use": "Do not use when the task assumes untouched raw reads or staged benchmark inputs.",
+      "capabilities": [
+        "fastqc"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastq"
+      ],
+      "required_parameters": [
+        "adapter",
+        "output"
+      ],
+      "optional_parameters": [
+        "paired_output",
+        "minimum_length"
+      ],
+      "executables": [
+        "cutadapt"
+      ],
+      "augment_capability_catalog": false,
+      "documentation_url": "https://cutadapt.readthedocs.io/"
+    },
+    {
+      "name": "trim_galore",
+      "aliases": [
+        "trim-galore"
+      ],
+      "support_tier": "catalog_only",
+      "family": "preprocessing",
+      "description": "Wrapper around Cutadapt and FastQC for adapter trimming and QC.",
+      "when_to_use": "Use when standard Illumina trimming plus QC is needed with one command.",
+      "when_not_to_use": "Do not use as a drop-in replacement for a fully specified read preprocessing workflow in strict mode.",
+      "capabilities": [
+        "fastqc"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastq",
+        "html"
+      ],
+      "required_parameters": [
+        "fastq"
+      ],
+      "optional_parameters": [
+        "paired",
+        "output_dir"
+      ],
+      "executables": [
+        "trim_galore"
+      ],
+      "augment_capability_catalog": false,
+      "documentation_url": "https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/"
+    },
+    {
+      "name": "trimmomatic",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "preprocessing",
+      "description": "Flexible Illumina read trimming and filtering tool.",
+      "when_to_use": "Use for configurable adapter trimming and quality filtering of short reads.",
+      "when_not_to_use": "Do not use if a task or benchmark requires untrimmed staged reads.",
+      "capabilities": [
+        "fastqc"
+      ],
+      "analysis_categories": [
+        "general"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastq"
+      ],
+      "required_parameters": [
+        "input_fastq",
+        "output_fastq"
+      ],
+      "optional_parameters": [
+        "adapter_fasta",
+        "leading",
+        "trailing",
+        "slidingwindow"
+      ],
+      "executables": [
+        "trimmomatic"
+      ],
+      "augment_capability_catalog": false,
+      "documentation_url": "https://github.com/usadellab/Trimmomatic"
+    },
+    {
+      "name": "rsem",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "quantification",
+      "description": "Transcript and gene expression quantification from RNA-seq alignments or read mappings.",
+      "when_to_use": "Use when isoform-level abundance estimates or expected counts are needed.",
+      "when_not_to_use": "Do not use as a substitute for count-based DE tools when only differential testing is needed.",
+      "capabilities": [
+        "quantification"
+      ],
+      "analysis_categories": [
+        "transcript_quantification",
+        "rna_seq_differential_expression"
+      ],
+      "input_types": [
+        "bam",
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "reference_name",
+        "reads"
+      ],
+      "optional_parameters": [
+        "paired_end",
+        "output_prefix"
+      ],
+      "executables": [
+        "rsem-calculate-expression"
+      ],
+      "repo_alternatives": [
+        "salmon_quant",
+        "kallisto_quant",
+        "featurecounts_run"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://deweylab.github.io/RSEM/"
+    },
+    {
+      "name": "stringtie",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "quantification",
+      "description": "Reference-guided transcript assembly and expression quantification.",
+      "when_to_use": "Use when transcript reconstruction and abundance estimation are both needed.",
+      "when_not_to_use": "Do not use as a variant caller or as a replacement for gene-level counting when transcript assembly is unnecessary.",
+      "capabilities": [
+        "quantification"
+      ],
+      "analysis_categories": [
+        "transcript_quantification",
+        "rna_seq_differential_expression"
+      ],
+      "input_types": [
+        "bam",
+        "gtf"
+      ],
+      "output_types": [
+        "gtf",
+        "tsv"
+      ],
+      "required_parameters": [
+        "input_bam",
+        "annotation_gtf"
+      ],
+      "optional_parameters": [
+        "output_gtf",
+        "gene_abundances"
+      ],
+      "executables": [
+        "stringtie"
+      ],
+      "repo_alternatives": [
+        "featurecounts_run",
+        "salmon_quant"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://ccb.jhu.edu/software/stringtie/"
+    },
+    {
+      "name": "alevin-fry",
+      "aliases": [
+        "alevin_fry",
+        "alevin"
+      ],
+      "support_tier": "catalog_only",
+      "family": "single_cell_analysis",
+      "description": "Single-cell RNA-seq quantification workflow built around lightweight mapping and permit-list based counting.",
+      "when_to_use": "Use for fast single-cell quantification workflows when alevin-fry references are already prepared.",
+      "when_not_to_use": "Do not use when the task explicitly requires Cell Ranger or STARsolo outputs.",
+      "capabilities": [
+        "single_cell_analysis",
+        "quantification"
+      ],
+      "analysis_categories": [
+        "single_cell_rna_seq"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "matrix"
+      ],
+      "required_parameters": [
+        "reads_1",
+        "reads_2",
+        "reference"
+      ],
+      "optional_parameters": [
+        "output_dir"
+      ],
+      "executables": [
+        "alevin-fry"
+      ],
+      "repo_alternatives": [
+        "cellranger_count",
+        "star_solo_count",
+        "sc_count_and_cluster"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://alevin-fry.readthedocs.io/"
+    },
+    {
+      "name": "deepvariant",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "variant_calling",
+      "description": "Deep learning-based small variant caller for aligned sequencing reads.",
+      "when_to_use": "Use for high-accuracy germline small variant calling when the required model and reference assets are available.",
+      "when_not_to_use": "Do not use for somatic calling or without aligned reads and a compatible reference build.",
+      "capabilities": [
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "germline_variant_calling"
+      ],
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "required_parameters": [
+        "reads",
+        "reference",
+        "output_vcf"
+      ],
+      "optional_parameters": [
+        "model_type",
+        "regions"
+      ],
+      "executables": [
+        "run_deepvariant"
+      ],
+      "repo_alternatives": [
+        "gatk_haplotypecaller",
+        "freebayes_call",
+        "bcftools_call"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/google/deepvariant"
+    },
+    {
+      "name": "strelka2",
+      "aliases": [
+        "strelka"
+      ],
+      "support_tier": "catalog_only",
+      "family": "variant_calling",
+      "description": "Germline and somatic small variant caller for aligned sequencing data.",
+      "when_to_use": "Use when a Strelka germline or tumor-normal calling workflow is explicitly desired.",
+      "when_not_to_use": "Do not use without properly aligned BAMs and the expected Strelka reference configuration.",
+      "capabilities": [
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "germline_variant_calling",
+        "variant_calling"
+      ],
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "required_parameters": [
+        "reference_fasta",
+        "input_bam"
+      ],
+      "optional_parameters": [
+        "normal_bam",
+        "tumor_bam"
+      ],
+      "executables": [
+        "configureStrelkaGermlineWorkflow.py",
+        "configureStrelkaSomaticWorkflow.py"
+      ],
+      "repo_alternatives": [
+        "gatk_haplotypecaller",
+        "gatk_mutect2_call",
+        "freebayes_call"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/Illumina/strelka"
+    },
+    {
+      "name": "vardict",
+      "aliases": [
+        "vardictjava"
+      ],
+      "support_tier": "catalog_only",
+      "family": "variant_calling",
+      "description": "Sensitive variant caller commonly used for somatic and amplicon sequencing analyses.",
+      "when_to_use": "Use for sensitive calling in tumor-normal or targeted sequencing settings.",
+      "when_not_to_use": "Do not use as a generic annotation step or without aligned BAM inputs.",
+      "capabilities": [
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "bam",
+        "bed",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "required_parameters": [
+        "input_bam",
+        "bed",
+        "reference_fasta"
+      ],
+      "optional_parameters": [
+        "normal_bam",
+        "output_vcf"
+      ],
+      "executables": [
+        "vardict"
+      ],
+      "repo_alternatives": [
+        "gatk_mutect2_call",
+        "bcftools_call"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/AstraZeneca-NGS/VarDictJava"
+    },
+    {
+      "name": "lofreq",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "variant_calling",
+      "description": "Low-frequency variant caller for high-depth sequencing data.",
+      "when_to_use": "Use when minor allele or low-frequency variants must be detected sensitively.",
+      "when_not_to_use": "Do not use as a general-purpose annotation or copy-number tool.",
+      "capabilities": [
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "variant_calling",
+        "viral_metagenomics"
+      ],
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "required_parameters": [
+        "input_bam",
+        "reference_fasta"
+      ],
+      "optional_parameters": [
+        "output_vcf"
+      ],
+      "executables": [
+        "lofreq"
+      ],
+      "repo_alternatives": [
+        "bcftools_call",
+        "freebayes_call"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://csb5.github.io/lofreq/"
+    },
+    {
+      "name": "octopus",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "variant_calling",
+      "description": "Haplotype-based variant caller for germline and somatic sequencing analyses.",
+      "when_to_use": "Use when a haplotype-aware caller beyond GATK or FreeBayes is explicitly requested.",
+      "when_not_to_use": "Do not use without aligned reads and a compatible reference.",
+      "capabilities": [
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "germline_variant_calling",
+        "variant_calling"
+      ],
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "required_parameters": [
+        "reads",
+        "reference",
+        "output"
+      ],
+      "optional_parameters": [
+        "threads",
+        "regions"
+      ],
+      "executables": [
+        "octopus"
+      ],
+      "repo_alternatives": [
+        "gatk_haplotypecaller",
+        "freebayes_call"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/luntergroup/octopus"
+    },
+    {
+      "name": "annovar",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "annotation",
+      "description": "Variant annotation framework for gene, region, and filter-based annotations.",
+      "when_to_use": "Use when ANNOVAR-specific annotation databases or output formats are required.",
+      "when_not_to_use": "Do not use as a variant caller or as a substitute for staged VCF generation.",
+      "capabilities": [
+        "annotation",
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "variant_annotation"
+      ],
+      "input_types": [
+        "vcf"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "input_vcf",
+        "database"
+      ],
+      "optional_parameters": [
+        "output_prefix"
+      ],
+      "executables": [
+        "table_annovar.pl"
+      ],
+      "repo_alternatives": [
+        "vep_annotate",
+        "snpeff_annotate"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://annovar.openbioinformatics.org/"
+    },
+    {
+      "name": "snpsift",
+      "aliases": [
+        "snpSift"
+      ],
+      "support_tier": "catalog_only",
+      "family": "annotation",
+      "description": "VCF annotation and filtering companion tool commonly used with SnpEff outputs.",
+      "when_to_use": "Use when downstream filtering or annotation manipulation of SnpEff-annotated VCFs is needed.",
+      "when_not_to_use": "Do not use before the needed annotation fields exist in the VCF.",
+      "capabilities": [
+        "annotation",
+        "variant_calling"
+      ],
+      "analysis_categories": [
+        "variant_annotation"
+      ],
+      "input_types": [
+        "vcf"
+      ],
+      "output_types": [
+        "vcf"
+      ],
+      "required_parameters": [
+        "input_vcf"
+      ],
+      "optional_parameters": [
+        "expression",
+        "database"
+      ],
+      "executables": [
+        "SnpSift"
+      ],
+      "repo_alternatives": [
+        "snpeff_annotate",
+        "vep_annotate"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://pcingola.github.io/SnpEff/snpsift/"
+    },
+    {
+      "name": "interproscan",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "protein_analysis",
+      "description": "Integrated protein signature and domain annotation across multiple databases.",
+      "when_to_use": "Use for broad functional/domain annotation of protein sequences.",
+      "when_not_to_use": "Do not use for nucleotide alignment or simple homology searches when BLASTP/HMMER is sufficient.",
+      "capabilities": [
+        "protein_analysis",
+        "annotation"
+      ],
+      "analysis_categories": [
+        "annotation",
+        "comparative_genomics"
+      ],
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv",
+        "xml",
+        "gff3"
+      ],
+      "required_parameters": [
+        "input_fasta"
+      ],
+      "optional_parameters": [
+        "formats",
+        "output_dir"
+      ],
+      "executables": [
+        "interproscan.sh"
+      ],
+      "repo_alternatives": [
+        "hmmscan_search",
+        "blastp_search"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://interproscan-docs.readthedocs.io/"
+    },
+    {
+      "name": "eggnog-mapper",
+      "aliases": [
+        "eggnog_mapper"
+      ],
+      "support_tier": "catalog_only",
+      "family": "protein_analysis",
+      "description": "Functional annotation of genes or proteins using orthology assignments.",
+      "when_to_use": "Use for broad functional annotation when orthology-based annotations are preferred.",
+      "when_not_to_use": "Do not use as a read aligner or variant caller.",
+      "capabilities": [
+        "protein_analysis",
+        "annotation"
+      ],
+      "analysis_categories": [
+        "annotation",
+        "comparative_genomics"
+      ],
+      "input_types": [
+        "fasta_protein"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "input_fasta",
+        "output_prefix"
+      ],
+      "optional_parameters": [
+        "database"
+      ],
+      "executables": [
+        "emapper.py"
+      ],
+      "repo_alternatives": [
+        "hmmscan_search",
+        "blastp_search",
+        "prokka_annotate"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/eggnogdb/eggnog-mapper"
+    },
+    {
+      "name": "megahit",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "genome_assembly",
+      "description": "Assembler for large or complex metagenomic short-read datasets.",
+      "when_to_use": "Use for de novo metagenome assembly from short reads.",
+      "when_not_to_use": "Do not use for long-read assembly or transcriptome reconstruction.",
+      "capabilities": [
+        "genome_assembly"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "required_parameters": [
+        "reads_1",
+        "reads_2",
+        "output_dir"
+      ],
+      "optional_parameters": [
+        "threads"
+      ],
+      "executables": [
+        "megahit"
+      ],
+      "repo_alternatives": [
+        "spades_assemble"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/voutcn/megahit"
+    },
+    {
+      "name": "unicycler",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "genome_assembly",
+      "description": "Hybrid bacterial genome assembler that combines short and long reads.",
+      "when_to_use": "Use for bacterial isolate assembly when both short and long reads are available or when SPAdes-style assembly is desired.",
+      "when_not_to_use": "Do not use for transcriptome assembly or purely long-read assembly without the expected workflow context.",
+      "capabilities": [
+        "genome_assembly"
+      ],
+      "analysis_categories": [
+        "comparative_genomics"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "required_parameters": [
+        "reads_1",
+        "reads_2",
+        "output_dir"
+      ],
+      "optional_parameters": [
+        "long_reads",
+        "threads"
+      ],
+      "executables": [
+        "unicycler"
+      ],
+      "repo_alternatives": [
+        "spades_assemble",
+        "flye_assemble"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/rrwick/Unicycler"
+    },
+    {
+      "name": "shovill",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "genome_assembly",
+      "description": "Pipeline wrapper for rapid bacterial isolate assembly from short reads.",
+      "when_to_use": "Use for fast bacterial genome assemblies from Illumina reads.",
+      "when_not_to_use": "Do not use for transcriptome assembly or metagenome profiling.",
+      "capabilities": [
+        "genome_assembly"
+      ],
+      "analysis_categories": [
+        "comparative_genomics"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "required_parameters": [
+        "reads_1",
+        "reads_2",
+        "output_dir"
+      ],
+      "optional_parameters": [
+        "threads"
+      ],
+      "executables": [
+        "shovill"
+      ],
+      "repo_alternatives": [
+        "spades_assemble"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/tseemann/shovill"
+    },
+    {
+      "name": "metaphlan",
+      "aliases": [
+        "MetaPhlAn"
+      ],
+      "support_tier": "catalog_only",
+      "family": "metagenomics_profiling",
+      "description": "Marker-gene based taxonomic profiling for metagenomic samples.",
+      "when_to_use": "Use when taxonomic profiling from marker genes is preferred over k-mer classification.",
+      "when_not_to_use": "Do not use as a genome assembler or abundance re-estimator for Kraken outputs.",
+      "capabilities": [
+        "metagenomics_profiling"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "input_reads",
+        "output_profile"
+      ],
+      "optional_parameters": [
+        "bowtie2db"
+      ],
+      "executables": [
+        "metaphlan"
+      ],
+      "repo_alternatives": [
+        "metagenomics_kraken2_bracken_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/biobakery/MetaPhlAn"
+    },
+    {
+      "name": "humann",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "metagenomics_profiling",
+      "description": "Functional profiling of microbial pathways and gene families from metagenomic or metatranscriptomic data.",
+      "when_to_use": "Use when pathway-level functional profiling is needed in metagenomics workflows.",
+      "when_not_to_use": "Do not use as a taxonomic classifier or read aligner.",
+      "capabilities": [
+        "metagenomics_profiling",
+        "pathway_enrichment"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "input_reads",
+        "output_dir"
+      ],
+      "optional_parameters": [
+        "nucleotide_database",
+        "protein_database"
+      ],
+      "executables": [
+        "humann"
+      ],
+      "repo_alternatives": [
+        "metagenomics_kraken2_bracken_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/biobakery/humann"
+    },
+    {
+      "name": "kaiju",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "metagenomics_profiling",
+      "description": "Protein-level taxonomic classifier for metagenomic reads.",
+      "when_to_use": "Use when translated protein-level metagenomic classification is preferred.",
+      "when_not_to_use": "Do not use as a read assembler or pathway enrichment tool.",
+      "capabilities": [
+        "metagenomics_profiling"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "reads",
+        "database"
+      ],
+      "optional_parameters": [
+        "output_report"
+      ],
+      "executables": [
+        "kaiju"
+      ],
+      "repo_alternatives": [
+        "metagenomics_kraken2_bracken_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/bioinformatics-centre/kaiju"
+    },
+    {
+      "name": "centrifuge",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "metagenomics_profiling",
+      "description": "Taxonomic classifier for large metagenomic reference collections.",
+      "when_to_use": "Use when a Centrifuge-style taxonomic classifier is explicitly requested.",
+      "when_not_to_use": "Do not use as an abundance re-estimator or assembler.",
+      "capabilities": [
+        "metagenomics_profiling"
+      ],
+      "analysis_categories": [
+        "metagenomics_classification"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "reads",
+        "index"
+      ],
+      "optional_parameters": [
+        "report_file"
+      ],
+      "executables": [
+        "centrifuge"
+      ],
+      "repo_alternatives": [
+        "metagenomics_kraken2_bracken_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://ccb.jhu.edu/software/centrifuge/"
+    },
+    {
+      "name": "mafft",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "phylogenetics",
+      "description": "Multiple sequence aligner commonly used before phylogenetic inference.",
+      "when_to_use": "Use when an aligned protein or nucleotide FASTA is needed before tree inference.",
+      "when_not_to_use": "Do not use as the tree inference step itself.",
+      "capabilities": [
+        "phylogenetics"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "required_parameters": [
+        "input_fasta"
+      ],
+      "optional_parameters": [
+        "output_fasta",
+        "threads"
+      ],
+      "executables": [
+        "mafft"
+      ],
+      "repo_alternatives": [
+        "phylogenetics_iqtree_style",
+        "infer_phylogeny_biopython.py"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://mafft.cbrc.jp/alignment/software/"
+    },
+    {
+      "name": "muscle",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "phylogenetics",
+      "description": "Multiple sequence alignment tool often used in phylogenetic workflows.",
+      "when_to_use": "Use when a MUSCLE alignment is explicitly requested before tree inference.",
+      "when_not_to_use": "Do not use as the final tree inference step.",
+      "capabilities": [
+        "phylogenetics"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "fasta"
+      ],
+      "required_parameters": [
+        "input_fasta",
+        "output_fasta"
+      ],
+      "optional_parameters": [],
+      "executables": [
+        "muscle"
+      ],
+      "repo_alternatives": [
+        "phylogenetics_iqtree_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/rcedgar/muscle"
+    },
+    {
+      "name": "fasttree",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "phylogenetics",
+      "description": "Approximate maximum-likelihood tree inference for large alignments.",
+      "when_to_use": "Use when a quick large-tree approximation is acceptable.",
+      "when_not_to_use": "Do not use when the task explicitly requires IQ-TREE or a more exhaustive ML search.",
+      "capabilities": [
+        "phylogenetics"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "tree"
+      ],
+      "required_parameters": [
+        "input_alignment"
+      ],
+      "optional_parameters": [
+        "nt",
+        "gtr"
+      ],
+      "executables": [
+        "FastTree"
+      ],
+      "repo_alternatives": [
+        "phylogenetics_iqtree_style",
+        "infer_phylogeny_biopython.py"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/morgannprice/fasttree"
+    },
+    {
+      "name": "raxml-ng",
+      "aliases": [
+        "raxml_ng"
+      ],
+      "support_tier": "catalog_only",
+      "family": "phylogenetics",
+      "description": "Maximum-likelihood phylogenetic tree inference for nucleotide or protein alignments.",
+      "when_to_use": "Use when a RAxML-NG phylogenetic workflow is explicitly required.",
+      "when_not_to_use": "Do not use for read alignment or taxonomy classification.",
+      "capabilities": [
+        "phylogenetics"
+      ],
+      "analysis_categories": [
+        "phylogenetics"
+      ],
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "tree"
+      ],
+      "required_parameters": [
+        "alignment",
+        "model"
+      ],
+      "optional_parameters": [
+        "threads",
+        "bootstrap"
+      ],
+      "executables": [
+        "raxml-ng"
+      ],
+      "repo_alternatives": [
+        "phylogenetics_iqtree_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/amkozlov/raxml-ng"
+    },
+    {
+      "name": "arriba",
+      "aliases": [],
+      "support_tier": "catalog_only",
+      "family": "fusion_detection",
+      "description": "RNA-seq fusion detector that works from STAR-aligned data.",
+      "when_to_use": "Use when Arriba-style fusion calling is explicitly requested on RNA-seq data.",
+      "when_not_to_use": "Do not use for DNA structural variant calling or generic differential expression.",
+      "capabilities": [
+        "fusion_detection"
+      ],
+      "analysis_categories": [
+        "rna_seq_differential_expression"
+      ],
+      "input_types": [
+        "bam"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "input_bam",
+        "annotation_gtf"
+      ],
+      "optional_parameters": [
+        "blacklist"
+      ],
+      "executables": [
+        "arriba"
+      ],
+      "repo_alternatives": [
+        "fusion_star_fusion_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://github.com/suhrig/arriba"
+    },
+    {
+      "name": "control-freec",
+      "aliases": [
+        "control_freec"
+      ],
+      "support_tier": "catalog_only",
+      "family": "cnv_analysis",
+      "description": "Copy-number and allelic-imbalance analysis from sequencing alignments.",
+      "when_to_use": "Use when a Control-FREEC style CNV workflow is explicitly requested.",
+      "when_not_to_use": "Do not use for small variant calling or RNA-seq quantification.",
+      "capabilities": [
+        "cnv_analysis"
+      ],
+      "analysis_categories": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "bam",
+        "fasta_reference"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "config"
+      ],
+      "optional_parameters": [
+        "mate_orientation"
+      ],
+      "executables": [
+        "freec"
+      ],
+      "repo_alternatives": [
+        "cnv_cnvkit_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://boevalab.inf.ethz.ch/FREEC/"
+    },
+    {
+      "name": "igblast",
+      "aliases": [
+        "igblastn"
+      ],
+      "support_tier": "catalog_only",
+      "family": "immune_repertoire_profiling",
+      "description": "Immunoglobulin and T-cell receptor sequence analysis against germline gene databases.",
+      "when_to_use": "Use when VDJ assignment or immune receptor gene annotation is explicitly requested.",
+      "when_not_to_use": "Do not use as a generic protein homology search.",
+      "capabilities": [
+        "immune_repertoire_profiling"
+      ],
+      "analysis_categories": [
+        "comparative_genomics"
+      ],
+      "input_types": [
+        "fasta"
+      ],
+      "output_types": [
+        "tsv"
+      ],
+      "required_parameters": [
+        "query_fasta",
+        "germline_db"
+      ],
+      "optional_parameters": [
+        "organism"
+      ],
+      "executables": [
+        "igblastn"
+      ],
+      "repo_alternatives": [
+        "immune_repertoire_mixcr_style"
+      ],
+      "augment_capability_catalog": true,
+      "documentation_url": "https://ncbi.github.io/igblast/"
+    }
+  ]
+}

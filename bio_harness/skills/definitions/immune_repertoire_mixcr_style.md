@@ -1,0 +1,45 @@
+---
+name: immune_repertoire_mixcr_style
+description: Run MiXCR-style immune repertoire profiling with deterministic fallback output.
+when_to_use: Use for immune receptor repertoire analysis (TCR/BCR) from sequencing data
+when_not_to_use: Not for general RNA-seq or non-immune sequencing data
+risk_level: medium
+tools_required:
+- mixcr
+capabilities:
+- immune_repertoire_profiling
+input_types:
+- fastq
+output_types:
+- tsv
+analysis_categories:
+- immune_repertoire
+parameters:
+  reads_1:
+    type: path
+    description: Read 1 FASTQ path.
+    required: true
+  reads_2:
+    type: path
+    description: Read 2 FASTQ path.
+    required: true
+  output_dir:
+    type: path
+    description: Output directory.
+    required: true
+  output_report:
+    type: path
+    description: Clone summary TSV output.
+    required: true
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 2
+command_template: mixcr analyze shotgun --threads {threads} {reads_1} {reads_2} {output_dir}/mixcr_analysis
+---
+Use for uncommon immune repertoire profiling prompts that expect MiXCR-style behavior.
+
+Fallback mode writes a deterministic empty clone summary when MiXCR is unavailable.

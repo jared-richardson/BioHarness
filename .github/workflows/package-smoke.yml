@@ -1,0 +1,62 @@
+name: Package Smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+
+jobs:
+  full-install-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+          python -m build --sdist --wheel --outdir dist
+      - name: Install wheel with dependencies
+        run: python -m pip install dist/*.whl
+      - name: Check installed requirements
+        run: python -m pip check
+      - name: Smoke installed console scripts
+        run: |
+          for cmd in \
+            bio-harness-bootstrap \
+            bio-harness-first-run \
+            bio-harness-doctor \
+            bio-harness-run \
+            bio-harness-preflight \
+            bio-harness-qwen-smoke \
+            bio-harness-configure-isolated-tools \
+            bio-harness-benchmark \
+            bio-harness-compare \
+            bio-harness-report; do
+            "$cmd" --help >/dev/null
+          done
+      - name: Verify installed package data
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import bio_harness
+
+          pkg = Path(bio_harness.__file__).parent
+          required = [
+              pkg / "skills/definitions/index.json",
+              pkg / "skills/definitions/retrieval_index.json",
+              pkg / "harness/repair_advisories.json",
+              pkg / "capabilities/catalog.json",
+              pkg / "capabilities/scientific_tools.json",
+              pkg / "skills/uncommon/spec_schema.json",
+          ]
+          missing = [str(path) for path in required if not path.exists()]
+          if missing:
+              raise SystemExit("Missing package data: " + ", ".join(missing))
+          PY
+      - name: Replay fast-signal fixtures
+        run: >-
+          python scripts/replay_fast_signal_fixtures.py tests/fixtures/fast_signal
+          --jsonl /tmp/fast_signal_replay.jsonl

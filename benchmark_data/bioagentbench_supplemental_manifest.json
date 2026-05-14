@@ -1,0 +1,41 @@
+[
+  {
+    "task_id": "comparative_genomics",
+    "task_name": "Comparative Genomics ANI Matrix",
+    "benchmark_family": "bioharness_supplemental_eval",
+    "task_dir": "benchmark_data/comparative_genomics",
+    "data_root": "benchmark_data/comparative_genomics",
+    "runs_root": "workspace/benchmarks/supplemental_runs/comparative_genomics",
+    "task_prompt": "Compare the provided microbial genomes to compute an ANI-style distance matrix, identify the closest genome pair, and summarize all pairwise genome comparisons.",
+    "runner_defaults": {
+      "strict_llm_planning": true,
+      "planner_attempt_timeout_seconds": 600,
+      "llm_timeout_seconds": 300,
+      "planner_hierarchical_mode": "off"
+    },
+    "output_requirements": [
+      "Write the ANI distance matrix CSV at {selected_dir}/output/distance_matrix.csv.",
+      "Write the pairwise summary TSV at {selected_dir}/output/summary.tsv.",
+      "Write the closest pair text file at {selected_dir}/output/closest_pair.txt."
+    ],
+    "deliverables": [
+      {
+        "path": "output/distance_matrix.csv",
+        "description": "Write the ANI distance matrix CSV."
+      },
+      {
+        "path": "output/summary.tsv",
+        "description": "Write the pairwise ANI summary TSV."
+      },
+      {
+        "path": "output/closest_pair.txt",
+        "description": "Write the closest pair text summary."
+      }
+    ],
+    "validator_script": "scripts/validate_comparative_genomics.py",
+    "validator_args": [
+      "{task_dir}/truth.json",
+      "{selected_dir}/output"
+    ]
+  }
+]

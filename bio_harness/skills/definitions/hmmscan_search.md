@@ -1,0 +1,45 @@
+---
+name: hmmscan_search
+description: Run HMMER hmmscan for protein domain annotation against an HMM database.
+when_to_use: Use for protein domain searches against HMM profile databases (Pfam, TIGRFAM)
+when_not_to_use: Not for sequence similarity (use BLAST) or gene prediction
+risk_level: medium
+tools_required:
+- hmmscan
+capabilities:
+- protein_analysis
+- annotation
+input_types:
+- fasta_protein
+output_types:
+- tsv
+analysis_categories:
+- annotation
+- comparative_genomics
+parameters:
+  query_fasta:
+    type: path
+    description: Protein FASTA query file.
+    required: true
+  hmm_db:
+    type: path
+    description: HMM database (for example Pfam-A.hmm).
+    required: true
+  output_tbl:
+    type: path
+    description: hmmscan table output path.
+    required: true
+  output_txt:
+    type: path
+    description: Optional full-text hmmscan report.
+    required: false
+  threads:
+    type: integer
+    description: CPU thread count.
+    required: false
+system_requirements:
+  min_ram_gb: 4
+  min_cores: 2
+command_template: hmmscan --cpu {threads} --tblout {output_tbl} {hmm_db} {query_fasta} > {output_txt}
+---
+Use for common protein domain fallback analyses.

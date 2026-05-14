@@ -1,0 +1,106 @@
+{
+  "analysis_type": "structural_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "output_bam": "{{selected_dir}}/aligned.bam",
+          "reads": "{{data_root}}/reads.fastq",
+          "reference_fasta": "{{data_root}}/ref.fasta"
+        },
+        "step_id": 2,
+        "tool_name": "sniffles_sv_call"
+      }
+    ],
+    "thought_process": "The alignment step is complete, so call structural variants with Sniffles on the aligned BAM."
+  },
+  "covers_fix": [
+    "sniffles_output_bam_input_alias"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "input_bam": "aligned.bam",
+      "output_vcf": "variants.vcf",
+      "reference_fasta": "ref.fasta"
+    },
+    "accepted_tool_name": "sniffles_sv_call"
+  },
+  "failure_class": "planner_output_input_alias_confusion",
+  "id": "qwen36_sniffles_output_bam_alias",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits the upstream aligned BAM under output_bam for sniffles_sv_call instead of input_bam.",
+    "user_request": "Align these Oxford Nanopore DNA reads to the reference genome and call structural variants.",
+    "workspace_files": [
+      "{{data_root}}/reads.fastq",
+      "{{data_root}}/ref.fasta",
+      "{{selected_dir}}/aligned.bam"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "structural_variant_calling",
+      "discovered_data_files": [
+        {
+          "name": "reads.fastq",
+          "path": "{{data_root}}/reads.fastq"
+        },
+        {
+          "name": "ref.fasta",
+          "path": "{{data_root}}/ref.fasta"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "sniffles_sv_call",
+          "minimap2_align"
+        ],
+        "execution_mode": "direct_wrapper"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "min_support": 3,
+            "min_sv_length": 50,
+            "threads": 4
+          },
+          "tool_name": "sniffles_sv_call"
+        }
+      ],
+      "preferred_tools": [
+        "sniffles_sv_call",
+        "minimap2_align"
+      ],
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/aligned.bam",
+            "reads": "{{data_root}}/reads.fastq",
+            "reference_fasta": "{{data_root}}/ref.fasta"
+          },
+          "step_id": 1,
+          "tool_name": "minimap2_align"
+        }
+      ]
+    },
+    "step_statuses": [
+      "completed"
+    ]
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_032327_align_these_oxford_nanopore__497f",
+  "tags": [
+    "band2",
+    "long_read_sv",
+    "argument_alias"
+  ],
+  "temperature": 0.3
+}

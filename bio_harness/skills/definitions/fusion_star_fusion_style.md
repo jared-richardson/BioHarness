@@ -1,0 +1,52 @@
+---
+name: fusion_star_fusion_style
+description: Run STAR-Fusion-style fusion transcript detection with deterministic fallback output.
+when_to_use: Use for detecting gene fusions from RNA-seq data using STAR-Fusion
+when_not_to_use: Not for general RNA-seq alignment or gene expression analysis
+risk_level: medium
+tools_required:
+- STAR-Fusion
+capabilities:
+- fusion_detection
+- alignment
+input_types:
+- fastq
+- fasta_reference
+output_types:
+- tsv
+analysis_categories:
+- rna_seq_differential_expression
+system_requirements:
+  min_ram_gb: 16
+  min_cores: 4
+parameters:
+  genome_lib_dir:
+    type: path
+    description: CTAT genome lib directory.
+    required: true
+  reads_1:
+    type: path
+    description: Read 1 FASTQ path.
+    required: true
+  reads_2:
+    type: path
+    description: Read 2 FASTQ path.
+    required: true
+  output_dir:
+    type: path
+    description: Output directory.
+    required: true
+  output_report:
+    type: path
+    description: Fusion prediction TSV output.
+    required: true
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+command_template: STAR-Fusion --genome_lib_dir {genome_lib_dir} --left_fq {reads_1} --right_fq {reads_2} --CPU {threads} --output_dir
+  {output_dir}
+---
+Use for uncommon RNA fusion detection prompts mapped to STAR-Fusion-style workflows.
+
+Fallback mode writes a deterministic empty fusion report when STAR-Fusion is unavailable.

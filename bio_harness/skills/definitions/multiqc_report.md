@@ -1,0 +1,44 @@
+---
+name: multiqc_report
+description: Build a researcher-facing run report bundle and aggregate discovered QC outputs with MultiQC when the binary
+  is installed.
+when_to_use: Use after a run completes to build a shareable report bundle with MultiQC aggregation
+when_not_to_use: Do not use for primary analysis execution or when no completed run directory exists
+risk_level: low
+tools_required:
+- python3
+capabilities:
+- run_reporting
+input_types:
+- directory
+- json
+output_types:
+- directory
+- html
+- markdown
+analysis_categories:
+- general
+parameters:
+  run_input:
+    type: path
+    description: Completed selected-dir path, result.json path, or a directory of QC artifacts.
+    required: true
+    file_role: input_file
+  output_dir:
+    type: path
+    description: Optional output directory for the generated report bundle.
+    required: false
+    file_role: output_dir
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+---
+# Usage Guide
+
+- Case 1: Summarize sequencing QC outputs for a completed RNA-seq run.
+- Case 2: Package benchmark-side logs and reports into one researcher-facing directory.
+
+# Common Pitfalls
+
+- MultiQC aggregation is optional and depends on the `multiqc` executable being installed.
+- This skill is post-analysis only; it does not rerun the analysis.

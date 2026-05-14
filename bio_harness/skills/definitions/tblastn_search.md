@@ -1,0 +1,56 @@
+---
+name: tblastn_search
+description: Run TBLASTN protein-to-translated-nucleotide search and emit tabular hits.
+when_to_use: Use when protein queries need to be searched against translated nucleotide databases
+when_not_to_use: Not for direct protein-vs-protein searches (use blastp) or nucleotide-vs-nucleotide searches (use blastn)
+risk_level: medium
+tools_required:
+- tblastn
+- makeblastdb
+capabilities:
+- annotation
+- protein_analysis
+input_types:
+- fasta_protein
+output_types:
+- tsv
+- xml
+analysis_categories:
+- comparative_genomics
+- annotation
+parameters:
+  query_fasta:
+    type: path
+    description: Protein FASTA query file.
+    required: true
+  database:
+    type: string
+    description: BLAST nucleotide database name/path or subject FASTA.
+    required: true
+  output_tsv:
+    type: path
+    description: Output hit file.
+    required: true
+  db_gencode:
+    type: integer
+    description: Optional genetic code for database translation.
+    required: false
+  outfmt:
+    type: string
+    description: BLAST outfmt string.
+    required: false
+  evalue:
+    type: string
+    description: E-value threshold.
+    required: false
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+system_requirements:
+  min_ram_gb: 4
+  min_cores: 2
+command_template: tblastn -query {query_fasta} -db {database} -out {output_tsv} -outfmt {outfmt} -num_threads {threads} -evalue
+  {evalue}
+---
+Use for protein-against-nucleotide translated searches.

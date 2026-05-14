@@ -1,0 +1,68 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "input_vcf_a": "/tmp/bogus/evol1.normalized.vcf",
+          "input_vcf_b": "/tmp/bogus/evol2.normalized.vcf",
+          "output_csv": "/tmp/bogus/shared.csv"
+        },
+        "objective": "Export shared variants before the second evolved branch has produced normalized inputs.",
+        "step_id": 3,
+        "tool_name": "shared_variants_export_run"
+      }
+    ],
+    "thought_process": "Aggregate now even though evol2 is missing."
+  },
+  "covers_fix": [
+    "22b",
+    "19",
+    "22a"
+  ],
+  "expected_outcome": {
+    "missing_inputs_contains": [
+      "annotated.normalized"
+    ],
+    "missing_inputs_rejected": true,
+    "passed": true
+  },
+  "failure_class": "missing_candidate_inputs",
+  "id": "exp37_shared_export_before_evol2_chain",
+  "kind": "candidate_gate",
+  "metadata": {
+    "scenario": "Original Fix #22b aggregator-before-producer failure: shared export must be rejected until the missing evol2 producer chain exists."
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "benchmark_policy": "bioagentbench_planning_strict",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {},
+          "step_id": 1,
+          "tool_name": "spades_assemble"
+        },
+        {
+          "arguments": {},
+          "branch_id": "evol1",
+          "step_id": 2,
+          "tool_name": "bwa_mem_align"
+        }
+      ],
+      "thought_process": ""
+    },
+    "step_statuses": [
+      "completed",
+      "completed"
+    ]
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "exp37",
+  "temperature": 0.3
+}

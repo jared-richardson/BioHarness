@@ -1,0 +1,203 @@
+{
+  "scenarios": [
+    {
+      "name": "clean_de_accept",
+      "analysis_type": "differential_expression",
+      "expected_decision": "accept",
+      "level": "L1",
+      "boundary_metric": "canonical_clean_output"
+    },
+    {
+      "name": "warning_de_accept_with_warning",
+      "analysis_type": "differential_expression",
+      "expected_decision": "accept_with_warning",
+      "level": "L2",
+      "boundary_metric": "no_significant_genes"
+    },
+    {
+      "name": "high_na_de_accept_with_warning",
+      "analysis_type": "differential_expression",
+      "expected_decision": "accept_with_warning",
+      "level": "L2",
+      "boundary_metric": "high_na_fraction"
+    },
+    {
+      "name": "all_significant_de_accept_with_warning",
+      "analysis_type": "differential_expression",
+      "expected_decision": "accept_with_warning",
+      "level": "L2",
+      "boundary_metric": "suspiciously_all_significant"
+    },
+    {
+      "name": "low_quality_fastq_rerun",
+      "analysis_type": "quality_control",
+      "expected_decision": "rerun_with_parameter_change",
+      "level": "L2",
+      "boundary_metric": "mean_quality"
+    },
+    {
+      "name": "missing_gene_column_escalate",
+      "analysis_type": "differential_expression",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L1",
+      "boundary_metric": "missing_required_column"
+    },
+    {
+      "name": "method_switch_signal",
+      "analysis_type": "differential_expression",
+      "expected_decision": "switch_method_family",
+      "level": "L1",
+      "boundary_metric": "review_signal_method_switch",
+      "review_signals": [
+        "Wrong method family for this assay; switch method family."
+      ]
+    },
+    {
+      "name": "empty_tabular_escalate",
+      "analysis_type": "quality_control",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L1",
+      "boundary_metric": "empty_file"
+    },
+    {
+      "name": "headerless_tabular_escalate",
+      "analysis_type": "quality_control",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L1",
+      "boundary_metric": "headerless_tabular_structure"
+    },
+    {
+      "name": "truncated_fastq_escalate",
+      "analysis_type": "quality_control",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L1",
+      "boundary_metric": "truncated_file"
+    },
+    {
+      "name": "empty_vcf_escalate",
+      "analysis_type": "variant_calling",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L1",
+      "boundary_metric": "empty_file"
+    },
+    {
+      "name": "single_cell_accept",
+      "analysis_type": "single_cell",
+      "expected_decision": "accept",
+      "level": "L1",
+      "boundary_metric": "canonical_clean_output"
+    },
+    {
+      "name": "transcript_quant_accept",
+      "analysis_type": "transcript_quantification",
+      "expected_decision": "accept",
+      "level": "L1",
+      "boundary_metric": "canonical_clean_output"
+    },
+    {
+      "name": "variant_calling_accept",
+      "analysis_type": "variant_calling",
+      "expected_decision": "accept",
+      "level": "L1",
+      "boundary_metric": "canonical_clean_output"
+    },
+    {
+      "name": "alignment_warning_accept_with_warning",
+      "analysis_type": "alignment",
+      "expected_decision": "accept_with_warning",
+      "level": "L2",
+      "boundary_metric": "mapping_rate"
+    },
+    {
+      "name": "alignment_fail_rerun",
+      "analysis_type": "alignment",
+      "expected_decision": "rerun_with_parameter_change",
+      "level": "L2",
+      "boundary_metric": "mapping_rate_fail"
+    },
+    {
+      "name": "html_only_escalate",
+      "analysis_type": "quality_control",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L2",
+      "boundary_metric": "unsupported_only"
+    },
+    {
+      "name": "de_na_just_below_warn_accept",
+      "analysis_type": "differential_expression",
+      "expected_decision": "accept",
+      "level": "L3",
+      "boundary_metric": "high_na_fraction"
+    },
+    {
+      "name": "vcf_low_pass_fraction_boundary_warning",
+      "analysis_type": "variant_calling",
+      "expected_decision": "accept_with_warning",
+      "level": "L3",
+      "boundary_metric": "pass_fraction"
+    },
+    {
+      "name": "fastq_short_read_boundary_warning",
+      "analysis_type": "quality_control",
+      "expected_decision": "accept_with_warning",
+      "level": "L3",
+      "boundary_metric": "short_reads"
+    },
+    {
+      "name": "alignment_duplicate_boundary_warning",
+      "analysis_type": "alignment",
+      "expected_decision": "accept_with_warning",
+      "level": "L3",
+      "boundary_metric": "duplicate_rate"
+    },
+    {
+      "name": "de_high_na_and_no_sig_warning",
+      "analysis_type": "differential_expression",
+      "expected_decision": "accept_with_warning",
+      "level": "L4",
+      "boundary_metric": "high_na_fraction+no_significant_genes"
+    },
+    {
+      "name": "fastq_short_and_low_quality_rerun",
+      "analysis_type": "quality_control",
+      "expected_decision": "rerun_with_parameter_change",
+      "level": "L4",
+      "boundary_metric": "mean_quality+short_reads"
+    },
+    {
+      "name": "alignment_duplicate_and_mapping_warning",
+      "analysis_type": "alignment",
+      "expected_decision": "accept_with_warning",
+      "level": "L4",
+      "boundary_metric": "duplicate_rate+mapping_rate"
+    },
+    {
+      "name": "vcf_low_pass_and_low_gq_warning",
+      "analysis_type": "variant_calling",
+      "expected_decision": "accept_with_warning",
+      "level": "L4",
+      "boundary_metric": "pass_fraction+mean_gq"
+    },
+    {
+      "name": "single_cell_overfragmented_escalate",
+      "analysis_type": "single_cell",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L5",
+      "boundary_metric": "cluster_fragmentation_semantics"
+    },
+    {
+      "name": "transcript_quant_zero_abundance_escalate",
+      "analysis_type": "transcript_quantification",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L5",
+      "boundary_metric": "all_zero_abundance_semantics"
+    },
+    {
+      "name": "vcf_header_payload_mismatch_escalate",
+      "analysis_type": "variant_calling",
+      "expected_decision": "escalate_to_researcher",
+      "level": "L5",
+      "boundary_metric": "header_payload_reference_mismatch"
+    }
+  ]
+}

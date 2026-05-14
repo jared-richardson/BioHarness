@@ -1,0 +1,141 @@
+{
+  "analysis_type": "variant_annotation",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "config_dir": "{{selected_dir}}/output/snpeff_custom_db",
+          "genome_db": "custom_ref",
+          "input_vcf": "{{data_root}}/input_variants.vcf",
+          "output_vcf": "{{selected_dir}}/output/annotated.vcf"
+        },
+        "step_id": 1,
+        "tool_name": "snpeff_annotate"
+      }
+    ]
+  },
+  "covers_fix": [
+    "snpeff_local_reference_manifest_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "annotation_gff": "genes.gff",
+      "input_vcf": "input_variants.vcf",
+      "output_vcf": "annotated.vcf",
+      "reference_fasta": "reference.fa"
+    },
+    "accepted_tool_name": "snpeff_annotate"
+  },
+  "failure_class": "snpeff_local_reference_binding",
+  "id": "qwen36_snpeff_local_reference_binding",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits snpeff_annotate with a custom genome key but omits local reference_fasta and annotation_gff even though the manifest declares them.",
+    "user_request": "Annotate the provided VCF with functional impact using the local reference.fa and genes.gff files.",
+    "workspace_files": [
+      "{{data_root}}/genes.gff",
+      "{{data_root}}/input_variants.vcf",
+      "{{data_root}}/reference.fa"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "variant_annotation",
+      "benchmark_policy": "scientific_harness",
+      "chosen_method": "snpeff_annotate",
+      "discovered_data_files": [
+        {
+          "name": "genes.gff",
+          "path": "{{data_root}}/genes.gff"
+        },
+        {
+          "name": "input_variants.vcf",
+          "path": "{{data_root}}/input_variants.vcf"
+        },
+        {
+          "name": "reference.fa",
+          "path": "{{data_root}}/reference.fa"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "snpeff_annotate"
+        ],
+        "execution_mode": "direct_wrapper",
+        "required_tools": []
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "gff",
+            "resolved_path": "{{data_root}}/genes.gff",
+            "role": "annotation_gff",
+            "sample_id": null
+          },
+          {
+            "file_type": "vcf",
+            "resolved_path": "{{data_root}}/input_variants.vcf",
+            "role": "input_vcf",
+            "sample_id": null
+          },
+          {
+            "file_type": "fasta",
+            "resolved_path": "{{data_root}}/reference.fa",
+            "role": "reference_genome",
+            "sample_id": null
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "genome_db": "GRCh37.75"
+          },
+          "tool_name": "snpeff_annotate"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "snpeff_annotate",
+          "Annotate variants with SnpEff if the input VCF is not already annotated",
+          {
+            "genome_db": "GRCh37.75"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "snpeff_annotate",
+        "bash_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "variant_annotation",
+        "compatible_tools": [
+          "snpeff_annotate"
+        ],
+        "execution_mode": "direct_wrapper",
+        "input_mode": "vcf"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_074528_annotate_the_provided_vcf_wi_1bd2",
+  "tags": [
+    "band2",
+    "direct_wrapper",
+    "runtime_prevention",
+    "snpeff",
+    "variant_annotation"
+  ],
+  "temperature": 0.3
+}

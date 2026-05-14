@@ -1,0 +1,52 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "output_bam": "evol1_aligned.bam",
+          "reads_1": "evol1_R1.fastq.gz",
+          "reads_2": "evol1_R2.fastq.gz",
+          "reference_fasta": "scaffolds.fasta"
+        },
+        "objective": "Align evolved lineage 1 using bare filenames from the run anchors.",
+        "step_id": 1,
+        "tool_name": "bwa_mem_align"
+      }
+    ],
+    "thought_process": "Use run-local filenames."
+  },
+  "covers_fix": [
+    "22b-refine"
+  ],
+  "expected_outcome": {
+    "duplicate_rejected": false,
+    "passed": true
+  },
+  "failure_class": "path_resolution",
+  "id": "corpus_qwen36_bare_filenames",
+  "kind": "candidate_gate",
+  "metadata": {
+    "scenario": "Bare filenames should remain candidate-gate safe and be left for anchor-aware binding/preflight.",
+    "workspace_files": [
+      "{{selected_dir}}/scaffolds.fasta",
+      "{{data_root}}/evol1_R1.fastq.gz",
+      "{{data_root}}/evol1_R2.fastq.gz"
+    ]
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling"
+    },
+    "plan": {
+      "plan": [],
+      "thought_process": ""
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "plan_shape_corpus_seed",
+  "temperature": 0.7
+}

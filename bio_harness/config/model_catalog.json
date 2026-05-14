@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "models": [
+    {
+      "model_id": "qwen3-coder-next:latest",
+      "backend": "ollama",
+      "display_name": "Qwen 3 Coder Next",
+      "recommended": true,
+      "recommendation_priority": 10,
+      "release_role": "recommended_public_default",
+      "tested_status": "passed_single_model_24_case_sweep",
+      "evidence_doc": "docs/QWEN_CODER_SINGLE_MODEL_PAPER_SUMMARY_20260502.md",
+      "estimated_download_gb": 51.0,
+      "estimated_disk_required_gb": 62.0,
+      "min_ram_gb": 48.0,
+      "recommended_ram_gb": 64.0,
+      "notes": "Recommended public setup path: one local model for planning and execution.",
+      "tags": ["recommended", "single_model", "qwen", "coder"]
+    },
+    {
+      "model_id": "gemma4:26b",
+      "backend": "ollama",
+      "display_name": "Gemma 4 26B",
+      "recommended": false,
+      "recommendation_priority": 30,
+      "release_role": "tested_generalization_alternative",
+      "tested_status": "passed_24_case_generalization_sweep",
+      "evidence_doc": "docs/EVALUATION_COMPLETED_CHECKLIST_20260501.md",
+      "estimated_download_gb": 17.0,
+      "estimated_disk_required_gb": 22.0,
+      "min_ram_gb": 32.0,
+      "recommended_ram_gb": 48.0,
+      "notes": "Tested alternative for users who already have Gemma locally.",
+      "tags": ["tested", "single_model", "gemma"]
+    },
+    {
+      "model_id": "qwen3.6:35b-a3b",
+      "backend": "ollama",
+      "display_name": "Qwen 3.6 35B A3B",
+      "recommended": false,
+      "recommendation_priority": 90,
+      "release_role": "advanced_research_stress_planner",
+      "tested_status": "passed_split_model_stress_sweeps",
+      "evidence_doc": "docs/QWEN36_POST_MINI_GATE_RESULTS_20260430.md",
+      "estimated_download_gb": 23.0,
+      "estimated_disk_required_gb": 29.0,
+      "min_ram_gb": 48.0,
+      "recommended_ram_gb": 64.0,
+      "notes": "Advanced research/stress configuration; not required for the default public setup.",
+      "tags": ["advanced", "stress", "split_model", "qwen"]
+    }
+  ]
+}

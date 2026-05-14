@@ -1,0 +1,463 @@
+{
+  "suite_name": "extended_scientific_grounding_v1",
+  "cases": [
+    {
+      "case_id": "pbmc3k_scanpy_explicit",
+      "lane": "scanpy_prompt_grounding",
+      "description": "Explicit one-step Scanpy workflow on processed PBMC3k AnnData.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use only the scanpy_workflow tool on the processed AnnData file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad. Write outputs under {selected_dir}/scanpy_output using min_genes 3, min_cells 1, max_mito_pct 100, n_hvgs 48, and leiden_resolution 0.3. Do not add FASTQ processing, count matrix generation, or bash_run.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["bash_run", "salmon_quant", "subread_align", "deseq2_run", "stringtie_quant"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_natural",
+      "lane": "scanpy_prompt_grounding",
+      "description": "Natural-language Scanpy request on PBMC3k with explicit output dir.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "I already have a processed single-cell h5ad file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad. Cluster it with the normal Scanpy workflow, write all outputs under {selected_dir}/scanpy_output, and keep this on the direct scanpy_workflow path only.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["bash_run", "salmon_quant", "subread_align", "deseq2_run", "stringtie_quant"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_noisy",
+      "lane": "scanpy_prompt_grounding",
+      "description": "Noisy-but-specific Scanpy request that must not drift into FASTQ logic.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Please do not look for FASTQ files or build a count matrix. Use the processed h5ad file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad, keep the workflow on scanpy_workflow, and write outputs under {selected_dir}/scanpy_output only.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["bash_run", "salmon_quant", "subread_align", "deseq2_run", "stringtie_quant"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "airway_deseq_explicit",
+      "lane": "deseq_prompt_grounding",
+      "description": "Explicit direct-count DESeq2 run on the Airway counts/metadata pair.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use only the deseq2_run tool on counts table {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv for the dex comparison. Use design formula ~ dex, write intermediate outputs under {selected_dir}/deseq_results, and write the final CSV to {selected_dir}/final/deseq_results.csv. Do not align reads, build counts, or use bash_run.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["bash_run", "cutadapt_run", "subread_align", "featurecounts_run", "scanpy_workflow", "stringtie_quant"],
+      "expected_artifacts": ["final/deseq_results.csv"],
+      "column_checks": [
+        {
+          "path": "final/deseq_results.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "airway_deseq_natural",
+      "lane": "deseq_prompt_grounding",
+      "description": "Natural-language DESeq2 request that must stay on direct count-matrix execution.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "I already have an RNA-seq count matrix and sample metadata. Use {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv to run DESeq2 for dex, keep this on the direct deseq2_run path, and write the final CSV to {selected_dir}/final/deseq_results.csv with any intermediate outputs under {selected_dir}/deseq_results.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["bash_run", "cutadapt_run", "subread_align", "featurecounts_run", "scanpy_workflow", "stringtie_quant"],
+      "expected_artifacts": ["final/deseq_results.csv"],
+      "column_checks": [
+        {
+          "path": "final/deseq_results.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "airway_deseq_noisy",
+      "lane": "deseq_prompt_grounding",
+      "description": "Noisy direct-count DESeq2 request that must not drift into alignment/count generation.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Do not align FASTQs or build counts from reads. I want DESeq2 directly on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv using the design formula ~ dex. Keep the workflow on deseq2_run and write the final CSV to {selected_dir}/final/deseq_results.csv.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["bash_run", "cutadapt_run", "subread_align", "featurecounts_run", "scanpy_workflow", "stringtie_quant"],
+      "expected_artifacts": ["final/deseq_results.csv"],
+      "column_checks": [
+        {
+          "path": "final/deseq_results.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_explicit",
+      "lane": "stringtie_prompt_grounding",
+      "description": "Explicit StringTie quantification on an existing aligned BAM plus external GTF.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use only the stringtie_quant tool on the coordinate-sorted BAM at {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with the annotation GTF at {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf. Write the assembled transcript GTF to {selected_dir}/stringtie/assembled.gtf and the gene abundance table to {selected_dir}/stringtie/gene_abundances.tsv. Keep this reference-guided only and do not add alignment, counting, or bash_run.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["bash_run", "bwa_mem_align", "star_align", "subread_align", "scanpy_workflow", "deseq2_run"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_natural",
+      "lane": "stringtie_prompt_grounding",
+      "description": "Natural-language StringTie request that must preserve the explicit GTF and BAM-only workflow.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "I have an aligned BAM already. Quantify transcripts from {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam using {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf, keep this on stringtie_quant, and write outputs to {selected_dir}/stringtie/assembled.gtf and {selected_dir}/stringtie/gene_abundances.tsv.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["bash_run", "bwa_mem_align", "star_align", "subread_align", "scanpy_workflow", "deseq2_run"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_noisy",
+      "lane": "stringtie_prompt_grounding",
+      "description": "Noisy StringTie prompt that must not realign or widen scope.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Do not realign anything. Use the existing aligned BAM {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with the external GTF {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf, keep the workflow on stringtie_quant, and write outputs under {selected_dir}/stringtie.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["bash_run", "bwa_mem_align", "star_align", "subread_align", "scanpy_workflow", "deseq2_run"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_misleading_de",
+      "lane": "scanpy_adversarial",
+      "description": "Scanpy request with misleading differential-expression wording.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "I need differential expression analysis. Use scanpy_workflow on the processed h5ad at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad. Write outputs under {selected_dir}/scanpy_output. Do not use DESeq2, edgeR, or bash_run.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["deseq2_run", "edger_run", "bash_run", "sc_count_and_cluster"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_mentions_seurat",
+      "lane": "scanpy_adversarial",
+      "description": "Scanpy request that explicitly rejects Seurat drift.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "This is single-cell work, but do not switch to Seurat. Keep the workflow on scanpy_workflow for the processed AnnData file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad and write outputs under {selected_dir}/scanpy_output only.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["seurat_rscript_workflow", "bash_run", "sc_count_and_cluster"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_minimal",
+      "lane": "scanpy_adversarial",
+      "description": "Minimal direct Scanpy prompt.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "scanpy_workflow on {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad output {selected_dir}/scanpy_output only",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["bash_run", "sc_count_and_cluster"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "airway_deseq_mentions_alignment",
+      "lane": "deseq_adversarial",
+      "description": "Direct DESeq2 counts prompt that mentions upstream RNA-seq alignment concepts.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "I have RNA-seq data that was already aligned and counted. The count matrix is at {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata at {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv. Run deseq2_run for dex comparison. Write final CSV to {selected_dir}/final/deseq_results.csv. Do not realign or requantify.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["star_align", "hisat2_align", "subread_align", "salmon_quant", "kallisto_quant", "featurecounts_run", "bash_run"],
+      "expected_artifacts": ["final/deseq_results.csv"],
+      "column_checks": [
+        {
+          "path": "final/deseq_results.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "airway_deseq_mentions_quantification",
+      "lane": "deseq_adversarial",
+      "description": "Direct DESeq2 counts prompt that mentions quantification but provides pre-existing matrices.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Quantification is already done. Use deseq2_run directly on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv, design ~ dex, and write the final CSV to {selected_dir}/final/deseq_results.csv. Do not pseudoalign, align, or recount anything.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["star_align", "subread_align", "salmon_quant", "kallisto_quant", "featurecounts_run", "bash_run"],
+      "expected_artifacts": ["final/deseq_results.csv"],
+      "column_checks": [
+        {
+          "path": "final/deseq_results.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "airway_deseq_minimal",
+      "lane": "deseq_adversarial",
+      "description": "Minimal direct DESeq2 prompt.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "deseq2_run on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv, design ~ dex, contrast dex,trt,untrt, final {selected_dir}/final/deseq_results.csv",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["bash_run", "featurecounts_run", "subread_align"],
+      "expected_artifacts": ["final/deseq_results.csv"],
+      "column_checks": [
+        {
+          "path": "final/deseq_results.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_misleading_de",
+      "lane": "stringtie_adversarial",
+      "description": "StringTie request with misleading downstream DE wording.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "I need transcript quantification before downstream differential expression. Use stringtie_quant on the existing aligned BAM {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with annotation {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf and write outputs under {selected_dir}/stringtie. Do not switch to DESeq2, edgeR, or bash_run.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["deseq2_run", "edger_run", "limma_voom_run", "bash_run", "subread_align"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_mentions_salmon",
+      "lane": "stringtie_adversarial",
+      "description": "StringTie request that explicitly rejects pseudoalignment tools.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "This is transcript quantification, but do not pseudoalign with Salmon or Kallisto. Use stringtie_quant on the existing BAM {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with GTF {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf and write outputs under {selected_dir}/stringtie.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["salmon_quant", "kallisto_quant", "bash_run", "star_align", "subread_align"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_minimal",
+      "lane": "stringtie_adversarial",
+      "description": "Minimal direct StringTie prompt.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "stringtie_quant on {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf output {selected_dir}/stringtie",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["bash_run", "star_align", "subread_align", "featurecounts_run"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "airway_edger_not_deseq",
+      "lane": "cross_tool_contamination",
+      "description": "edgeR direct-wrapper request must not drift into DESeq2.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Run edgeR, not DESeq2, differential expression on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv using design ~ dex and contrast dex,trt,untrt. Write results under {selected_dir}/edger_results and do not use bash_run.",
+      "required_tools": ["edger_run"],
+      "forbidden_tools": ["deseq2_run", "bash_run", "featurecounts_run", "subread_align"],
+      "expected_artifacts": ["edger_results/edger_results.tsv"]
+    },
+    {
+      "case_id": "airway_limma_not_deseq",
+      "lane": "cross_tool_contamination",
+      "description": "limma-voom direct-wrapper request must not drift into DESeq2 or edgeR.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use limma_voom_run on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv, design ~ dex, contrast dex,trt,untrt, and write outputs under {selected_dir}/limma_results. Do not switch to DESeq2, edgeR, or bash_run.",
+      "required_tools": ["limma_voom_run"],
+      "forbidden_tools": ["deseq2_run", "edger_run", "bash_run", "featurecounts_run", "subread_align"],
+      "expected_artifacts": ["limma_results/limma_voom_results.tsv"]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_not_sc_count",
+      "lane": "cross_tool_contamination",
+      "description": "Processed h5ad prompt must stay on Scanpy and avoid raw-count single-cell wrappers.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use scanpy_workflow, not sc_count_and_cluster, on the processed h5ad file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad and write outputs under {selected_dir}/scanpy_output. Do not use bash_run.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["sc_count_and_cluster", "bash_run"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_not_seurat",
+      "lane": "cross_tool_contamination",
+      "description": "Processed h5ad prompt must stay on Scanpy and not drift into Seurat.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use scanpy_workflow, not seurat_rscript_workflow, on the processed AnnData file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad and write outputs under {selected_dir}/scanpy_output.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["seurat_rscript_workflow", "bash_run"],
+      "expected_artifacts": [
+        "scanpy_output/processed.h5ad",
+        "scanpy_output/cluster_assignments.csv",
+        "scanpy_output/marker_genes.csv",
+        "scanpy_output/summary.json"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_not_salmon",
+      "lane": "cross_tool_contamination",
+      "description": "Aligned-BAM transcript quantification should stay on StringTie rather than pseudoaligners.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use stringtie_quant, not salmon_quant or kallisto_quant, on the aligned BAM {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with GTF {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf and write outputs under {selected_dir}/stringtie.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["salmon_quant", "kallisto_quant", "bash_run"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_not_featurecounts",
+      "lane": "cross_tool_contamination",
+      "description": "Aligned-BAM transcript quantification should stay on StringTie rather than count-generation tools.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use stringtie_quant, not featurecounts_run, on the existing BAM {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with annotation {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf. Write outputs under {selected_dir}/stringtie and do not use bash_run.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["featurecounts_run", "subread_align", "bash_run"],
+      "expected_artifacts": [
+        "stringtie/assembled.gtf",
+        "stringtie/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_deep_path",
+      "lane": "output_path_fidelity",
+      "description": "Deeply nested Scanpy output root should survive normalization.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use only the scanpy_workflow tool on the processed AnnData file at {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad and write outputs under {selected_dir}/results/2026/march/scanpy_run_01.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["bash_run", "sc_count_and_cluster"],
+      "expected_artifacts": [
+        "results/2026/march/scanpy_run_01/processed.h5ad",
+        "results/2026/march/scanpy_run_01/cluster_assignments.csv",
+        "results/2026/march/scanpy_run_01/marker_genes.csv",
+        "results/2026/march/scanpy_run_01/summary.json"
+      ]
+    },
+    {
+      "case_id": "pbmc3k_scanpy_alt_dir",
+      "lane": "output_path_fidelity",
+      "description": "Alternate Scanpy output root should survive normalization.",
+      "data_root": "workspace/non_bioagent_real_data/pbmc3k_processed",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Keep this on scanpy_workflow and write outputs under {selected_dir}/custom_scanpy/output_bundle for the processed h5ad file {project_root}/workspace/non_bioagent_real_data/pbmc3k_processed/pbmc3k_processed.h5ad.",
+      "required_tools": ["scanpy_workflow"],
+      "forbidden_tools": ["bash_run", "sc_count_and_cluster"],
+      "expected_artifacts": [
+        "custom_scanpy/output_bundle/processed.h5ad",
+        "custom_scanpy/output_bundle/cluster_assignments.csv",
+        "custom_scanpy/output_bundle/marker_genes.csv",
+        "custom_scanpy/output_bundle/summary.json"
+      ]
+    },
+    {
+      "case_id": "airway_deseq_nonstandard_dir",
+      "lane": "output_path_fidelity",
+      "description": "Direct DESeq2 prompt with custom intermediate and final output paths.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use only the deseq2_run tool on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with metadata {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv, design ~ dex, contrast dex,trt,untrt, write intermediate outputs under {selected_dir}/my_analysis/de_intermediate, and write the final CSV to {selected_dir}/my_analysis/final_result.csv.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["bash_run", "featurecounts_run", "subread_align"],
+      "expected_artifacts": ["my_analysis/final_result.csv"],
+      "column_checks": [
+        {
+          "path": "my_analysis/final_result.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "airway_deseq_nested_final_dir",
+      "lane": "output_path_fidelity",
+      "description": "Direct DESeq2 prompt with a deeply nested final CSV path.",
+      "data_root": "workspace/non_bioagent_real_data/airway",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Run deseq2_run directly on {project_root}/workspace/non_bioagent_real_data/airway/airway_counts.tsv with {project_root}/workspace/non_bioagent_real_data/airway/airway_metadata_dex.tsv for dex, keep intermediate outputs under {selected_dir}/reports/2026/03/deseq/work, and write the final CSV to {selected_dir}/reports/2026/03/deseq/final_table.csv.",
+      "required_tools": ["deseq2_run"],
+      "forbidden_tools": ["bash_run", "featurecounts_run", "subread_align"],
+      "expected_artifacts": ["reports/2026/03/deseq/final_table.csv"],
+      "column_checks": [
+        {
+          "path": "reports/2026/03/deseq/final_table.csv",
+          "columns": ["gene_id", "log2FoldChange", "pvalue", "padj"]
+        }
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_deep_path",
+      "lane": "output_path_fidelity",
+      "description": "Deeply nested StringTie output root should survive normalization.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Use only the stringtie_quant tool on {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf and write outputs under {selected_dir}/results/2026/march/stringtie_run_01.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["bash_run", "star_align", "subread_align"],
+      "expected_artifacts": [
+        "results/2026/march/stringtie_run_01/assembled.gtf",
+        "results/2026/march/stringtie_run_01/gene_abundances.tsv"
+      ]
+    },
+    {
+      "case_id": "hnrnpc_stringtie_alt_dir",
+      "lane": "output_path_fidelity",
+      "description": "Alternate StringTie output root should survive normalization.",
+      "data_root": "workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata",
+      "benchmark_policy": "scientific_harness",
+      "prompt": "Keep this on stringtie_quant for the aligned BAM {project_root}/workspace/non_bioagent_real_data/r_libs/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam with annotation {project_root}/workspace/non_bioagent_real_data/ucsc/hg19.chr14.knownGene.gtf and write outputs under {selected_dir}/custom_stringtie/output_set.",
+      "required_tools": ["stringtie_quant"],
+      "forbidden_tools": ["bash_run", "featurecounts_run", "subread_align"],
+      "expected_artifacts": [
+        "custom_stringtie/output_set/assembled.gtf",
+        "custom_stringtie/output_set/gene_abundances.tsv"
+      ]
+    }
+  ]
+}

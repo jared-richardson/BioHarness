@@ -1,0 +1,75 @@
+{
+  "analysis_type": "metabolomics",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "metabolomics_diff_abundance"
+      }
+    ]
+  },
+  "covers_fix": [
+    "missing_required_args_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "feature_table": "feature_table.csv",
+      "metadata_table": "metadata.csv"
+    },
+    "accepted_tool_name": "metabolomics_diff_abundance"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_metabolomics_missing_required_args",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits metabolomics_diff_abundance with no table arguments.",
+    "user_request": "Perform differential metabolite abundance analysis comparing control vs treatment conditions.",
+    "workspace_files": [
+      "{{data_root}}/feature_table.csv",
+      "{{data_root}}/metadata.csv"
+    ]
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "metabolomics",
+      "discovered_data_files": [
+        {
+          "name": "feature_table.csv",
+          "path": "{{data_root}}/feature_table.csv"
+        },
+        {
+          "name": "metadata.csv",
+          "path": "{{data_root}}/metadata.csv"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "metabolomics_diff_abundance"
+        ],
+        "execution_mode": "direct_wrapper"
+      },
+      "preferred_tools": [
+        "metabolomics_diff_abundance"
+      ],
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "sweep46_band2_qwen36_no_templates",
+  "tags": [
+    "band2",
+    "metabolomics",
+    "required_arguments"
+  ],
+  "temperature": 0.3
+}

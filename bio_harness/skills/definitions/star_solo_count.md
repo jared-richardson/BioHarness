@@ -1,0 +1,75 @@
+---
+name: star_solo_count
+description: Run STARsolo for single-cell alignment and UMI counting.
+when_to_use: Use for single-cell RNA-seq counting with STARsolo as CellRanger alternative
+when_not_to_use: Not for bulk RNA-seq alignment or pre-processed single-cell data
+risk_level: high
+tools_required:
+- star
+capabilities:
+- single_cell_analysis
+- alignment
+- reference_inputs
+input_types:
+- fastq
+- fasta_reference
+output_types:
+- h5ad
+- tsv
+- bam
+analysis_categories:
+- single_cell_rna_seq
+parameters:
+  threads:
+    type: integer
+    description: Thread count.
+    required: true
+  genome_dir:
+    type: path
+    description: STAR genome index directory.
+    required: true
+  reference_fasta:
+    type: path
+    description: Reference FASTA used to build the STAR genome directory if it does not already exist.
+    required: false
+  annotation_gtf:
+    type: path
+    description: Gene annotation GTF used to build the STAR genome directory if it does not already exist.
+    required: false
+  reads_1:
+    type: path
+    description: Read 1 FASTQ(.gz).
+    required: true
+  reads_2:
+    type: path
+    description: Read 2 FASTQ(.gz).
+    required: true
+  whitelist:
+    type: path
+    description: Cell barcode whitelist.
+    required: true
+  output_prefix:
+    type: path
+    description: Output prefix path.
+    required: true
+  star_index_cache_root:
+    type: path
+    description: Optional STAR index cache root used when materializing a genome dir.
+    required: false
+  sjdb_overhang:
+    type: integer
+    description: Optional sjdbOverhang used for STAR genomeGenerate.
+    required: false
+system_requirements:
+  min_ram_gb: 32
+  min_cores: 8
+command_template: STAR --runThreadN {threads} --genomeDir {genome_dir} --readFilesIn {reads_2} {reads_1} --readFilesCommand
+  zcat --soloType CB_UMI_Simple --soloCBwhitelist {whitelist} --soloFeatures Gene --outFileNamePrefix {output_prefix}
+---
+Use for STAR-native single-cell counting when Cell Ranger is not required.
+
+## Onboarding Metadata
+- Source: https://github.com/alexdobin/STAR
+- Source Mode: official_docs
+- Installed At: curated_seed_v1
+- Install Workflow: controlled_curated_batch_onboarding:single_cell_core

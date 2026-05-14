@@ -1,0 +1,29 @@
+{
+  "species": [
+    {
+      "name": "Escherichia coli",
+      "taxid": 562,
+      "proportion": 0.6,
+      "read_pairs": 1800
+    },
+    {
+      "name": "Bacillus subtilis",
+      "taxid": 1423,
+      "proportion": 0.3,
+      "read_pairs": 900
+    },
+    {
+      "name": "Staphylococcus aureus",
+      "taxid": 1280,
+      "proportion": 0.1,
+      "read_pairs": 300
+    }
+  ],
+  "total_read_pairs": 3000,
+  "min_classification_rate": 0.8,
+  "expected_top_genus": [
+    "Escherichia",
+    "Bacillus",
+    "Staphylococcus"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "analysis_type": "long_read_assembly",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "flye_assemble"
+      }
+    ]
+  },
+  "covers_fix": [
+    "missing_required_args_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "genome_size": "5m",
+      "output_dir": "",
+      "reads_fastq": "reads.fastq"
+    },
+    "accepted_tool_name": "flye_assemble"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_flye_missing_required_args",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits flye_assemble as the first long-read assembly step with no arguments.",
+    "user_request": "Assemble these Oxford Nanopore reads into a de novo genome assembly.",
+    "workspace_files": [
+      "{{data_root}}/reads.fastq"
+    ]
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "long_read_assembly",
+      "discovered_data_files": [
+        {
+          "name": "reads.fastq",
+          "path": "{{data_root}}/reads.fastq"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "flye_assemble"
+        ],
+        "execution_mode": "direct_wrapper"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "genome_size": "5m",
+            "read_mode": "nano-raw",
+            "threads": 4
+          },
+          "tool_name": "flye_assemble"
+        }
+      ],
+      "preferred_tools": [
+        "flye_assemble"
+      ],
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260426_193002_assemble_these_oxford_nanopo_8788",
+  "tags": [
+    "band2",
+    "long_read_assembly",
+    "required_arguments"
+  ],
+  "temperature": 0.3
+}

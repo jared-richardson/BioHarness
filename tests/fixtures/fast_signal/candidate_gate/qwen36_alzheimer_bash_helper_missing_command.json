@@ -1,0 +1,133 @@
+{
+  "analysis_type": "multi_model_dge_pathway",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "bash_run"
+      }
+    ]
+  },
+  "covers_fix": [
+    "helper_backed_bash_command_binding",
+    "multi_model_requested_data_root_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "command": "compare_pathways.py"
+    },
+    "accepted_tool_name": "bash_run"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_alzheimer_bash_helper_missing_command",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits the Alzheimer multi-model helper-backed bash_run step with no command.",
+    "user_request": "Perform comparative differential expression analysis across the mouse models and identify shared KEGG pathways.",
+    "workspace_files": [
+      "{{data_root}}/DEA_PS3O1S.csv",
+      "{{data_root}}/GSE161904_Raw_gene_counts_cortex.txt",
+      "{{data_root}}/GSE168137_countList.txt"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "multi_model_dge_pathway",
+      "benchmark_policy": "scientific_harness",
+      "chosen_method": "bash_run",
+      "context_facts": [
+        "DGE + pathway enrichment workflow",
+        "Use repo-local helper scripts that already exist in the project when they implement the requested multi-model comparison."
+      ],
+      "discovered_data_files": [
+        {
+          "name": "DEA_PS3O1S.csv",
+          "path": "{{data_root}}/DEA_PS3O1S.csv"
+        },
+        {
+          "name": "GSE161904_Raw_gene_counts_cortex.txt",
+          "path": "{{data_root}}/GSE161904_Raw_gene_counts_cortex.txt"
+        },
+        {
+          "name": "GSE168137_countList.txt",
+          "path": "{{data_root}}/GSE168137_countList.txt"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [],
+        "execution_mode": "direct_wrapper",
+        "required_tools": []
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "csv",
+            "resolved_path": "{{data_root}}/DEA_PS3O1S.csv",
+            "role": "input_csv",
+            "sample_id": "PS3O1S"
+          },
+          {
+            "file_type": "txt",
+            "resolved_path": "{{data_root}}/GSE161904_Raw_gene_counts_cortex.txt",
+            "role": "input_txt",
+            "sample_id": "3xTG_AD"
+          },
+          {
+            "file_type": "txt",
+            "resolved_path": "{{data_root}}/GSE168137_countList.txt",
+            "role": "input_txt",
+            "sample_id": "5xFAD"
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "helper_script": "/repo/bio_harness/pipeline_scripts/compare_pathways.py",
+            "tool": "python3"
+          },
+          "tool_name": "bash_run"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "bash_run",
+          "Invoke compare_pathways.py to filter counts, run DGE, and compute shared KEGG enrichment",
+          {
+            "helper_script": "/repo/bio_harness/pipeline_scripts/compare_pathways.py",
+            "tool": "python3"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "bash_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "multi_model_dge_pathway",
+        "compatible_tools": [],
+        "execution_mode": "direct_wrapper",
+        "input_mode": ""
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_074623_perform_a_comparative_differ_99ef",
+  "tags": [
+    "band2",
+    "helper_backed",
+    "multi_model_dge_pathway"
+  ],
+  "temperature": 0.3
+}

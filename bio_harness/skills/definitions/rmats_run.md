@@ -1,0 +1,56 @@
+---
+name: rmats_run
+description: Run rMATS alternative splicing analysis for two BAM groups using an annotation GTF.
+when_to_use: Use for differential alternative splicing analysis between conditions in RNA-seq
+when_not_to_use: Not for gene-level differential expression (use DESeq2)
+risk_level: medium
+tools_required:
+- rmats
+capabilities:
+- splicing_analysis
+- group_comparison
+input_types:
+- bam
+- gtf
+output_types:
+- tsv
+analysis_categories:
+- rna_seq_differential_expression
+parameters:
+  group1_bams:
+    type: string
+    description: Group 1 BAM path(s), as a comma-separated string or JSON-style list.
+    required: true
+  group2_bams:
+    type: string
+    description: Group 2 BAM path(s), as a comma-separated string or JSON-style list.
+    required: true
+  annotation_gtf:
+    type: path
+    description: Reference annotation GTF.
+    required: true
+    file_role: reference_annotation
+  output_dir:
+    type: path
+    description: Output directory for rMATS result tables.
+    required: true
+    file_role: output_dir
+  tmp_dir:
+    type: path
+    description: Temporary working directory for rMATS.
+    required: false
+  read_length:
+    type: integer
+    description: Read length used by rMATS. Defaults to 100.
+    required: false
+  threads:
+    type: integer
+    description: Thread count. Defaults to 2.
+    required: false
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 2
+command_template: bash pipeline_scripts/run_rmats_if_needed.sh <group1_list_file> <group2_list_file> <annotation_gtf> <output_dir>
+  <tmp_dir> <read_length> <threads>
+---
+Use when alternative splicing analysis is requested on grouped RNA-seq BAMs and rMATS is available.

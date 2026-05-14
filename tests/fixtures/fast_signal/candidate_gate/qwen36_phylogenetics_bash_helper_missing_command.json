@@ -1,0 +1,113 @@
+{
+  "analysis_type": "phylogenetics",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "bash_run"
+      }
+    ]
+  },
+  "covers_fix": [
+    "helper_backed_bash_command_binding",
+    "phylogenetics_requested_data_root_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "command": "infer_phylogeny_biopython.py"
+    },
+    "accepted_tool_name": "bash_run"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_phylogenetics_bash_helper_missing_command",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits the phylogenetics helper-backed bash_run step with no command.",
+    "user_request": "Infer a phylogenetic tree from the provided homologous sequences and write a valid Newick tree.",
+    "workspace_files": [
+      "{{data_root}}/sequences.fasta"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "phylogenetics",
+      "benchmark_policy": "scientific_harness",
+      "chosen_method": "bash_run",
+      "context_facts": [
+        "When inputs are already in direct-wrapper form, preserve a compatible single-wrapper workflow instead of expanding to upstream template stages."
+      ],
+      "discovered_data_files": [
+        {
+          "name": "sequences.fasta",
+          "path": "{{data_root}}/sequences.fasta"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [],
+        "execution_mode": "direct_wrapper",
+        "required_tools": []
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "fasta",
+            "resolved_path": "{{data_root}}/sequences.fasta",
+            "role": "input_fasta",
+            "sample_id": null
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "helper_script": "/repo/bio_harness/pipeline_scripts/infer_phylogeny_biopython.py",
+            "tool": "python3"
+          },
+          "tool_name": "bash_run"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "bash_run",
+          "Align the provided sequences conceptually and infer a phylogenetic tree using the repo-local Biopython helper, then write the requested Newick output",
+          {
+            "helper_script": "/repo/bio_harness/pipeline_scripts/infer_phylogeny_biopython.py",
+            "tool": "python3"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "bash_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "phylogenetics",
+        "compatible_tools": [
+          "bash_run"
+        ],
+        "execution_mode": "direct_wrapper",
+        "input_mode": ""
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_093138_infer_a_phylogenetic_tree_fr_9435",
+  "tags": [
+    "band1",
+    "direct_wrapper",
+    "helper_backed",
+    "phylogenetics"
+  ],
+  "temperature": 0.3
+}

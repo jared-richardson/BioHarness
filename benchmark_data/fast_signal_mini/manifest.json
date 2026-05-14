@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "analysis_family": "evolution",
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "band": 1,
+      "data_root": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/tasks/evolution/data",
+      "id": "control_evolution_mini",
+      "prompt_file": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/tasks/evolution/prompt.txt",
+      "selected_dir": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/official_runs/evolution/attempt1"
+    },
+    {
+      "analysis_family": "de",
+      "analysis_type": "rna_seq_differential_expression",
+      "band": 1,
+      "data_root": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/tasks/deseq/data",
+      "id": "de_mini",
+      "prompt_file": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/tasks/deseq/prompt.txt",
+      "selected_dir": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/official_runs/deseq/attempt1"
+    },
+    {
+      "analysis_family": "germline_vc",
+      "analysis_type": "germline_variant_calling",
+      "band": 1,
+      "data_root": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/tasks/germline-vc/data",
+      "id": "germline_vc_mini",
+      "prompt_file": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/tasks/germline-vc/prompt.txt",
+      "selected_dir": "<BIO_HARNESS_ROOT>/benchmark_data/fast_signal_mini/official_runs/germline-vc/attempt1"
+    }
+  ],
+  "description": "Fast-signal mini-benchmark suite with tiny real inputs."
+}

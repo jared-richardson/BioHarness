@@ -1,0 +1,233 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {
+          "input_bam": "{{selected_dir}}/alignments/evol1_aligned.bam",
+          "output_vcf": "{{selected_dir}}/variants/evol1_raw_retry.vcf",
+          "ploidy": 1,
+          "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+        },
+        "branch_id": "evol1",
+        "objective": "Restart completed evol1 variant calling after evol1 normalization.",
+        "step_id": 17,
+        "tool_name": "freebayes_call"
+      }
+    ],
+    "thought_process": "The previous plan had alignment issues, so redo variant calling for evol1."
+  },
+  "covers_fix": [
+    "branch-stage-hard-frontier",
+    "planner-completed-prefix-progress-filter"
+  ],
+  "expected_outcome": {
+    "branch_progress_hint_contains": [
+      "branch=evol2",
+      "stage=normalized_vcf",
+      "bcftools_norm_run"
+    ],
+    "branch_progress_next": {
+      "branch_id": "evol2",
+      "stage": "normalized_vcf",
+      "suggested_tool": "bcftools_norm_run"
+    },
+    "branch_stage_reason_contains": [
+      "Candidate does not advance the current branch-stage frontier",
+      "branch=evol2, stage=normalized_vcf",
+      "Expected branch-stage tool: `bcftools_norm_run`"
+    ],
+    "branch_stage_rejected": true,
+    "duplicate_rejected": true,
+    "missing_inputs_rejected": false,
+    "passed": true
+  },
+  "failure_class": "planner_completed_prefix_restart",
+  "id": "exp44_completed_prefix_restart_after_norm",
+  "kind": "candidate_gate",
+  "metadata": {
+    "scenario": "After evol1 normalization, a restarted completed-prefix freebayes_call must not be treated as useful progress; the next hard frontier is evol2 normalization.",
+    "workspace_files": [
+      "{{selected_dir}}/assembly/scaffolds.fasta",
+      "{{selected_dir}}/annotation/genes.gff",
+      "{{selected_dir}}/alignments/anc_aligned.bam",
+      "{{selected_dir}}/alignments/evol1_aligned.bam",
+      "{{selected_dir}}/alignments/evol2_aligned.bam",
+      "{{selected_dir}}/variants/anc_raw.vcf",
+      "{{selected_dir}}/variants/evol1_raw.vcf",
+      "{{selected_dir}}/variants/evol2_raw.vcf",
+      "{{selected_dir}}/variants/anc.filtered.vcf.gz",
+      "{{selected_dir}}/variants/anc.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol2.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol2.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz",
+      "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz",
+      "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.annotated.vcf",
+      "{{selected_dir}}/variants/evol2.annotated.vcf",
+      "{{selected_dir}}/variants/evol1.normalized.vcf"
+    ]
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "benchmark_policy": "bioagentbench_planning_strict",
+      "protocol_grounding": {
+        "min_variant_branches": 2,
+        "requires_shared_comparison": true
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/anc_aligned.bam"
+          },
+          "branch_id": "ancestor",
+          "step_id": 1,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/anc_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/anc_raw.vcf"
+          },
+          "branch_id": "ancestor",
+          "step_id": 2,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/anc_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+          },
+          "branch_id": "ancestor",
+          "step_id": 3,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol1_aligned.bam"
+          },
+          "branch_id": "evol1",
+          "step_id": 4,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol1_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol1_raw.vcf"
+          },
+          "branch_id": "evol1",
+          "step_id": 5,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol1_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol1.filtered.vcf.gz"
+          },
+          "branch_id": "evol1",
+          "step_id": 6,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol2_aligned.bam"
+          },
+          "branch_id": "evol2",
+          "step_id": 7,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol2_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol2_raw.vcf"
+          },
+          "branch_id": "evol2",
+          "step_id": 8,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol2_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol2.filtered.vcf.gz"
+          },
+          "branch_id": "evol2",
+          "step_id": 9,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "output_vcf": "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz"
+          },
+          "branch_id": "evol1",
+          "step_id": 10,
+          "tool_name": "bcftools_isec_run"
+        },
+        {
+          "arguments": {
+            "output_vcf": "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz"
+          },
+          "branch_id": "evol2",
+          "step_id": 11,
+          "tool_name": "bcftools_isec_run"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz",
+            "output_vcf": "{{selected_dir}}/variants/evol1.annotated.vcf"
+          },
+          "branch_id": "evol1",
+          "step_id": 12,
+          "tool_name": "snpeff_annotate"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz",
+            "output_vcf": "{{selected_dir}}/variants/evol2.annotated.vcf"
+          },
+          "branch_id": "evol2",
+          "step_id": 13,
+          "tool_name": "snpeff_annotate"
+        },
+        {
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol1.annotated.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol1.normalized.vcf"
+          },
+          "branch_id": "evol1",
+          "step_id": 14,
+          "tool_name": "bcftools_norm_run"
+        }
+      ],
+      "thought_process": ""
+    },
+    "step_statuses": [
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed"
+    ]
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260424_074036_identify_and_annotate_genome_da0a",
+  "temperature": 0.3
+}

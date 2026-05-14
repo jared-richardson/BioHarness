@@ -1,0 +1,75 @@
+---
+name: bwa_mem_align
+description: Align short-read DNA sequencing reads with BWA-MEM and produce indexed BAM output.
+when_to_use: Use for short-read DNA alignment to a reference genome with BWA-MEM2
+when_not_to_use: Not for spliced alignment (use STAR/HISAT2) or long reads (use minimap2)
+risk_level: medium
+tools_required:
+- bwa
+- samtools
+capabilities:
+- alignment
+- reference_inputs
+input_types:
+- fastq
+- fasta_reference
+output_types:
+- bam
+analysis_categories:
+- variant_calling
+- evolution
+- germline
+parameters:
+  reference_fasta:
+    type: path
+    description: Reference FASTA for BWA indexing/alignment.
+    required: true
+    file_role: reference_genome
+  reads_1:
+    type: path
+    description: Read 1 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r1
+  reads_2:
+    type: path
+    description: Read 2 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r2
+  output_bam:
+    type: path
+    description: Sorted BAM output path.
+    required: true
+    file_role: output_dir
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+  cache_index_prefix:
+    type: path
+    description: Optional shared index prefix path for cached BWA index files.
+    required: false
+    file_role: buildable_index
+  postprocess_mode:
+    type: string
+    description: Optional deterministic postprocessing mode, for example fixmate_markdup_q20.
+    required: false
+  output_unmapped_bam:
+    type: path
+    description: Optional BAM path for unmapped reads emitted by supported postprocessing modes.
+    required: false
+    file_role: output_dir
+  read_group:
+    type: string
+    description: Optional explicit read-group string passed to BWA-MEM.
+    required: false
+  sample_name:
+    type: string
+    description: Optional sample name used to derive the read-group when one is not provided directly.
+    required: false
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 4
+command_template: bwa mem -t {threads} {reference_fasta} {reads_1} {reads_2} | samtools sort -@ {threads} -o {output_bam}
+  -
+---
+Use for deterministic short-read DNA alignment fallback plans.

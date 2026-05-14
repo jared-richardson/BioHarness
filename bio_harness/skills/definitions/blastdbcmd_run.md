@@ -1,0 +1,76 @@
+---
+name: blastdbcmd_run
+description: Retrieve sequences or metadata from a BLAST database.
+when_to_use: Use to inspect BLAST database contents, retrieve entries, or print database metadata
+when_not_to_use: Do not use to execute sequence similarity searches
+risk_level: low
+tools_required:
+- blastdbcmd
+capabilities:
+- annotation
+- protein_analysis
+input_types:
+- directory
+output_types:
+- fasta
+- tsv
+- txt
+analysis_categories:
+- comparative_genomics
+- annotation
+parameters:
+  database:
+    type: string
+    description: BLAST database name or path prefix.
+    required: true
+  output_file:
+    type: path
+    description: Optional output file path.
+    required: false
+    file_role: output_dir
+  dbtype:
+    type: string
+    description: Database molecule type.
+    required: false
+  entry:
+    type: string
+    description: Entry identifier or all.
+    required: false
+  entry_batch:
+    type: path
+    description: File of entry identifiers.
+    required: false
+  outfmt:
+    type: string
+    description: blastdbcmd output format.
+    required: false
+  info:
+    type: boolean
+    description: Emit database info instead of entries.
+    required: false
+  metadata:
+    type: boolean
+    description: Emit database metadata.
+    required: false
+  tax_info:
+    type: boolean
+    description: Emit taxonomy info.
+    required: false
+  show_search_path:
+    type: boolean
+    description: Print BLAST DB search path.
+    required: false
+  range_spec:
+    type: string
+    description: Optional subsequence range.
+    required: false
+  strand:
+    type: string
+    description: Optional nucleotide strand.
+    required: false
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+command_template: blastdbcmd -db {database} -entry {entry} -out {output_file}
+---
+Use for deterministic inspection and retrieval from BLAST databases.

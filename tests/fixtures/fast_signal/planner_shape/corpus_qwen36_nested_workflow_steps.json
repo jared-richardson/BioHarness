@@ -1,0 +1,40 @@
+{
+  "analysis_family": "transcript_quantification",
+  "analysis_type": "transcript_quantification",
+  "backend_version": "0.20.0",
+  "candidate": {},
+  "captured_against_model_digest": "07d35212591fc27746f0a317c975a6d68754fb38e9053d82e25f06057af28522",
+  "covers_fix": [
+    "B2-nested-workflow-shape"
+  ],
+  "expected_outcome": {
+    "forbid_silent_corruption": true,
+    "min_steps": 1,
+    "passed": true,
+    "required_tools": [
+      "salmon_quant"
+    ]
+  },
+  "failure_class": "corpus_idiom",
+  "failure_class_id": "unclassified",
+  "fixture_signature_hash": "1d20d8fda5b8423645e478d8236cdbdc7e94cdbc9fb5be2d96bbc3b96e7a13fc",
+  "id": "corpus_qwen36_nested_workflow_steps",
+  "kind": "planner_shape",
+  "metadata": {
+    "idiom_key_before_fix": "step_key=|steps=0|abs=0|rel=0|bare=0|args=0|hints=0|branch=0|sample=0",
+    "scenario": "Qwen 3.6 emitted workflow as an object containing steps and used tool instead of tool_name.",
+    "source_emission_id": "control_transcript.t0p0.r01"
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {},
+  "raw_emission": "{\n  \"thought_process\": \"The user requested transcript quantification using salmon_quant on paired-end RNA-seq reads, requiring a single step to process the inputs and produce quantification results.\",\n  \"workflow\": {\n    \"steps\": [\n      {\n        \"step_id\": \"salmon_quantification\",\n        \"tool\": \"salmon_quant\",\n        \"inputs\": {\n          \"index_dir\": \"transcriptome_index\",\n          \"output_dir\": \"output_dir\",\n          \"reads_1\": \"input_fastq_r1\",\n          \"reads_2\": \"input_fastq_r2\",\n          \"threads\": 8,\n          \"library_type\": \"A\",\n          \"transcriptome_fasta\": \"fasta_transcriptome\"\n        },\n        \"parameter_hints\": \"validateMappings=True, library_type=A\"\n      }\n    ],\n    \"final_deliverables\": [\n      {\n        \"step_id\": \"salmon_quantification\",\n        \"output_key\": \"quant_tsv\"\n      }\n    ]\n  }\n}",
+  "schema_version": 1,
+  "source_run": "plan_shape_corpus_qwen36_pilot_20260430",
+  "tags": [
+    "plan_shape_corpus",
+    "qwen36_pilot",
+    "nested_workflow_steps",
+    "transcript_quantification"
+  ],
+  "temperature": 0.0
+}

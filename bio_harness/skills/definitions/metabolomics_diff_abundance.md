@@ -1,0 +1,103 @@
+---
+name: metabolomics_diff_abundance
+description: Run deterministic differential metabolite-feature abundance analysis from a processed feature table and sample metadata.
+when_to_use: Use for table-first metabolomics inputs with one feature-intensity matrix and one sample metadata table.
+when_not_to_use: Not for raw LC-MS peak detection, mzML preprocessing, or spectral annotation workflows.
+risk_level: medium
+tools_required:
+- python
+capabilities:
+- metabolomics
+- differential_analysis
+- group_comparison
+input_types:
+- csv
+- tsv
+output_types:
+- csv
+- tsv
+- json
+- md
+canonical_output_filenames:
+  output_dir:
+  - metabolomics_differential_abundance.csv
+  - metabolomics_qc_summary.json
+  - normalized_feature_matrix.tsv
+  - volcano_plot_data.tsv
+  - metabolomics_summary.md
+analysis_categories:
+- metabolomics
+parameters:
+  feature_table:
+    type: path
+    description: Metabolomics feature-intensity matrix in wide sample-column format.
+    required: true
+    file_role: input_csv
+    ownership: user_input
+  metadata_table:
+    type: path
+    description: Sample metadata table describing group assignments.
+    required: true
+    file_role: metadata_table
+    ownership: user_input
+  script_path:
+    type: path
+    description: Optional path to a custom metabolomics workflow script. Defaults to the bundled deterministic workflow.
+    required: false
+    ownership: harness_managed
+  output_dir:
+    type: path
+    description: Output directory for canonical metabolomics result artifacts.
+    required: true
+    file_role: output_dir
+    ownership: execution_output
+  output_csv:
+    type: path
+    description: Optional explicit path for the differential-abundance CSV.
+    required: false
+    file_role: output_csv
+    ownership: execution_output
+  sample_id_column:
+    type: string
+    description: Optional explicit sample-ID column name in the metadata table.
+    required: false
+    ownership: tuning
+  group_column:
+    type: string
+    description: Optional explicit grouping column in the metadata table.
+    required: false
+    ownership: tuning
+  group_a:
+    type: string
+    description: Optional reference group label.
+    required: false
+    ownership: tuning
+  group_b:
+    type: string
+    description: Optional comparison group label.
+    required: false
+    ownership: tuning
+  normalization_method:
+    type: string
+    description: Deterministic normalization method. Currently only median_center is supported.
+    required: false
+    ownership: tuning
+  min_present_fraction:
+    type: number
+    description: Minimum observed fraction required to retain one feature before imputation.
+    required: false
+    ownership: tuning
+  impute_method:
+    type: string
+    description: Deterministic missing-value imputation method.
+    required: false
+    ownership: tuning
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 4
+command_template: python {script_path} --feature-table {feature_table} --metadata-table {metadata_table} --output-dir {output_dir}
+---
+Use for deterministic table-first metabolomics differential-abundance analysis.
+The wrapper expects one wide feature-intensity matrix with feature identifiers in
+the first column and one metadata table containing exactly two comparison
+groups.

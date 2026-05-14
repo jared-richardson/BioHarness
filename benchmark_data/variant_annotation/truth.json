@@ -1,0 +1,89 @@
+{
+  "variants": [
+    {
+      "id": "stop_gained_A",
+      "pos": 619,
+      "expected_impact": "HIGH",
+      "expected_effect": "stop_gained",
+      "gene": "GENE_A"
+    },
+    {
+      "id": "frameshift_A",
+      "pos": 651,
+      "expected_impact": "HIGH",
+      "expected_effect": "frameshift_variant",
+      "gene": "GENE_A"
+    },
+    {
+      "id": "missense_A",
+      "pos": 676,
+      "expected_impact": "MODERATE",
+      "expected_effect": "missense_variant",
+      "gene": "GENE_A"
+    },
+    {
+      "id": "synonymous_A",
+      "pos": 744,
+      "expected_impact": "LOW",
+      "expected_effect": "synonymous_variant",
+      "gene": "GENE_A"
+    },
+    {
+      "id": "intron_A",
+      "pos": 951,
+      "expected_impact": "MODIFIER",
+      "expected_effect": "intron_variant",
+      "gene": "GENE_A"
+    },
+    {
+      "id": "intergenic",
+      "pos": 3001,
+      "expected_impact": "MODIFIER",
+      "expected_effect": "intergenic_region",
+      "gene": "none"
+    },
+    {
+      "id": "stop_gained_B",
+      "pos": 4119,
+      "expected_impact": "HIGH",
+      "expected_effect": "stop_gained",
+      "gene": "GENE_B"
+    },
+    {
+      "id": "missense_B",
+      "pos": 4176,
+      "expected_impact": "MODERATE",
+      "expected_effect": "missense_variant",
+      "gene": "GENE_B"
+    },
+    {
+      "id": "synonymous_B",
+      "pos": 4238,
+      "expected_impact": "LOW",
+      "expected_effect": "synonymous_variant",
+      "gene": "GENE_B"
+    },
+    {
+      "id": "intron_B",
+      "pos": 4601,
+      "expected_impact": "MODIFIER",
+      "expected_effect": "intron_variant",
+      "gene": "GENE_B"
+    }
+  ],
+  "total_variants": 10,
+  "impact_counts": {
+    "HIGH": 3,
+    "MODERATE": 2,
+    "LOW": 2,
+    "MODIFIER": 3
+  },
+  "high_moderate_ids": [
+    "stop_gained_A",
+    "frameshift_A",
+    "missense_A",
+    "stop_gained_B",
+    "missense_B"
+  ],
+  "high_moderate_count": 5
+}

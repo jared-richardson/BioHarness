@@ -1,0 +1,134 @@
+{
+  "analysis_type": "variant_annotation",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "snpeff_annotate"
+      }
+    ]
+  },
+  "covers_fix": [
+    "direct_wrapper_data_root_input_priority"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "genome_db": "custom_ref",
+      "input_vcf": "ex1.eff.vcf",
+      "output_vcf": "annotated.vcf"
+    },
+    "accepted_tool_name": "snpeff_annotate"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_snpeff_data_root_vcf_disambiguation",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits snpeff_annotate without input_vcf when both the primary data VCF and a ClinVar reference VCF are present.",
+    "user_request": "Find the genetic cause of cystic fibrosis in the provided family VCF and export a clinically interpretable CSV.",
+    "workspace_files": [
+      "{{data_root}}/ex1.eff.vcf",
+      "{{data_root}}/family_description.txt",
+      "{{data_root}}/../references/clinvar_20250521.vcf.gz"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "variant_annotation",
+      "benchmark_policy": "scientific_harness",
+      "chosen_method": "snpeff_annotate",
+      "discovered_data_files": [
+        {
+          "name": "ex1.eff.vcf",
+          "path": "{{data_root}}/ex1.eff.vcf"
+        },
+        {
+          "name": "family_description.txt",
+          "path": "{{data_root}}/family_description.txt"
+        },
+        {
+          "name": "clinvar_20250521.vcf.gz",
+          "path": "{{data_root}}/../references/clinvar_20250521.vcf.gz"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "snpeff_annotate"
+        ],
+        "execution_mode": "direct_wrapper",
+        "required_tools": []
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "vcf",
+            "resolved_path": "{{data_root}}/ex1.eff.vcf",
+            "role": "input_vcf",
+            "sample_id": null
+          },
+          {
+            "file_type": "txt",
+            "resolved_path": "{{data_root}}/family_description.txt",
+            "role": "input_txt",
+            "sample_id": null
+          },
+          {
+            "file_type": "vcf",
+            "resolved_path": "{{data_root}}/../references/clinvar_20250521.vcf.gz",
+            "role": "input_vcf",
+            "sample_id": null
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "genome_db": "GRCh37.75"
+          },
+          "tool_name": "snpeff_annotate"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "snpeff_annotate",
+          "Annotate variants with SnpEff if the input VCF is not already annotated",
+          {
+            "genome_db": "GRCh37.75"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "snpeff_annotate",
+        "bash_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "variant_annotation",
+        "compatible_tools": [
+          "snpeff_annotate"
+        ],
+        "execution_mode": "direct_wrapper",
+        "input_mode": "vcf"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_065006_find_the_genetic_cause_of_cy_5948",
+  "tags": [
+    "band2",
+    "direct_wrapper",
+    "required_arguments",
+    "variant_annotation"
+  ],
+  "temperature": 0.3
+}

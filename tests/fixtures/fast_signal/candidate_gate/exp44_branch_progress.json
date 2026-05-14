@@ -1,0 +1,206 @@
+{
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "branch_id": "evol2",
+        "objective": "Annotate evolved line 2 variants with ANN-compatible fields.",
+        "parameter_hints": {
+          "annotation_field": "ANN",
+          "genome_db": "ancestor"
+        },
+        "step_id": 11,
+        "tool_name": "snpeff_annotate"
+      }
+    ],
+    "thought_process": "The previous step annotated evol1, so annotate evol2 next."
+  },
+  "covers_fix": [
+    "branch-stage-progress"
+  ],
+  "expected_outcome": {
+    "branch_progress_hint_contains": [
+      "branch=ancestor",
+      "stage=filtered_vcf",
+      "bcftools_filter_run",
+      "evol2:filtered_vcf"
+    ],
+    "branch_progress_next": {
+      "branch_id": "ancestor",
+      "stage": "filtered_vcf",
+      "suggested_tool": "bcftools_filter_run"
+    },
+    "duplicate_rejected": false,
+    "missing_inputs_contains": [
+      "evol2.ancestor_subtracted.vcf.gz"
+    ],
+    "missing_inputs_rejected": true,
+    "passed": true
+  },
+  "failure_class": "branch_stage_progress",
+  "id": "exp44_branch_progress",
+  "kind": "candidate_gate",
+  "metadata": {
+    "scenario": "After ancestor/evol1/evol2 raw calls and premature evol1 annotation, a snpeff_annotate[evol2] candidate must be rejected until branch-local filtering and ancestor subtraction catch up.",
+    "workspace_files": [
+      "{{selected_dir}}/assembly/scaffolds.fasta",
+      "{{selected_dir}}/assembly/genes.gff",
+      "{{selected_dir}}/alignments/anc_aligned.bam",
+      "{{selected_dir}}/alignments/evol1_aligned.bam",
+      "{{selected_dir}}/alignments/evol2_aligned.bam",
+      "{{selected_dir}}/variants/anc_raw.vcf",
+      "{{selected_dir}}/variants/evol1_raw.vcf",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.annotated.vcf",
+      "{{selected_dir}}/variants/evol2_raw.vcf"
+    ]
+  },
+  "model": "qwen3.6",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "benchmark_policy": "bioagentbench_planning_strict",
+      "protocol_grounding": {
+        "min_variant_branches": 2,
+        "requires_shared_comparison": true
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {
+            "careful": true,
+            "output_dir": "{{selected_dir}}/assembly",
+            "reads_1": "{{data_root}}/anc_R1.fastq.gz",
+            "reads_2": "{{data_root}}/anc_R2.fastq.gz"
+          },
+          "step_id": 1,
+          "tool_name": "spades_assemble"
+        },
+        {
+          "arguments": {
+            "input_fasta": "{{selected_dir}}/assembly/scaffolds.fasta",
+            "output_faa": "{{selected_dir}}/assembly/genes.faa",
+            "output_gff": "{{selected_dir}}/assembly/genes.gff"
+          },
+          "step_id": 2,
+          "tool_name": "prodigal_annotate"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/anc_aligned.bam",
+            "reads_1": "{{data_root}}/anc_R1.fastq.gz",
+            "reads_2": "{{data_root}}/anc_R2.fastq.gz",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "ancestor",
+          "objective": "Align ancestor reads to the assembled scaffold reference.",
+          "step_id": 3,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/anc_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/anc_raw.vcf",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "ancestor",
+          "objective": "Call haploid ancestor variants.",
+          "step_id": 4,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol1_aligned.bam",
+            "reads_1": "{{data_root}}/evol1_R1.fastq.gz",
+            "reads_2": "{{data_root}}/evol1_R2.fastq.gz",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "evol1",
+          "objective": "Align evolved line 1 reads.",
+          "step_id": 5,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol1_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol1_raw.vcf",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "evol1",
+          "objective": "Call haploid evolved line 1 variants.",
+          "step_id": 6,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "filter_expression": "QUAL > 1",
+            "input_vcf": "{{selected_dir}}/variants/evol1_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol1.filtered.vcf.gz"
+          },
+          "branch_id": "evol1",
+          "objective": "Filter evolved line 1 raw variants.",
+          "step_id": 7,
+          "tool_name": "bcftools_filter_run"
+        },
+        {
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol2_aligned.bam",
+            "reads_1": "{{data_root}}/evol2_R1.fastq.gz",
+            "reads_2": "{{data_root}}/evol2_R2.fastq.gz",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "evol2",
+          "objective": "Align evolved line 2 reads.",
+          "step_id": 8,
+          "tool_name": "bwa_mem_align"
+        },
+        {
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol2_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol2_raw.vcf",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "evol2",
+          "objective": "Call haploid evolved line 2 variants.",
+          "step_id": 9,
+          "tool_name": "freebayes_call"
+        },
+        {
+          "arguments": {
+            "annotation_field": "ANN",
+            "annotation_gff": "{{selected_dir}}/assembly/genes.gff",
+            "genome_db": "ancestor",
+            "input_vcf": "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+            "output_vcf": "{{selected_dir}}/variants/evol1.annotated.vcf",
+            "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta"
+          },
+          "branch_id": "evol1",
+          "objective": "Annotate evolved line 1 variants.",
+          "step_id": 10,
+          "tool_name": "snpeff_annotate"
+        }
+      ],
+      "thought_process": ""
+    },
+    "step_statuses": [
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed"
+    ]
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260423_185727_identify_and_annotate_genome_1d85",
+  "temperature": 0.3
+}

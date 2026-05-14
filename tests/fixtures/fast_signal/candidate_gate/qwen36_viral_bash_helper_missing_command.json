@@ -1,0 +1,166 @@
+{
+  "analysis_type": "viral_metagenomics",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 2,
+        "tool_name": "bash_run"
+      }
+    ]
+  },
+  "covers_fix": [
+    "helper_backed_bash_command_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "command": "classify_viral_reads_kmer.py"
+    },
+    "accepted_tool_name": "bash_run"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_viral_bash_helper_missing_command",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits the second viral-metagenomics helper-backed bash_run step with no command.",
+    "user_request": "Identify viruses in the paired-end reads by mapping against the viral reference FASTAs staged in the task directory references. Write the required final files under the selected output directory.",
+    "workspace_files": [
+      "{{data_root}}/sample_R1.fastq.gz",
+      "{{data_root}}/sample_R2.fastq.gz",
+      "{{data_root}}/../references/NC_001416.1.fasta"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "viral_metagenomics",
+      "benchmark_policy": "scientific_harness",
+      "chosen_method": "fastp_run + bash_run",
+      "discovered_data_files": [
+        {
+          "name": "sample_R1.fastq.gz",
+          "path": "{{data_root}}/sample_R1.fastq.gz"
+        },
+        {
+          "name": "sample_R2.fastq.gz",
+          "path": "{{data_root}}/sample_R2.fastq.gz"
+        },
+        {
+          "name": "NC_001416.1.fasta",
+          "path": "{{data_root}}/../references/NC_001416.1.fasta"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [],
+        "execution_mode": "compiled_pipeline",
+        "required_tools": []
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/sample_R1.fastq.gz",
+            "role": "input_fastq_r1",
+            "sample_id": "sample"
+          },
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/sample_R2.fastq.gz",
+            "role": "input_fastq_r2",
+            "sample_id": "sample"
+          },
+          {
+            "file_type": "fasta",
+            "resolved_path": "{{data_root}}/../references/NC_001416.1.fasta",
+            "role": "input_fasta",
+            "sample_id": null
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "detect_adapter_for_pe": true,
+            "length_required": 30
+          },
+          "tool_name": "fastp_run"
+        },
+        {
+          "settings": {
+            "helper_script": "/repo/bio_harness/pipeline_scripts/classify_viral_reads_kmer.py",
+            "tool": "python3"
+          },
+          "tool_name": "bash_run"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "fastp_run",
+          "Quality trim paired-end reads before viral classification",
+          {
+            "detect_adapter_for_pe": true,
+            "length_required": 30
+          }
+        ],
+        [
+          "bash_run",
+          "Classify trimmed reads against the staged viral reference panel and write coverage and detection outputs",
+          {
+            "helper_script": "/repo/bio_harness/pipeline_scripts/classify_viral_reads_kmer.py",
+            "tool": "python3"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "fastp_run",
+        "bash_run",
+        "fastqc_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "viral_metagenomics",
+        "compatible_tools": [],
+        "execution_mode": "compiled_pipeline",
+        "input_mode": "raw_fastq"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": [
+        {
+          "arguments": {
+            "detect_adapter_for_pe": true,
+            "length_required": 30,
+            "output_reads_1": "{{selected_dir}}/trimmed/sample_trimmed_1.fastq.gz",
+            "output_reads_2": "{{selected_dir}}/trimmed/sample_trimmed_2.fastq.gz",
+            "reads_1": "{{data_root}}/sample_R1.fastq.gz",
+            "reads_2": "{{data_root}}/sample_R2.fastq.gz"
+          },
+          "step_id": 1,
+          "tool_name": "fastp_run"
+        }
+      ]
+    },
+    "step_statuses": [
+      {
+        "exit_code": 0,
+        "status": "completed",
+        "step_id": 1,
+        "tool_name": "fastp_run"
+      }
+    ]
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_073736_identify_viruses_in_the_pair_9673",
+  "tags": [
+    "band2",
+    "compiled_pipeline",
+    "helper_backed",
+    "viral_metagenomics"
+  ],
+  "temperature": 0.3
+}

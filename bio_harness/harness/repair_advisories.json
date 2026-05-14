@@ -1,0 +1,121 @@
+{
+  "analysis_advisories": {
+    "bacterial_evolution_variant_calling": {
+      "avoid_patterns": [
+        "Consuming branch-local annotated VCFs before the annotation producer has run or when one branch has no annotated producer at all."
+      ],
+      "repair_hints": [
+        "Late normalization or shared-export steps must consume already-produced annotated branch-local VCFs, not fabricated annotated filenames.",
+        "If one branch lacks an annotated producer, keep that as an explicit replan gap instead of mirroring a sibling annotation step."
+      ],
+      "source": "fix_stage_dag_annotation_order",
+      "summary": "Shared evolution plans must keep ancestor, branch-local annotation, and final export handoffs exact through subtraction, annotation, normalization, and export."
+    },
+    "long_read_rna": {
+      "avoid_patterns": [
+        "Fabricating transcript quantification or annotation files from BAM-only evidence.",
+        "Routing annotation-free long-read RNA requests into short-read quantification workflows to satisfy an unsupported contract."
+      ],
+      "repair_hints": [
+        "If annotation is explicitly unavailable, drop annotation and quantification requirements and keep sorted/indexed alignment as the supported terminal output.",
+        "Use minimap2-backed alignment artifacts plus a clear downstream handoff note when isoform quantification cannot be grounded from provided inputs."
+      ],
+      "source": "repo",
+      "summary": "Annotation-limited long-read RNA requests should degrade to alignment-first outputs, not fabricated quantification."
+    },
+    "multi_model_dge_pathway": {
+      "avoid_patterns": [
+        "Inventing mock or placeholder pathway names.",
+        "Guessing case or control group membership from column order.",
+        "Bypassing the repo helper for final pathway comparison when it is already the chosen local route."
+      ],
+      "repair_hints": [
+        "Keep the repair centered on the local compare_pathways helper and its validated handoffs.",
+        "Preserve explicit sample-group evidence rather than inferring groups from filenames or index position."
+      ],
+      "source": "repo",
+      "summary": "Alzheimer pathway repairs should stay helper-backed and avoid fabricated biology."
+    },
+    "variant_annotation": {
+      "avoid_patterns": [
+        "Filtering on impact or ANN-derived fields before the annotation step has produced them."
+      ],
+      "repair_hints": [
+        "Preserve the annotation step and only apply impact/effect filtering after annotated VCF output exists."
+      ],
+      "source": "repo",
+      "summary": "Variant-annotation repairs must keep annotation before impact filtering."
+    }
+  },
+  "tool_advisories": {
+    "bash_run": {
+      "avoid_patterns": [
+        "Joining multiple scientific operations with pipes, &&, ;, or || inside one bash_run step.",
+        "Leaving unresolved template placeholders such as <reference_fasta> in command arguments."
+      ],
+      "repair_hints": [
+        "Each bash_run step must perform exactly one shell operation. Split multi-operation shell into multiple steps.",
+        "Resolve template placeholders such as <reference_fasta> to concrete paths before emitting command arguments.",
+        "Prefer typed wrappers over bash_run when a dedicated wrapper exists for the operation."
+      ],
+      "source": "atomic_step_m1_bash_run_policy",
+      "summary": "Keep bash_run atomic, resolve placeholders explicitly, and prefer typed wrappers over compound shell."
+    },
+    "bcftools_filter_run": {
+      "avoid_patterns": [
+        "Retrying GATK-style QD, MQRankSum, FS, SOR, or ReadPosRankSum filters unchanged against FreeBayes VCFs that do not declare those tags.",
+        "Inventing filter tags that are absent from the VCF header."
+      ],
+      "repair_hints": [
+        "If a FreeBayes-produced VCF lacks GATK-specific INFO/QD, use QUAL / INFO/DP as the QualByDepth equivalent when INFO/DP is declared.",
+        "Validate every filter clause against the input VCF header before retrying; drop or rewrite only clauses backed by declared INFO/FORMAT tags."
+      ],
+      "source": "public_tree_qwen_coder_mini_evolution_20260503",
+      "summary": "bcftools filter repairs should keep filter expressions consistent with the input VCF producer's declared header tags."
+    },
+    "featurecounts_run": {
+      "avoid_patterns": [
+        "Pointing featurecounts_run.input_bams at selected-dir BAM aliases that no earlier step emits."
+      ],
+      "repair_hints": [
+        "Keep featurecounts_run.input_bams limited to BAMs that earlier alignment or merge steps actually produce.",
+        "If multiple replicate BAMs are listed, preserve one upstream producer for each listed identity before counting."
+      ],
+      "source": "fix45_rnaseq_bam_producer_coverage",
+      "summary": "featureCounts repairs must keep BAM inputs producer-complete."
+    },
+    "flye_assemble": {
+      "avoid_patterns": [
+        "Passing undeclared wrapper arguments or dropping Flye-specific parameters during repair.",
+        "Falling back from long-read assembly into unrelated RNA or generic shell workflows when assembly remains the requested objective."
+      ],
+      "repair_hints": [
+        "For metagenome-style prompts, set an appropriate Flye read mode, enable meta mode, and prefer conservative thread counts and genome-size defaults.",
+        "After Docker or OOM failures, retry within the Flye wrapper constraints before considering any fallback, and never cross assay families when no same-class fallback exists."
+      ],
+      "source": "repo",
+      "summary": "Long-read assembly repairs should preserve Flye-specific read-mode, meta-mode, and conservative resource settings."
+    },
+    "freebayes_call": {
+      "avoid_patterns": [
+        "Using diploid defaults in haploid bacterial variant calling."
+      ],
+      "repair_hints": [
+        "Use haploid settings for bacterial evolution and preserve branch-local BAM-to-VCF bindings."
+      ],
+      "source": "repo",
+      "summary": "Bacterial FreeBayes repairs should preserve haploid calling and branch-local outputs."
+    },
+    "snpeff_annotate": {
+      "avoid_patterns": [
+        "Passing plain Bacterial/prokaryotic codon-table overrides into custom SnpEff database builds when the active SnpEff runtime rejects them."
+      ],
+      "repair_hints": [
+        "For custom bacterial or ancestor SnpEff database builds, normalize problematic codon_table overrides like 11, Bacterial, or Bacterial_and_Plant_Plastid to the empty string so the packaged default codon handling is used."
+      ],
+      "source": "fix_snpeff_plain_bacterial_codon_table",
+      "summary": "snpEff repairs should validate non-empty outputs, preserve local custom database inputs, and avoid incompatible codon-table overrides."
+    }
+  },
+  "version": 1
+}

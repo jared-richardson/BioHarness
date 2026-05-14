@@ -1,0 +1,48 @@
+---
+name: tabix_index_run
+description: Build one tabix index for a bgzipped genomic file as a single atomic step.
+when_to_use: Use to index a bgzipped VCF, GFF, or BED file with tabix
+when_not_to_use: Do not use when the file still needs compression or other upstream transformations first
+risk_level: low
+tools_required:
+- tabix
+capabilities:
+- indexing
+- variant_calling
+input_types:
+- vcf
+- gff
+- bed
+output_types:
+- index
+analysis_categories:
+- variant_calling
+- annotation
+parameters:
+  input_file:
+    type: path
+    description: Bgzip-compressed file to index.
+    required: true
+    file_role: input_vcf
+  preset:
+    type: string
+    description: Tabix preset (`vcf`, `gff`, or `bed`).
+    required: false
+  force:
+    type: boolean
+    description: Whether to pass `-f` and overwrite an existing index.
+    required: false
+system_requirements:
+  min_ram_gb: 1
+  min_cores: 1
+command_template: tabix -p {preset} {input_file}
+---
+Use for one deterministic tabix indexing step. This wrapper emits a single
+direct `tabix` invocation and does not bundle compression or other follow-on
+operations.
+
+## Onboarding Metadata
+- Source: http://www.htslib.org/doc/tabix.html
+- Source Mode: official_docs
+- Installed At: curated_seed_v1
+- Install Workflow: controlled_curated_batch_onboarding:alignment_variant_core

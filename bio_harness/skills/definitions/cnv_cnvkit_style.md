@@ -1,0 +1,49 @@
+---
+name: cnv_cnvkit_style
+description: Run CNVkit-style copy-number analysis with deterministic fallback behavior.
+when_to_use: Use for copy number variation detection from WGS or targeted sequencing BAM data
+when_not_to_use: Not for SNP/indel calling or structural variant detection
+risk_level: medium
+tools_required:
+- cnvkit.py
+capabilities:
+- cnv_analysis
+- reference_inputs
+- alignment
+input_types:
+- bam
+- fasta_reference
+output_types:
+- tsv
+- bed
+analysis_categories:
+- variant_calling
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 2
+parameters:
+  input_bam:
+    type: path
+    description: Input BAM path.
+    required: true
+  reference_fasta:
+    type: path
+    description: Reference FASTA path.
+    required: true
+  output_dir:
+    type: path
+    description: Output directory.
+    required: true
+  output_report:
+    type: path
+    description: CNV summary TSV output.
+    required: true
+  threads:
+    type: integer
+    description: Process count.
+    required: false
+command_template: cnvkit.py batch {input_bam} --fasta {reference_fasta} --processes {threads} --output-dir {output_dir}
+---
+Use for uncommon copy-number analysis prompts when CNVkit-style interfaces are required.
+
+Fallback mode writes a deterministic neutral CNV summary when CNVkit is unavailable.

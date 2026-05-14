@@ -1,0 +1,147 @@
+{
+  "analysis_type": "metagenomics_classification",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "spades_assemble"
+      }
+    ]
+  },
+  "covers_fix": [
+    "metagenomics_requested_data_root_spades_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "memory_gb": "32",
+      "output_dir": "assembly/metaspades",
+      "reads_1": "sample_R1.fastq.gz",
+      "reads_2": "sample_R2.fastq.gz",
+      "threads": "8"
+    },
+    "accepted_tool_name": "spades_assemble"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_metagenomics_spades_missing_required_args",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits the metagenomics workflow-seed spades_assemble step with no arguments; strict binding must recover paired FASTQs from requested_data_root instead of official_runs path inference.",
+    "user_request": "Classify the provided shotgun metagenomic reads with Kraken2 and use the prebuilt Kraken2 database at the task directory references/kraken2_db. Produce a community-composition report and keep the analysis within the selected directory.",
+    "workspace_files": [
+      "{{data_root}}/sample_R1.fastq.gz",
+      "{{data_root}}/sample_R2.fastq.gz"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "metagenomics_classification",
+      "benchmark_policy": "scientific_harness",
+      "candidate_methods": [
+        "metaSPAdes assembly followed by reference-panel k-mer taxonomic profiling"
+      ],
+      "chosen_method": "spades_assemble + bash_run",
+      "discovered_data_files": [
+        {
+          "name": "sample_R1.fastq.gz",
+          "path": "{{data_root}}/sample_R1.fastq.gz"
+        },
+        {
+          "name": "sample_R2.fastq.gz",
+          "path": "{{data_root}}/sample_R2.fastq.gz"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "kraken2"
+        ],
+        "execution_mode": "compiled_pipeline",
+        "required_tools": [
+          "kraken2"
+        ]
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/sample_R1.fastq.gz",
+            "role": "input_fastq_r1",
+            "sample_id": "sample"
+          },
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/sample_R2.fastq.gz",
+            "role": "input_fastq_r2",
+            "sample_id": "sample"
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "meta_mode": true
+          },
+          "tool_name": "spades_assemble"
+        },
+        {
+          "settings": {
+            "helper_script": "<BIO_HARNESS_ROOT>/bio_harness/pipeline_scripts/classify_metagenomics_kmer.py",
+            "tool": "python3"
+          },
+          "tool_name": "bash_run"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "spades_assemble",
+          "Assemble the paired-end metagenomics reads with metaSPAdes and write the requested contigs FASTA under the assembly output directory",
+          {
+            "meta_mode": true
+          }
+        ],
+        [
+          "bash_run",
+          "Classify the paired-end metagenomics reads against the staged bacterial reference panel with the repo-local k-mer helper and write the requested Kraken-style report",
+          {
+            "helper_script": "<BIO_HARNESS_ROOT>/bio_harness/pipeline_scripts/classify_metagenomics_kmer.py",
+            "tool": "python3"
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "spades_assemble",
+        "bash_run",
+        "fastqc_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "metagenomics_classification",
+        "compatible_tools": [
+          "kraken2"
+        ],
+        "execution_mode": "compiled_pipeline"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_082232_classify_the_provided_shotgu_fc02",
+  "tags": [
+    "band2",
+    "compiled_pipeline",
+    "metagenomics",
+    "requested_data_root",
+    "required_arguments",
+    "spades"
+  ],
+  "temperature": 0.3
+}

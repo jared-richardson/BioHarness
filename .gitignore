@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage*
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Local environments
+.venv/
+venv/
+.pixi/
+.tool-envs/
+.tool-envs-docker/
+.tool-envs-generic/
+
+# Frontend
+node_modules/
+.vite/
+apps/web/dist/
+
+# Runtime outputs and local data
+workspace/
+runs/
+outputs/
+output/
+downloads/
+
+# Platform/editor noise
+.DS_Store
+.vscode/
+.idea/
+*.log

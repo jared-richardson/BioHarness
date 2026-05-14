@@ -1,0 +1,126 @@
+{
+  "analysis_type": "metagenomics_classification",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "metagenomics_kraken2_bracken_style"
+      }
+    ]
+  },
+  "covers_fix": [
+    "metagenomics_direct_wrapper_candidate_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "database": "references/kraken2_db",
+      "output_report": "bracken_abundance.tsv",
+      "reads_1": "sample_R1.fastq.gz",
+      "reads_2": "sample_R2.fastq.gz"
+    },
+    "accepted_tool_name": "metagenomics_kraken2_bracken_style"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_metagenomics_missing_required_args",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits metagenomics_kraken2_bracken_style with no required arguments under a compiled metagenomics analysis spec.",
+    "user_request": "Classify the provided shotgun metagenomic reads with Kraken2 and use the prebuilt Kraken2 database at the task directory references/kraken2_db. Produce a community-composition report and keep the analysis within the selected directory.",
+    "workspace_files": [
+      "{{data_root}}/sample_R1.fastq.gz",
+      "{{data_root}}/sample_R2.fastq.gz",
+      "{{data_root}}/../references/kraken2_db/hash.k2d",
+      "{{data_root}}/../references/kraken2_db/opts.k2d",
+      "{{data_root}}/../references/kraken2_db/taxo.k2d"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "metagenomics_classification",
+      "benchmark_policy": "scientific_harness",
+      "candidate_methods": [],
+      "chosen_method": "spades_assemble + bash_run",
+      "discovered_data_files": [
+        {
+          "name": "sample_R1.fastq.gz",
+          "path": "{{data_root}}/sample_R1.fastq.gz"
+        },
+        {
+          "name": "sample_R2.fastq.gz",
+          "path": "{{data_root}}/sample_R2.fastq.gz"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [
+          "kraken2"
+        ],
+        "execution_mode": "compiled_pipeline",
+        "required_tools": [
+          "kraken2"
+        ]
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/sample_R1.fastq.gz",
+            "role": "input_fastq_r1",
+            "sample_id": "sample"
+          },
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/sample_R2.fastq.gz",
+            "role": "input_fastq_r2",
+            "sample_id": "sample"
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "graph_pipeline_skeleton": [
+        {
+          "capability": "metagenomic_classification",
+          "input_types": [
+            "fastq"
+          ],
+          "output_types": [
+            "tsv"
+          ],
+          "step_number": 1,
+          "tool_name": "metagenomics_kraken2_bracken_style"
+        }
+      ],
+      "preferred_tools": [
+        "spades_assemble",
+        "bash_run",
+        "fastqc_run"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "metagenomics_classification",
+        "compatible_tools": [
+          "kraken2"
+        ],
+        "execution_mode": "compiled_pipeline"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_063453_classify_the_provided_shotgu_8c74",
+  "tags": [
+    "band2",
+    "compiled_pipeline",
+    "metagenomics",
+    "required_arguments"
+  ],
+  "temperature": 0.3
+}

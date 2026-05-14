@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use Bio-Harness, please cite the software and accompanying manuscript."
+title: "Bio-Harness: Reliable Local-First Bioinformatics Agents with a Calibrated Fast-Signal Methodology"
+type: software
+authors:
+  - family-names: Richardson
+    given-names: Jared
+repository-code: "https://github.com/jared-richardson/BioHarness"
+url: "https://github.com/jared-richardson/BioHarness"
+license: MIT
+version: "0.1.0"
+date-released: "2026-05-02"
+preferred-citation:
+  type: article
+  title: "Bio-Harness: Reliable Local-First Bioinformatics Agents with a Calibrated Fast-Signal Methodology"
+  authors:
+    - family-names: Richardson
+      given-names: Jared
+  year: 2026

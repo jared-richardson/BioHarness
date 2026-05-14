@@ -1,0 +1,131 @@
+{
+  "analysis_type": "structural_variant_calling",
+  "candidate": {
+    "plan": [
+      {
+        "arguments": {},
+        "step_id": 1,
+        "tool_name": "minimap2_align"
+      }
+    ]
+  },
+  "covers_fix": [
+    "compiled_sv_direct_wrapper_candidate_binding"
+  ],
+  "expected_outcome": {
+    "accepted": true,
+    "accepted_arguments_contains": {
+      "output_bam": "aligned.bam",
+      "reads": "reads.fastq",
+      "reference_fasta": "ref.fasta"
+    },
+    "accepted_tool_name": "minimap2_align"
+  },
+  "failure_class": "planner_missing_required_arguments_first_step",
+  "id": "qwen36_compiled_sv_minimap2_missing_args",
+  "kind": "candidate_gate",
+  "metadata": {
+    "replay_mode": "stepwise_candidate_evaluation",
+    "scenario": "Qwen 3.6 emits minimap2_align with no arguments under a compiled structural-variant analysis spec.",
+    "user_request": "Align these Oxford Nanopore DNA reads to the reference genome and call structural variants.",
+    "workspace_files": [
+      "{{data_root}}/reads.fastq",
+      "{{data_root}}/ref.fasta"
+    ]
+  },
+  "model": "qwen3.6:35b-a3b",
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "structural_variant_calling",
+      "candidate_methods": [
+        "sniffles_sv_call"
+      ],
+      "chosen_method": "sniffles_sv_call",
+      "discovered_data_files": [
+        {
+          "name": "reads.fastq",
+          "path": "{{data_root}}/reads.fastq"
+        },
+        {
+          "name": "ref.fasta",
+          "path": "{{data_root}}/ref.fasta"
+        }
+      ],
+      "execution_contract": {
+        "compatible_tools": [],
+        "execution_mode": ""
+      },
+      "file_manifest": {
+        "entries": [
+          {
+            "file_type": "fastq",
+            "resolved_path": "{{data_root}}/reads.fastq",
+            "role": "input_fastq_r1",
+            "sample_id": "reads"
+          },
+          {
+            "file_type": "fasta",
+            "resolved_path": "{{data_root}}/ref.fasta",
+            "role": "input_fasta",
+            "sample_id": null
+          }
+        ],
+        "output_dir": "{{selected_dir}}"
+      },
+      "parameter_profile": [
+        {
+          "settings": {
+            "min_support": 3,
+            "min_sv_length": 50,
+            "threads": 4
+          },
+          "tool_name": "sniffles_sv_call"
+        }
+      ],
+      "plan_skeleton": [
+        [
+          "sniffles_sv_call",
+          "Call structural variants from the aligned long-read BAM or CRAM and write a VCF under the selected output path",
+          {
+            "min_support": 3,
+            "min_sv_length": 50,
+            "threads": 4
+          }
+        ]
+      ],
+      "preferred_tools": [
+        "sniffles_sv_call"
+      ],
+      "protocol_grounding": {
+        "analysis_family": "structural_variant_calling",
+        "analysis_type": "structural_variant_calling",
+        "compatible_tools": [],
+        "execution_mode": "compiled_pipeline",
+        "grounded": true,
+        "required_plan_signals": [
+          "sniffles_sv_call"
+        ],
+        "required_tools": [
+          "sniffles_sv_call"
+        ],
+        "task_name": "structural_variant_calling"
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "plan": []
+    },
+    "step_statuses": []
+  },
+  "raw_emission": null,
+  "schema_version": 1,
+  "source_run": "20260427_051234_align_these_oxford_nanopore__a0ec",
+  "tags": [
+    "band2",
+    "compiled_pipeline",
+    "long_read_sv",
+    "required_arguments"
+  ],
+  "temperature": 0.3
+}

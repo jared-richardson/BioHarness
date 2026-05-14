@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "id": "exp44_annotation_requires_gff_producer",
+  "kind": "candidate_gate",
+  "source_run": "20260424_182546_identify_and_annotate_genome_7afe",
+  "model": "qwen3.6",
+  "temperature": null,
+  "analysis_type": "bacterial_evolution_variant_calling",
+  "raw_emission": null,
+  "prefix_state": {
+    "analysis_spec": {
+      "analysis_type": "bacterial_evolution_variant_calling",
+      "benchmark_policy": "bioagentbench_planning_strict",
+      "protocol_grounding": {
+        "min_variant_branches": 2,
+        "requires_shared_comparison": true
+      },
+      "requested_data_root": "{{data_root}}",
+      "selected_dir": "{{selected_dir}}"
+    },
+    "plan": {
+      "thought_process": "",
+      "plan": [
+        {
+          "step_id": 1,
+          "tool_name": "spades_assemble",
+          "arguments": {
+            "reads_1": "{{data_root}}/anc_R1.fastq.gz",
+            "reads_2": "{{data_root}}/anc_R2.fastq.gz",
+            "output_dir": "{{selected_dir}}/assembly",
+            "careful": true
+          }
+        },
+        {
+          "step_id": 2,
+          "tool_name": "bwa_mem_align",
+          "branch_id": "ancestor",
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/anc_aligned.bam"
+          }
+        },
+        {
+          "step_id": 3,
+          "tool_name": "bwa_mem_align",
+          "branch_id": "evol1",
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol1_aligned.bam"
+          }
+        },
+        {
+          "step_id": 4,
+          "tool_name": "bwa_mem_align",
+          "branch_id": "evol2",
+          "arguments": {
+            "output_bam": "{{selected_dir}}/alignments/evol2_aligned.bam"
+          }
+        },
+        {
+          "step_id": 5,
+          "tool_name": "freebayes_call",
+          "branch_id": "ancestor",
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/anc_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/anc_raw.vcf"
+          }
+        },
+        {
+          "step_id": 6,
+          "tool_name": "freebayes_call",
+          "branch_id": "evol1",
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol1_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol1_raw.vcf"
+          }
+        },
+        {
+          "step_id": 7,
+          "tool_name": "freebayes_call",
+          "branch_id": "evol2",
+          "arguments": {
+            "input_bam": "{{selected_dir}}/alignments/evol2_aligned.bam",
+            "output_vcf": "{{selected_dir}}/variants/evol2_raw.vcf"
+          }
+        },
+        {
+          "step_id": 8,
+          "tool_name": "bcftools_filter_run",
+          "branch_id": "ancestor",
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/anc_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+          }
+        },
+        {
+          "step_id": 9,
+          "tool_name": "bcftools_filter_run",
+          "branch_id": "evol1",
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol1_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol1.filtered.vcf.gz"
+          }
+        },
+        {
+          "step_id": 10,
+          "tool_name": "bcftools_filter_run",
+          "branch_id": "evol2",
+          "arguments": {
+            "input_vcf": "{{selected_dir}}/variants/evol2_raw.vcf",
+            "output_vcf": "{{selected_dir}}/variants/evol2.filtered.vcf.gz"
+          }
+        },
+        {
+          "step_id": 11,
+          "tool_name": "bcftools_isec_run",
+          "branch_id": "evol1",
+          "objective": "Subtract ancestor-supported sites from evol1 callset.",
+          "arguments": {
+            "input_vcfs": [
+              "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+              "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+            ],
+            "output_dir": "{{selected_dir}}/variants/.isec_evol1.ancestor_subtracted",
+            "output_vcf": "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz"
+          }
+        },
+        {
+          "step_id": 12,
+          "tool_name": "bcftools_isec_run",
+          "branch_id": "evol2",
+          "objective": "Subtract ancestor-supported sites from evol2 callset.",
+          "arguments": {
+            "input_vcfs": [
+              "{{selected_dir}}/variants/evol2.filtered.vcf.gz",
+              "{{selected_dir}}/variants/anc.filtered.vcf.gz"
+            ],
+            "output_dir": "{{selected_dir}}/variants/.isec_evol2.ancestor_subtracted",
+            "output_vcf": "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz"
+          }
+        }
+      ]
+    },
+    "step_statuses": [
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed",
+      "completed"
+    ]
+  },
+  "candidate": {
+    "thought_process": "The branch-local VCFs are ready for annotation.",
+    "plan": [
+      {
+        "step_id": 13,
+        "tool_name": "snpeff_annotate",
+        "branch_id": "evol1",
+        "objective": "Annotate evol1 ancestor-subtracted variants.",
+        "arguments": {
+          "reference_fasta": "{{selected_dir}}/assembly/scaffolds.fasta",
+          "annotation_gff": "{{selected_dir}}/annotation/genes.gff",
+          "config_dir": "{{selected_dir}}/annotation/_snpeff",
+          "genome_db": "ancestor",
+          "input_vcf": "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz",
+          "output_vcf": "{{selected_dir}}/variants/evol1.annotated.vcf"
+        }
+      }
+    ]
+  },
+  "expected_outcome": {
+    "duplicate_rejected": false,
+    "prerequisite_rejected": true,
+    "branch_stage_rejected": true,
+    "missing_inputs_rejected": true,
+    "missing_inputs_contains": [
+      "annotation/genes.gff"
+    ],
+    "allowed_tool_names": [
+      "prodigal_annotate",
+      "prokka_annotate"
+    ],
+    "prerequisite_reason_contains": [
+      "reference gene annotation GFF",
+      "`prodigal_annotate`",
+      "`snpeff_annotate`"
+    ],
+    "branch_progress_next": {
+      "branch_id": "evol1",
+      "stage": "annotated_vcf",
+      "suggested_tool": "snpeff_annotate"
+    }
+  },
+  "failure_class": "missing_reference_annotation_prerequisite",
+  "covers_fix": [
+    "annotation-prerequisite-frontier",
+    "optional-reference-input-existence"
+  ],
+  "metadata": {
+    "scenario": "After both ancestor-subtracted branch VCFs exist, variant annotation must not run until a real GFF exists or a producer such as prodigal_annotate has completed.",
+    "workspace_files": [
+      "{{selected_dir}}/assembly/scaffolds.fasta",
+      "{{selected_dir}}/alignments/anc_aligned.bam",
+      "{{selected_dir}}/alignments/evol1_aligned.bam",
+      "{{selected_dir}}/alignments/evol2_aligned.bam",
+      "{{selected_dir}}/variants/anc_raw.vcf",
+      "{{selected_dir}}/variants/evol1_raw.vcf",
+      "{{selected_dir}}/variants/evol2_raw.vcf",
+      "{{selected_dir}}/variants/anc.filtered.vcf.gz",
+      "{{selected_dir}}/variants/anc.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol1.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol2.filtered.vcf.gz",
+      "{{selected_dir}}/variants/evol2.filtered.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz",
+      "{{selected_dir}}/variants/evol1.ancestor_subtracted.vcf.gz.tbi",
+      "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz",
+      "{{selected_dir}}/variants/evol2.ancestor_subtracted.vcf.gz.tbi"
+    ]
+  }
+}
