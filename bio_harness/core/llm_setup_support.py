@@ -225,6 +225,26 @@ def _discover_available_models(
     return True, rows, defaults, ""
 
 
+def _probe_backend_reachable(probe: dict[str, Any], discovered_reachable: bool) -> bool:
+    """Return backend reachability using explicit probe diagnostics when present.
+
+    Args:
+        probe: Structured report from ``probe_llm_backend``.
+        discovered_reachable: Reachability inferred from model discovery.
+
+    Returns:
+        True only when discovery succeeded and the direct backend probe did not
+        explicitly fail.
+    """
+    diagnostics = dict(probe.get("diagnostics", {}) or {})
+    direct_probe = diagnostics.get("direct_probe_ok")
+    if direct_probe is False:
+        return False
+    if direct_probe is True:
+        return True
+    return bool(discovered_reachable)
+
+
 def _ollama_pull_model(model_name: str, *, host: str | None = None) -> dict[str, Any]:
     """Attempt to pull an Ollama model and return a structured receipt."""
     from bio_harness.core.ollama_setup import pull_ollama_model
@@ -423,7 +443,7 @@ def build_llm_setup_report(
         host=resolved_host,
         helpers=helpers,
     )
-    report["backend_reachable"] = reachable
+    report["backend_reachable"] = _probe_backend_reachable(probe, reachable)
     report["available_models"] = rows
     report["recommended_defaults"] = defaults
     report["model_present"] = any(
@@ -456,7 +476,7 @@ def build_llm_setup_report(
                 host=resolved_host,
                 helpers=helpers,
             )
-            report["backend_reachable"] = reachable
+            report["backend_reachable"] = _probe_backend_reachable(probe, reachable)
             report["available_models"] = rows
             report["recommended_defaults"] = defaults
             report["model_present"] = any(

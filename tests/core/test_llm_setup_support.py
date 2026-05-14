@@ -86,6 +86,42 @@ def test_build_llm_setup_report_surfaces_missing_model_and_available_defaults(mo
     assert any("default to `qwen3-coder-next:latest`" in step for step in report["next_steps"])
 
 
+def test_build_llm_setup_report_marks_failed_direct_probe_unreachable(monkeypatch) -> None:
+    helpers = {
+        "probe_llm_backend": lambda **_kwargs: {
+            "available": False,
+            "message": "Cannot connect to Ollama",
+            "diagnostics": {
+                "backend": "ollama",
+                "direct_probe_ok": False,
+                "direct_probe_error": "connection refused",
+            },
+        }
+    }
+    monkeypatch.setattr(llm_setup_support, "_safe_import_backend_helpers", lambda: (helpers, ""))
+    monkeypatch.setattr(llm_setup_support, "_command_available", lambda _name: True)
+    monkeypatch.setattr(
+        llm_setup_support,
+        "_discover_available_models",
+        lambda **_kwargs: (
+            True,
+            [],
+            {"planner": "", "executor": ""},
+            "",
+        ),
+    )
+
+    report = llm_setup_support.build_llm_setup_report(
+        llm_backend="ollama",
+        model_name="qwen3-coder-next:latest",
+        host="http://127.0.0.1:19999",
+    )
+
+    assert report["backend_reachable"] is False
+    assert any(command == "ollama serve" for command in report["recommended_commands"])
+    assert not any("ollama pull" in command for command in report["recommended_commands"])
+
+
 def test_build_llm_setup_report_can_pull_missing_ollama_model(monkeypatch) -> None:
     probe_responses = iter(
         [
