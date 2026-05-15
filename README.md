@@ -12,7 +12,7 @@
 <p align="center">
   <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-blue?style=for-the-badge" alt="Quick Start" /></a>&nbsp;
   <a href="#examples"><img src="https://img.shields.io/badge/Examples-green?style=for-the-badge" alt="Examples" /></a>&nbsp;
-  <a href="docs/manuscript/Bio-Harness_manuscript.pdf"><img src="https://img.shields.io/badge/Manuscript-PDF-purple?style=for-the-badge" alt="Manuscript PDF" /></a>&nbsp;
+  <a href="docs/manuscript/"><img src="https://img.shields.io/badge/Manuscript-Markdown-purple?style=for-the-badge" alt="Manuscript" /></a>&nbsp;
   <a href="docs/benchmark_evidence.md"><img src="https://img.shields.io/badge/168%2F168_passing-brightgreen?style=for-the-badge" alt="168/168" /></a>&nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT License" /></a>
 </p>
@@ -21,8 +21,8 @@
 
 ## Manuscript
 
-The current manuscript submission copy is available here:
-[Bio-Harness_manuscript.pdf](docs/manuscript/Bio-Harness_manuscript.pdf).
+The current manuscript draft is available here:
+[Read the manuscript](docs/manuscript/).
 A permanent publication link will be added after the manuscript is posted.
 
 ---
