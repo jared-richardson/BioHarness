@@ -219,6 +219,14 @@ large run artifacts.
 
 Python floor: `3.10+`.
 
+On macOS, double-click `Launch Bio-Harness.command` for the click-first setup
+path. It prepares the source checkout, starts the local API and React UI, and
+opens the first-run setup wizard in your browser. The wizard can start Ollama,
+show tested model choices, report disk/RAM requirements, pull the selected
+model with progress, and run the mini preflight.
+
+Command-line setup remains available:
+
 ```bash
 python3 scripts/first_run_setup.py
 ```
@@ -343,6 +351,19 @@ See:
 PUBLIC_INSTALLATION_DOC = """# Installation
 
 Bio-Harness is currently source-checkout first.
+
+## Click-First macOS Setup
+
+Double-click the root-level launcher:
+
+```text
+Launch Bio-Harness.command
+```
+
+The launcher prepares the Python/Pixi environment, installs web-interface
+packages when needed, starts the local API and React UI, and opens the first-run
+setup wizard. Keep the launcher window open while using Bio-Harness; closing it
+stops the local UI servers.
 
 ## Supported Path
 
@@ -751,6 +772,7 @@ def _public_scripts_readme() -> str:
 ROOT_FILES = (
     "AGENTS.md",
     "CODING_STANDARDS.md",
+    "Launch Bio-Harness.command",
     "install.sh",
     "pyproject.toml",
     "pixi.toml",

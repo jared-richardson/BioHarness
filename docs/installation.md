@@ -2,6 +2,19 @@
 
 Bio-Harness is currently source-checkout first.
 
+## Click-First macOS Setup
+
+Double-click the root-level launcher:
+
+```text
+Launch Bio-Harness.command
+```
+
+The launcher prepares the Python/Pixi environment, installs web-interface
+packages when needed, starts the local API and React UI, and opens the first-run
+setup wizard. Keep the launcher window open while using Bio-Harness; closing it
+stops the local UI servers.
+
 ## Supported Path
 
 ```bash

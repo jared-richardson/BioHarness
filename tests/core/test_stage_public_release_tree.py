@@ -48,6 +48,7 @@ def test_stage_public_release_tree_copies_allowlist_and_excludes_generated(
     repo_root = tmp_path / "repo"
     _write(repo_root / "pyproject.toml", "[project]\nname = 'demo'\n")
     _write(repo_root / "README.md", "# Demo\n")
+    _write(repo_root / "Launch Bio-Harness.command", "#!/bin/bash\n")
     _write(repo_root / "bio_harness" / "__init__.py", "")
     _write(
         repo_root / "bio_harness" / "core" / "private_path_fixture.py",
@@ -88,6 +89,7 @@ def test_stage_public_release_tree_copies_allowlist_and_excludes_generated(
     )
 
     assert "README.md" in result.copied_files
+    assert "Launch Bio-Harness.command" in result.copied_files
     assert ".gitignore" in result.copied_files
     assert "bio_harness/__init__.py" in result.copied_files
     assert "scripts/bootstrap_bioharness.py" in result.copied_files
@@ -113,6 +115,7 @@ def test_stage_public_release_tree_copies_allowlist_and_excludes_generated(
     assert "prepare_fast_signal_mini_benchmarks.py" in staged_readme
     assert "recommended public Qwen path" in staged_readme
     assert "qwen3-coder-next:latest" in staged_readme
+    assert "Launch Bio-Harness.command" in staged_readme
     assert "example/local/path" not in staged_readme
     staged_gitignore = (output_dir / ".gitignore").read_text()
     assert "benchmark_data/*" not in staged_gitignore
