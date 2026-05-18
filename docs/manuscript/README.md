@@ -4,7 +4,9 @@
 
 **Code:** [`github.com/jared-richardson/BioHarness`](https://github.com/jared-richardson/BioHarness)
 
-> This is the repository-rendered manuscript page. A permanent publication link will be added after the manuscript is posted.
+**Publication record:** [`zenodo.org/records/20277620`](https://zenodo.org/records/20277620)
+
+> This is the repository-rendered manuscript page. The archived publication record is available on Zenodo.
 
 **Quick navigation:** [Abstract](#abstract) · [System Architecture](#3-system-architecture) · [Fast-Signal Methodology](#4-fast-signal-methodology) · [Evaluation](#6-evaluation) · [Discussion](#7-discussion) · [References](#references)
 

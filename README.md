@@ -12,7 +12,7 @@
 <p align="center">
   <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-blue?style=for-the-badge" alt="Quick Start" /></a>&nbsp;
   <a href="#examples"><img src="https://img.shields.io/badge/Examples-green?style=for-the-badge" alt="Examples" /></a>&nbsp;
-  <a href="docs/manuscript/"><img src="https://img.shields.io/badge/Manuscript-Markdown-purple?style=for-the-badge" alt="Manuscript" /></a>&nbsp;
+  <a href="https://zenodo.org/records/20277620"><img src="https://img.shields.io/badge/Publication-Zenodo-purple?style=for-the-badge" alt="Zenodo publication" /></a>&nbsp;
   <a href="docs/benchmark_evidence.md"><img src="https://img.shields.io/badge/168%2F168_passing-brightgreen?style=for-the-badge" alt="168/168" /></a>&nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT License" /></a>
 </p>
@@ -21,9 +21,11 @@
 
 ## Manuscript
 
-The current manuscript draft is available here:
+The manuscript publication record is available on Zenodo:
+[zenodo.org/records/20277620](https://zenodo.org/records/20277620).
+
+A repository-rendered manuscript copy is also available here:
 [Read the manuscript](docs/manuscript/).
-A permanent publication link will be added after the manuscript is posted.
 
 ---
 
