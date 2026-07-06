@@ -50,6 +50,7 @@ DEFAULT_CORS_ORIGINS = (
     "http://127.0.0.1:5173",
     "http://localhost:3000",
 )
+DEFAULT_CORS_ORIGIN_REGEX = r"^http://(localhost|127\.0\.0\.1):[0-9]+$"
 
 TERMINAL_BLOCK_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (
@@ -134,6 +135,15 @@ def _cors_origins_from_env() -> list[str]:
     if not raw.strip():
         return list(DEFAULT_CORS_ORIGINS)
     return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+
+def _cors_origin_regex_from_env() -> str | None:
+    """Return an optional browser-origin regex for local development ports."""
+    raw = os.getenv("BIO_HARNESS_UI_CORS_ORIGIN_REGEX")
+    if raw is None:
+        return DEFAULT_CORS_ORIGIN_REGEX
+    stripped = raw.strip()
+    return stripped or None
 
 
 def _infer_kind(name: str) -> str:
@@ -224,6 +234,7 @@ app = FastAPI(title="Bio-Harness v2 API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins_from_env(),
+    allow_origin_regex=_cors_origin_regex_from_env(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

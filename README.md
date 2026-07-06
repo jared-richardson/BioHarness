@@ -148,6 +148,18 @@ cd apps/web && npm ci && npm run dev
 
 Open **http://localhost:5173** in your browser. If setup is incomplete, the UI opens the setup wizard automatically.
 
+For a custom local frontend port, set both the frontend API target and the
+backend's allowed browser origin:
+
+```bash
+# Terminal 1
+BIO_HARNESS_UI_CORS_ORIGINS=http://127.0.0.1:15173,http://localhost:15173 .venv/bin/python ui_v2_api.py
+
+# Terminal 2
+cd apps/web
+VITE_API_BASE=http://127.0.0.1:8000 npm run dev -- --host 127.0.0.1 --port 15173
+```
+
 ### Option C: CLI only (no UI)
 
 ```bash
@@ -486,6 +498,7 @@ Install with `python3 scripts/bootstrap_bioharness.py --all-installable-tools` o
 | `BIO_HARNESS_UI_HOST` | `127.0.0.1` | API bind address (use `0.0.0.0` for LAN, trusted networks only) |
 | `BIO_HARNESS_UI_PORT` | `8000` | API port |
 | `BIO_HARNESS_UI_CORS_ORIGINS` | | Comma-separated allowed CORS origins for LAN UI access |
+| `BIO_HARNESS_UI_CORS_ORIGIN_REGEX` | Localhost/127.0.0.1 HTTP ports | Optional regex for local browser origins; set empty to disable |
 | `VITE_API_BASE` | `http://127.0.0.1:8000` | Frontend API target (for non-default backend) |
 
 ---

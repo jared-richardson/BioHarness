@@ -78,6 +78,33 @@ def test_cors_origins_are_explicitly_configurable(monkeypatch: pytest.MonkeyPatc
     ]
 
 
+def test_cors_allows_localhost_dev_ports_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("BIO_HARNESS_UI_CORS_ORIGIN_REGEX", raising=False)
+
+    assert ui_v2_api._cors_origin_regex_from_env() == (
+        r"^http://(localhost|127\.0\.0\.1):[0-9]+$"
+    )
+
+
+def test_cors_origin_regex_can_be_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("BIO_HARNESS_UI_CORS_ORIGIN_REGEX", "")
+
+    assert ui_v2_api._cors_origin_regex_from_env() is None
+
+
+def test_cors_preflight_allows_custom_local_vite_port() -> None:
+    response = TestClient(ui_v2_api.app).options(
+        "/api/health",
+        headers={
+            "Origin": "http://127.0.0.1:15173",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:15173"
+
+
 def test_model_rows_for_setup_catalog_converts_ollama_sizes() -> None:
     rows = ui_v2_api._model_rows_for_setup_catalog(
         [

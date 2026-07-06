@@ -261,6 +261,15 @@ VITE_API_BASE=http://127.0.0.1:8000 npm run dev
 
 If you serve the UI from a LAN hostname, set `BIO_HARNESS_UI_CORS_ORIGINS` to
 the explicit comma-separated browser origins you want to allow.
+Localhost and `127.0.0.1` frontend ports are allowed by default for local
+development; set `BIO_HARNESS_UI_CORS_ORIGIN_REGEX=` to disable that regex.
+
+For a custom local frontend port:
+
+```bash
+BIO_HARNESS_UI_CORS_ORIGINS=http://127.0.0.1:15173,http://localhost:15173 .venv/bin/python ui_v2_api.py
+VITE_API_BASE=http://127.0.0.1:8000 npm run dev -- --host 127.0.0.1 --port 15173
+```
 
 Then open:
 
@@ -582,6 +591,8 @@ local setups. Set `BIO_HARNESS_UI_HOST=0.0.0.0` only on a trusted network
 because the API includes a local terminal endpoint. If you serve the frontend
 from a LAN hostname, set `BIO_HARNESS_UI_CORS_ORIGINS` to the explicit
 comma-separated browser origins you want to allow.
+Localhost and `127.0.0.1` frontend ports are allowed by default for local
+development; set `BIO_HARNESS_UI_CORS_ORIGIN_REGEX=` to disable that regex.
 
 Then start the Vite frontend:
 
@@ -595,6 +606,13 @@ Open:
 
 ```text
 http://localhost:5173
+```
+
+For a custom local frontend port:
+
+```bash
+BIO_HARNESS_UI_CORS_ORIGINS=http://127.0.0.1:15173,http://localhost:15173 .venv/bin/python ui_v2_api.py
+VITE_API_BASE=http://127.0.0.1:8000 npm run dev -- --host 127.0.0.1 --port 15173
 ```
 
 If setup is incomplete, the UI opens the first-run setup wizard. To force the
@@ -657,6 +675,8 @@ Set `BIO_HARNESS_UI_HOST=0.0.0.0` only on a trusted network; the API exposes a
 local terminal endpoint intended for single-user local development. If you also
 serve the Vite frontend from a LAN hostname, set
 `BIO_HARNESS_UI_CORS_ORIGINS` to a comma-separated list of allowed origins.
+Localhost and `127.0.0.1` frontend ports are allowed by default for local
+development; set `BIO_HARNESS_UI_CORS_ORIGIN_REGEX=` to disable that regex.
 
 Then start the Vite UI:
 
@@ -674,6 +694,13 @@ it in `.env.local`:
 
 ```bash
 VITE_API_BASE=http://127.0.0.1:8000 npm run dev
+```
+
+For a custom local frontend port:
+
+```bash
+BIO_HARNESS_UI_CORS_ORIGINS=http://127.0.0.1:15173,http://localhost:15173 .venv/bin/python ui_v2_api.py
+VITE_API_BASE=http://127.0.0.1:8000 npm run dev -- --host 127.0.0.1 --port 15173
 ```
 
 Generated folders such as `node_modules/`, `.vite/`, and `dist/` are not part of
