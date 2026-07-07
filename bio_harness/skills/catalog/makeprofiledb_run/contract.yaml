@@ -1,0 +1,58 @@
+name: makeprofiledb_run
+description: Build an RPS, DELTA, or COBALT profile database for domain-aware BLAST workflows.
+when_to_use: Use to prepare profile databases required by RPS-BLAST, RPSTBLASTN, or DELTA-BLAST
+when_not_to_use: Do not use for ordinary nucleotide or protein FASTA databases; use makeblastdb_run instead
+risk_level: medium
+tools_required:
+- makeprofiledb
+capabilities:
+- annotation
+- protein_analysis
+input_types:
+- txt
+output_types:
+- directory
+analysis_categories:
+- comparative_genomics
+- annotation
+parameters:
+  input_list:
+    type: path
+    description: File listing scoremat or PSSM files.
+    required: true
+    file_role: input_fasta
+  output_prefix:
+    type: path
+    description: Profile database output prefix.
+    required: true
+    file_role: output_dir
+  dbtype:
+    type: string
+    description: Output database type (rps, delta, cobalt).
+    required: false
+  title:
+    type: string
+    description: Optional database title.
+    required: false
+  binary:
+    type: boolean
+    description: Input scoremats are binary.
+    required: false
+  index:
+    type: boolean
+    description: Create index files.
+    required: false
+  threshold:
+    type: number
+    description: Optional word score threshold.
+    required: false
+  matrix:
+    type: string
+    description: Optional substitution matrix name.
+    required: false
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+command_template: makeprofiledb -in {input_list} -out {output_prefix} -dbtype {dbtype}
+source_definition: bio_harness/skills/definitions/makeprofiledb_run.md
+generated_by: scripts/generate_standard_skill_packages.py

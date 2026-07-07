@@ -1,0 +1,53 @@
+name: phylogenetics_iqtree_style
+description: Run IQ-TREE-style phylogenetic inference with deterministic fallback tree generation.
+when_to_use: Use for maximum-likelihood phylogenetic tree inference from aligned sequences
+when_not_to_use: Not for sequence alignment (use MAFFT) or distance-based trees
+risk_level: medium
+tools_required:
+- iqtree
+capabilities:
+- phylogenetics
+- protein_analysis
+input_types:
+- fasta_alignment
+output_types:
+- newick
+analysis_categories:
+- phylogenetics
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 2
+parameters:
+  alignment_fasta:
+    type: path
+    description: Aligned sequence FASTA.
+    required: true
+    file_role: input_fasta
+  output_dir:
+    type: path
+    description: Output directory.
+    required: true
+    file_role: output_dir
+  output_prefix:
+    type: path
+    description: IQ-TREE output prefix.
+    required: true
+  output_tree:
+    type: path
+    description: Output Newick tree path.
+    required: true
+  model:
+    type: string
+    description: Substitution model.
+    required: false
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+  seed:
+    type: integer
+    description: Deterministic seed.
+    required: false
+command_template: iqtree -s {alignment_fasta} -m {model} -T {threads} -seed {seed} -redo -pre {output_prefix}
+source_definition: bio_harness/skills/definitions/phylogenetics_iqtree_style.md
+generated_by: scripts/generate_standard_skill_packages.py

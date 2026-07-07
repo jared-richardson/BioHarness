@@ -1,0 +1,28 @@
+name: bash_run
+description: 'Executes a user-approved shell command inside the workspace sandbox. Use this when a specialized
+  skill is not yet available, but a safe command-line step is needed.
+
+  '
+when_to_use: Use as a last resort when no specialized skill exists for the required single operation
+when_not_to_use: Do not use when a dedicated skill wrapper exists or when the workflow needs multiple
+  operations
+risk_level: high
+tools_required: []
+input_types: []
+output_types: []
+analysis_categories:
+- general
+parameters:
+  command:
+    type: string
+    description: Full shell command to execute.
+    required: true
+  working_directory:
+    type: string
+    description: Optional execution directory for the shell command. Must stay inside the selected workspace
+      root.
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+source_definition: bio_harness/skills/definitions/bash_run.md
+generated_by: scripts/generate_standard_skill_packages.py

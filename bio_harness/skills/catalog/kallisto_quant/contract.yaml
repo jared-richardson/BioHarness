@@ -1,0 +1,54 @@
+name: kallisto_quant
+description: Quantify transcript abundance with kallisto pseudoalignment.
+when_to_use: Use for fast transcript-level quantification as an alternative to Salmon
+when_not_to_use: Not for genome-level alignment or gene-level counting (use featureCounts)
+risk_level: medium
+tools_required:
+- kallisto
+capabilities:
+- quantification
+input_types:
+- fastq
+- fasta_transcriptome
+output_types:
+- tsv
+- h5
+analysis_categories:
+- transcript_quantification
+- rna_seq_differential_expression
+parameters:
+  index_path:
+    type: path
+    description: kallisto index file.
+    required: true
+    file_role: buildable_index
+  transcriptome_fasta:
+    type: path
+    description: Optional transcriptome FASTA used to build the index when it does not already exist.
+    required: false
+    file_role: fasta_transcriptome
+  output_dir:
+    type: path
+    description: Output directory.
+    required: true
+    file_role: output_dir
+  threads:
+    type: integer
+    description: Thread count.
+    required: true
+  reads_1:
+    type: path
+    description: Read 1 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r1
+  reads_2:
+    type: path
+    description: Read 2 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r2
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 4
+command_template: kallisto quant -i {index_path} -o {output_dir} -t {threads} {reads_1} {reads_2}
+source_definition: bio_harness/skills/definitions/kallisto_quant.md
+generated_by: scripts/generate_standard_skill_packages.py

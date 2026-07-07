@@ -1,0 +1,52 @@
+name: blast_formatter_run
+description: Format a BLAST archive file into tabular, XML, or HTML output.
+when_to_use: Use after a BLAST run when archive output needs to be reformatted for downstream use or reporting
+when_not_to_use: Do not use to execute a BLAST search itself
+risk_level: low
+tools_required:
+- blast_formatter
+capabilities:
+- annotation
+- protein_analysis
+input_types:
+- asn1
+output_types:
+- tsv
+- xml
+- html
+analysis_categories:
+- comparative_genomics
+- annotation
+parameters:
+  archive_file:
+    type: path
+    description: BLAST archive file produced with outfmt 11.
+    required: true
+    file_role: input_fasta
+  output_file:
+    type: path
+    description: Formatted BLAST result output file.
+    required: true
+    file_role: output_dir
+  outfmt:
+    type: string
+    description: BLAST formatter outfmt string.
+    required: false
+  html:
+    type: boolean
+    description: Emit HTML-wrapped output.
+    required: false
+  max_target_seqs:
+    type: integer
+    description: Optional result limit.
+    required: false
+  parse_deflines:
+    type: boolean
+    description: Parse sequence deflines.
+    required: false
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+command_template: blast_formatter -archive {archive_file} -out {output_file} -outfmt {outfmt}
+source_definition: bio_harness/skills/definitions/blast_formatter_run.md
+generated_by: scripts/generate_standard_skill_packages.py

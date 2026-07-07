@@ -1,0 +1,40 @@
+name: mafft_align
+description: Align multiple nucleotide or protein sequences with MAFFT.
+when_to_use: Use for deterministic multiple-sequence alignment before phylogenetic inference
+when_not_to_use: Do not use as the tree inference step itself or for general shell execution
+risk_level: low
+tools_required:
+- mafft
+capabilities:
+- phylogenetics
+input_types:
+- fasta
+output_types:
+- fasta_alignment
+analysis_categories:
+- phylogenetics
+parameters:
+  input_fasta:
+    type: path
+    description: Input FASTA with two or more sequences to align.
+    required: true
+    file_role: input_fasta
+  output_fasta:
+    type: path
+    description: Output aligned FASTA path.
+    required: true
+    file_role: output_dir
+  threads:
+    type: integer
+    description: Thread count for MAFFT.
+    required: false
+  strategy_mode:
+    type: string
+    description: MAFFT strategy mode (auto, localpair, globalpair, genafpair).
+    required: false
+system_requirements:
+  min_ram_gb: 4
+  min_cores: 2
+command_template: mafft --auto --thread {threads} {input_fasta} > {output_fasta}
+source_definition: bio_harness/skills/definitions/mafft_align.md
+generated_by: scripts/generate_standard_skill_packages.py

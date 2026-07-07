@@ -1,0 +1,43 @@
+name: cellranger_count
+description: Run 10x Cell Ranger gene-expression counting pipeline.
+when_to_use: Use for 10x Genomics single-cell RNA-seq counting from raw FASTQ data
+when_not_to_use: Not for non-10x data or pre-processed h5ad files (use scanpy/seurat)
+risk_level: high
+tools_required:
+- cellranger
+capabilities:
+- single_cell_analysis
+- reference_inputs
+input_types:
+- fastq
+- fasta_reference
+output_types:
+- h5ad
+- bam
+- tsv
+analysis_categories:
+- single_cell_rna_seq
+parameters:
+  run_id:
+    type: string
+    description: Cell Ranger run identifier.
+    required: true
+  transcriptome_ref:
+    type: path
+    description: Cell Ranger reference package directory.
+    required: true
+  fastq_dir:
+    type: path
+    description: Directory containing FASTQ files.
+    required: true
+  sample_name:
+    type: string
+    description: Sample prefix in FASTQ names.
+    required: true
+system_requirements:
+  min_ram_gb: 32
+  min_cores: 8
+command_template: cellranger count --id={run_id} --transcriptome={transcriptome_ref} --fastqs={fastq_dir}
+  --sample={sample_name}
+source_definition: bio_harness/skills/definitions/cellranger_count.md
+generated_by: scripts/generate_standard_skill_packages.py

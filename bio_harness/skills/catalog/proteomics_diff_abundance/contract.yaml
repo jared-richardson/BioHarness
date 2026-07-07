@@ -1,0 +1,104 @@
+name: proteomics_diff_abundance
+description: Run deterministic differential protein abundance analysis from a processed abundance table
+  and sample metadata.
+when_to_use: Use for table-first proteomics inputs with one protein abundance matrix and one sample metadata
+  table.
+when_not_to_use: Not for raw mzML processing, peptide-spectrum matching, or sequence-level protein annotation
+  workflows.
+risk_level: medium
+tools_required:
+- python
+capabilities:
+- proteomics
+- differential_analysis
+- group_comparison
+input_types:
+- csv
+- tsv
+output_types:
+- csv
+- tsv
+- json
+- md
+canonical_output_filenames:
+  output_dir:
+  - proteomics_differential_abundance.csv
+  - proteomics_qc_summary.json
+  - normalized_abundance_matrix.tsv
+  - volcano_plot_data.tsv
+  - proteomics_summary.md
+analysis_categories:
+- proteomics
+parameters:
+  abundance_matrix:
+    type: path
+    description: Protein abundance matrix in wide sample-column format.
+    required: true
+    file_role: input_csv
+    ownership: user_input
+  metadata_table:
+    type: path
+    description: Sample metadata table describing group assignments.
+    required: true
+    file_role: metadata_table
+    ownership: user_input
+  script_path:
+    type: path
+    description: Optional path to a custom proteomics workflow script. Defaults to the bundled deterministic
+      workflow.
+    required: false
+    ownership: harness_managed
+  output_dir:
+    type: path
+    description: Output directory for canonical proteomics result artifacts.
+    required: true
+    file_role: output_dir
+    ownership: execution_output
+  output_csv:
+    type: path
+    description: Optional explicit path for the differential-abundance CSV.
+    required: false
+    file_role: output_csv
+    ownership: execution_output
+  sample_id_column:
+    type: string
+    description: Optional explicit sample-ID column name in the metadata table.
+    required: false
+    ownership: tuning
+  group_column:
+    type: string
+    description: Optional explicit grouping column in the metadata table.
+    required: false
+    ownership: tuning
+  group_a:
+    type: string
+    description: Optional reference group label.
+    required: false
+    ownership: tuning
+  group_b:
+    type: string
+    description: Optional comparison group label.
+    required: false
+    ownership: tuning
+  normalization_method:
+    type: string
+    description: Deterministic normalization method. Currently only median_center is supported.
+    required: false
+    ownership: tuning
+  min_present_fraction:
+    type: number
+    description: Minimum observed fraction required to retain one protein before imputation.
+    required: false
+    ownership: tuning
+  impute_method:
+    type: string
+    description: Deterministic missing-value imputation method.
+    required: false
+    ownership: tuning
+system_requirements:
+  min_ram_gb: 8
+  min_cores: 4
+command_template: python {script_path} --abundance-matrix {abundance_matrix} --metadata-table {metadata_table}
+  --output-dir {output_dir}
+source_definition: bio_harness/skills/definitions/proteomics_diff_abundance.md
+generated_by: scripts/generate_standard_skill_packages.py

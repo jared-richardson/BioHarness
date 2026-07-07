@@ -1,0 +1,52 @@
+name: fallback_skill_builder
+description: Build and maintain deterministic fallback pipeline skills/templates with inventory-driven
+  reuse/extend/create selection, optional multi-template composition for multi-domain contracts, preflight
+  safety checks, contract validation, and artifact-driven troubleshooting/retry loops.
+when_to_use: Use as internal meta-skill for generating pipeline plans when no dedicated skill exists
+when_not_to_use: Not for direct use in analysis plans; used internally by the system
+risk_level: medium
+tools_required:
+- python
+capabilities:
+- alignment
+- variant_calling
+- differential_analysis
+- splicing_analysis
+- protein_analysis
+input_types: []
+output_types: []
+analysis_categories:
+- general
+system_requirements:
+  min_ram_gb: 2
+  min_cores: 1
+parameters:
+  target_capability_set:
+    type: string
+    description: Comma-separated required capabilities for the fallback contract.
+    required: true
+  allowed_tools:
+    type: string
+    description: Comma-separated tools/wrappers allowed for generated fallback plans.
+    required: true
+  data_reference_constraints:
+    type: string
+    description: JSON object with required paths/references and optional controls.
+    required: true
+  strictness_mode:
+    type: string
+    description: conservative or aggressive.
+    required: true
+  request_text:
+    type: string
+    description: Optional free text used for capability/tool inference.
+    required: false
+  out_json:
+    type: path
+    description: Output path for builder audit/report JSON.
+    required: false
+command_template: python3 -m scripts.fallback_skill_builder --target-capabilities {target_capability_set}
+  --allowed-tools {allowed_tools} --data-constraints-json {data_reference_constraints} --strictness-mode
+  {strictness_mode} --request-text {request_text} --out-json {out_json}
+source_definition: bio_harness/skills/definitions/fallback_skill_builder.md
+generated_by: scripts/generate_standard_skill_packages.py

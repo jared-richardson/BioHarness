@@ -104,6 +104,8 @@ bio_harness = [
   "pipeline_scripts/*.md",
   "skills/definitions/*.json",
   "skills/definitions/*.md",
+  "skills/catalog/*/SKILL.md",
+  "skills/catalog/*/contract.yaml",
   "skills/uncommon/*.json",
 ]
 

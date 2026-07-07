@@ -1,0 +1,59 @@
+name: psiblast_search
+description: Run PSI-BLAST iterative protein-to-protein search and emit tabular hits.
+when_to_use: Use for iterative protein homology searches when standard BLASTP sensitivity is not enough
+when_not_to_use: Not for nucleotide queries or when a single-pass protein search is sufficient
+risk_level: medium
+tools_required:
+- psiblast
+- makeblastdb
+capabilities:
+- annotation
+- protein_analysis
+input_types:
+- fasta_protein
+output_types:
+- tsv
+- xml
+analysis_categories:
+- comparative_genomics
+- annotation
+parameters:
+  query_fasta:
+    type: path
+    description: Protein FASTA query file.
+    required: true
+  database:
+    type: string
+    description: Protein BLAST database name/path or subject FASTA.
+    required: true
+  output_tsv:
+    type: path
+    description: Output hit file.
+    required: true
+  num_iterations:
+    type: integer
+    description: Optional PSI-BLAST iteration count.
+    required: false
+  inclusion_ethresh:
+    type: string
+    description: Optional inclusion E-value threshold.
+    required: false
+  outfmt:
+    type: string
+    description: BLAST outfmt string.
+    required: false
+  evalue:
+    type: string
+    description: E-value threshold.
+    required: false
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+system_requirements:
+  min_ram_gb: 4
+  min_cores: 2
+command_template: psiblast -query {query_fasta} -db {database} -out {output_tsv} -outfmt {outfmt} -num_threads
+  {threads} -evalue {evalue}
+source_definition: bio_harness/skills/definitions/psiblast_search.md
+generated_by: scripts/generate_standard_skill_packages.py

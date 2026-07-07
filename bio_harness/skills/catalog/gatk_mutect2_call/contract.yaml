@@ -1,0 +1,63 @@
+name: gatk_mutect2_call
+description: Call somatic variants with GATK Mutect2 (tumor-only or tumor-normal mode).
+when_to_use: Use for somatic variant calling from tumor/normal paired samples
+when_not_to_use: Not for germline calling (use HaplotypeCaller) or bacterial genomes
+risk_level: high
+tools_required:
+- gatk
+capabilities:
+- variant_calling
+- reference_inputs
+- group_comparison
+input_types:
+- bam
+- fasta_reference
+output_types:
+- vcf
+analysis_categories:
+- variant_calling
+parameters:
+  reference_fasta:
+    type: path
+    description: Reference FASTA path.
+    required: true
+    file_role: reference_genome
+  tumor_bam:
+    type: path
+    description: Tumor BAM path.
+    required: true
+  tumor_sample:
+    type: string
+    description: Tumor sample ID.
+    required: true
+  output_vcf:
+    type: path
+    description: Output VCF(.gz) path.
+    required: true
+    file_role: output_dir
+  normal_bam:
+    type: path
+    description: Optional normal/control BAM.
+    required: false
+  normal_sample:
+    type: string
+    description: Optional normal/control sample ID.
+    required: false
+  panel_of_normals:
+    type: path
+    description: Optional panel-of-normals VCF.
+    required: false
+  germline_resource:
+    type: path
+    description: Optional germline resource VCF.
+    required: false
+  threads:
+    type: integer
+    description: Native pair-HMM thread count.
+    required: false
+system_requirements:
+  min_ram_gb: 16
+  min_cores: 4
+command_template: gatk Mutect2 -R {reference_fasta} -I {tumor_bam} -tumor {tumor_sample} -O {output_vcf}
+source_definition: bio_harness/skills/definitions/gatk_mutect2_call.md
+generated_by: scripts/generate_standard_skill_packages.py

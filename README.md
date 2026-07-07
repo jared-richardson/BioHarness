@@ -414,7 +414,8 @@ BioHarness/
     core/                    # Planning, contracts, artifact binding, recovery
     harness/                 # Execution engine, path utils, plan repair
     pipeline_scripts/        # 80+ typed tool wrappers (BWA, STAR, DESeq2, ...)
-    skills/definitions/      # 85 skill specifications with typed schemas
+    skills/definitions/      # Typed executable tool contracts
+    skills/catalog/          # Generated standard SKILL.md agent-skill packages
     tools/                   # Tool registry and onboarding
     capabilities/            # Capability catalog and scientific tool index
     workflows/               # Workflow definitions
@@ -431,7 +432,7 @@ BioHarness/
     core/                    # Core unit tests
     fixtures/fast_signal/    # 38 curated replay fixtures
     pipeline_scripts/        # Tool wrapper tests
-    skills/                  # Skill tests
+    skills/                  # Tool-contract and wrapper tests
   benchmark_data/            # Manifests and mini-benchmark generators
   docker/                    # Container recipes for isolated tools
   docs/                      # Full documentation

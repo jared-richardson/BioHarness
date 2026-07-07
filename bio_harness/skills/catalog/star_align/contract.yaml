@@ -1,0 +1,67 @@
+name: star_align
+description: Align RNA-seq reads to reference genome using STAR.
+when_to_use: Use for splice-aware RNA-seq read alignment to a reference genome
+when_not_to_use: Not for DNA-seq alignment (use BWA/bowtie2) or long reads (use minimap2)
+risk_level: medium
+tools_required:
+- star
+capabilities:
+- alignment
+- reference_inputs
+input_types:
+- fastq
+- fasta_reference
+output_types:
+- bam
+analysis_categories:
+- rna_seq_differential_expression
+- transcript_quantification
+parameters:
+  threads:
+    type: integer
+    description: Thread count.
+    required: true
+  genome_dir:
+    type: path
+    description: STAR genome index directory.
+    required: true
+    file_role: buildable_genome_index
+  reference_fasta:
+    type: path
+    description: Reference FASTA used to build the STAR genome directory if it does not already exist.
+    required: false
+    file_role: reference_genome
+  annotation_gtf:
+    type: path
+    description: Gene annotation GTF used to build the STAR genome directory if it does not already exist.
+    required: false
+  reads_1:
+    type: path
+    description: Read 1 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r1
+  reads_2:
+    type: path
+    description: Read 2 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r2
+  output_prefix:
+    type: path
+    description: Output prefix path.
+    required: true
+    file_role: output_dir
+  star_index_cache_root:
+    type: path
+    description: Optional STAR index cache root used when materializing a genome dir.
+    required: false
+  sjdb_overhang:
+    type: integer
+    description: Optional sjdbOverhang used for STAR genomeGenerate.
+    required: false
+system_requirements:
+  min_ram_gb: 24
+  min_cores: 8
+command_template: STAR --runThreadN {threads} --genomeDir {genome_dir} --readFilesIn {reads_1} {reads_2}
+  --readFilesCommand zcat --outFileNamePrefix {output_prefix}
+source_definition: bio_harness/skills/definitions/star_align.md
+generated_by: scripts/generate_standard_skill_packages.py

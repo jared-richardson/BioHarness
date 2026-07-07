@@ -1,0 +1,57 @@
+name: hisat2_align
+description: Align reads to genome/transcriptome using HISAT2.
+when_to_use: Use for splice-aware RNA-seq alignment as an alternative to STAR
+when_not_to_use: Not for DNA-seq alignment (use BWA/bowtie2) or long reads (use minimap2)
+risk_level: medium
+tools_required:
+- hisat2
+capabilities:
+- alignment
+- reference_inputs
+input_types:
+- fastq
+- fasta_reference
+output_types:
+- bam
+analysis_categories:
+- rna_seq_differential_expression
+- transcript_quantification
+parameters:
+  index_base:
+    type: path
+    description: HISAT2 index basename.
+    required: true
+    file_role: buildable_index
+  reference_fasta:
+    type: path
+    description: Optional FASTA used to build index if index files are missing.
+    required: false
+  cache_index_base:
+    type: path
+    description: Optional shared cache index basename.
+    required: false
+    file_role: buildable_index
+  reads_1:
+    type: path
+    description: Read 1 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r1
+  reads_2:
+    type: path
+    description: Read 2 FASTQ(.gz).
+    required: true
+    file_role: input_fastq_r2
+  threads:
+    type: integer
+    description: Thread count.
+    required: false
+  output_sam:
+    type: path
+    description: Output SAM path.
+    required: true
+system_requirements:
+  min_ram_gb: 16
+  min_cores: 8
+command_template: hisat2 -x {index_base} -1 {reads_1} -2 {reads_2} -p {threads} -S {output_sam}
+source_definition: bio_harness/skills/definitions/hisat2_align.md
+generated_by: scripts/generate_standard_skill_packages.py

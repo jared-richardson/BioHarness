@@ -1,0 +1,50 @@
+name: fastqc_run
+description: 'Performs quality control on raw sequencing data (FASTQ files) using FastQC.
+
+  '
+when_to_use: Use for quality control assessment of raw FASTQ sequencing data before processing
+when_not_to_use: Not a processing step; does not filter or trim reads (use fastp/trimmomatic)
+risk_level: medium
+tools_required:
+- fastqc
+capabilities:
+- fastqc
+input_types:
+- fastq
+output_types:
+- html
+- zip
+analysis_categories:
+- general
+- evolution
+- rna_seq_differential_expression
+- variant_calling
+parameters:
+  input_file:
+    type: path
+    description: Path to the input FASTQ file(s). Can be a single file or a space-separated list of files.
+    required: true
+    file_role: input_fastq_r1
+  output_dir:
+    type: path
+    description: Directory to save FastQC reports.
+    required: true
+    file_role: output_dir
+  threads:
+    type: integer
+    description: Number of threads to use. Defaults to 2.
+    default: 2
+  contaminants:
+    type: path
+    description: An optional file containing a list of contaminants to screen against.
+    required: false
+  casava:
+    type: boolean
+    description: Files come from raw Casava 1.8 or later output, so only the first in a pair is checked
+      for Ns.
+    required: false
+system_requirements:
+  min_ram_gb: 4
+  min_cores: 2
+source_definition: bio_harness/skills/definitions/fastqc.md
+generated_by: scripts/generate_standard_skill_packages.py
