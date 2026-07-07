@@ -50,14 +50,27 @@ def test_star_align_supports_quant_mode_and_annotation_gtf():
 
 
 def test_star_align_prefers_repo_pixi_star_bin(monkeypatch):
-    repo_pixi_star = Path(__file__).resolve().parents[2] / ".pixi" / "envs" / "default" / "bin" / "STAR"
+    repo_pixi_star = (
+        Path(__file__).resolve().parents[2]
+        / ".pixi"
+        / "envs"
+        / "default"
+        / "bin"
+        / "STAR"
+    )
+    repo_pixi_star_real = repo_pixi_star.resolve()
 
     def fake_isfile(path: str) -> bool:
-        return str(path) in {str(repo_pixi_star), "/usr/local/bin/STAR"}
+        return Path(path).resolve() == repo_pixi_star_real or path == "/usr/local/bin/STAR"
 
     monkeypatch.setattr(star_support_module.os.path, "isfile", fake_isfile)
     monkeypatch.setattr(star_support_module.os, "access", lambda path, mode: fake_isfile(path))
-    monkeypatch.setattr(star_support_module.shutil, "which", lambda name: "/usr/local/bin/STAR" if name == "STAR" else "")
+    monkeypatch.setattr(
+        star_support_module.shutil,
+        "which",
+        lambda name: "/usr/local/bin/STAR" if name == "STAR" else "",
+    )
+    monkeypatch.setattr(star_support_module, "which_with_pixi", lambda name: "")
     monkeypatch.delenv("BIO_HARNESS_STAR_BIN", raising=False)
 
     cmd = star_align(
@@ -67,7 +80,7 @@ def test_star_align_prefers_repo_pixi_star_bin(monkeypatch):
         reads_2="/data/S1_R2.fastq",
         output_prefix="/out/S1_",
     )
-    assert str(repo_pixi_star) in cmd
+    assert str(repo_pixi_star_real) in cmd or str(repo_pixi_star) in cmd
 
 
 def test_star_2pass_and_solo_adapt_to_plain_fastq():
