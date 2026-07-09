@@ -31,6 +31,16 @@ outputs/
 output/
 downloads/
 
+# Local presentation drafts and review artifacts
+*.ppt
+*.pptx
+*.key
+docs/*Seminar*/
+docs/*Seminar*.md
+docs/*Seminar*.png
+docs/*presentation*.md
+docs/*presentation*.png
+
 # Platform/editor noise
 .DS_Store
 .vscode/
